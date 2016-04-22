@@ -37,20 +37,20 @@ public class ShoppingItemAdapter extends RecyclerView.Adapter<ShoppingItemAdapte
         this.mContext = mContext;
     }
 
-    // Create new views (invoked by the layout manager)
+    // Create new views (invoked by the cardView manager)
     @Override
     public ShoppingItemAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
                                                              int viewType) {
         // create a new view
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.custom_shopin_item, parent, false);
-        // set the view's size, margins, paddings and layout parameters
+        // set the view's size, margins, paddings and cardView parameters
 
         ViewHolder vh = new ViewHolder((LinearLayout) v);
         return vh;
     }
 
-    // Replace the contents of a view (invoked by the layout manager)
+    // Replace the contents of a view (invoked by the cardView manager)
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
         // - get element from your dataset at this position
@@ -68,7 +68,7 @@ public class ShoppingItemAdapter extends RecyclerView.Adapter<ShoppingItemAdapte
         });
     }
 
-    // Return the size of your dataset (invoked by the layout manager)
+    // Return the size of your dataset (invoked by the cardView manager)
     @Override
     public int getItemCount() {
         return mDataset.length;

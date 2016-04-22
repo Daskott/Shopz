@@ -43,10 +43,10 @@ public class ShopinItemsActivity extends AppCompatActivity {
         shopinListView = (RecyclerView) findViewById(R.id.shopin_list_view);
 
         // use this setting to improve performance if you know that changes
-        // in content do not change the layout size of the RecyclerView
+        // in content do not change the cardView size of the RecyclerView
         shopinListView.setHasFixedSize(true);
 
-        // use a linear layout manager
+        // use a linear cardView manager
         layoutManager = new LinearLayoutManager(this);
         shopinListView.setLayoutManager(layoutManager);
 
