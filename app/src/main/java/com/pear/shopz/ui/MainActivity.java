@@ -14,6 +14,7 @@ import android.view.ActionMode;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 
 import com.pear.shopz.R;
@@ -32,6 +33,7 @@ public class MainActivity extends AppCompatActivity implements ShoppingListAdapt
     private RecyclerView.LayoutManager layoutManager;
     private ShoppingListController shoppingListController;
     private ArrayList<ShoppingList> lists;
+    private ArrayList<ShoppingList> tempLists;
     private ActionMode actionMode;
     private GestureDetectorCompat  gestureDetector;
     private Toolbar toolbar;
@@ -54,14 +56,16 @@ public class MainActivity extends AppCompatActivity implements ShoppingListAdapt
         });
 
         setActionListeners();
+        setUpList(null);
     }
 
     public void setActionListeners() {
     }
 
-    public void setUpLists() {
+    public void setUpList(ArrayList<ShoppingList> currLists)
+    {
         shoppingListController = new ShoppingListController(this);
-        lists = shoppingListController.getShoppingLists();
+        lists = currLists == null? shoppingListController.getShoppingLists() : currLists;
         shopinListView = (RecyclerView) findViewById(R.id.shopin_list_view);
 
         // use this setting to improve performance if you know that changes
@@ -77,7 +81,20 @@ public class MainActivity extends AppCompatActivity implements ShoppingListAdapt
 
         shopinListView.setAdapter(listAdapter);
         shopinListView.setItemAnimator(new DefaultItemAnimator());
+    }
 
+    //check if List is up to date & update it
+    public void upDateList()
+    {
+        ArrayList<ShoppingList> currList = new ShoppingListController(this).getShoppingLists();
+
+        if(currList.size() != lists.size())
+        {
+            if (this.actionMode != null)
+                this.actionMode.finish();
+
+            setUpList(currList);
+        }
     }
 
     @Override
@@ -103,11 +120,13 @@ public class MainActivity extends AppCompatActivity implements ShoppingListAdapt
         return super.onOptionsItemSelected(item);
     }
 
+
     @Override
     protected void onResume() {
         super.onResume();
 
-        setUpLists();
+        //if list has changed, update it
+        upDateList();
     }
 
 

@@ -38,6 +38,9 @@ public class AddListActivity extends AppCompatActivity {
 
                 if(attemptSave()) {
                     shoppingListController.addShoppingList(nameTextView.getText().toString(), DEFAULT_STORE);
+
+                    Intent intent = new Intent(AddListActivity.this, ShopinItemsActivity.class);
+                    startActivity(intent);
                     finish();
                 }
             }
