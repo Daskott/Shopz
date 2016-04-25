@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.pear.shopz.R;
+import com.pear.shopz.objects.ShoppingList;
 import com.pear.shopz.objects.ShoppingListController;
 
 public class AddListActivity extends AppCompatActivity {
@@ -16,12 +17,23 @@ public class AddListActivity extends AppCompatActivity {
     private Button saveButton;
     private TextView nameTextView;
 
+    private int listId = -1;
+    private String listName = "";
     private final String DEFAULT_STORE = "Default";
+
+    private final String LISTID = "LISTID";
+    private final String LISTNAME = "LISTNAME";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_list);
+        Bundle extras = getIntent().getExtras();
+
+        if(extras!=null) {
+            listId = extras.getInt(LISTID);
+            listName = extras.getString(LISTNAME);
+        }
 
         init();
     }
@@ -31,15 +43,30 @@ public class AddListActivity extends AppCompatActivity {
         saveButton = (Button)findViewById(R.id.save_button_ls);
         nameTextView = (TextView)findViewById(R.id.list_name);
 
+        //check if its an edit/add
+        if(listId != -1)
+            nameTextView.setText(listName);
+
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ShoppingListController shoppingListController = new ShoppingListController(AddListActivity.this);
+                Intent intent;
 
                 if(attemptSave()) {
-                    shoppingListController.addShoppingList(nameTextView.getText().toString(), DEFAULT_STORE);
 
-                    Intent intent = new Intent(AddListActivity.this, ShopinItemsActivity.class);
+                    //check if its an edit/add
+                    if(listId == -1)
+                    {
+                        shoppingListController.addShoppingList(new ShoppingList(-1, nameTextView.getText().toString(), DEFAULT_STORE));
+                        intent = new Intent(AddListActivity.this, ShopinItemsActivity.class);
+                    }
+                    else
+                    {
+                        shoppingListController.updateShoppingList(new ShoppingList(listId, nameTextView.getText().toString(), DEFAULT_STORE));
+                        intent = new Intent(AddListActivity.this, MainActivity.class);
+
+                    }
                     startActivity(intent);
                     finish();
                 }
@@ -57,4 +84,5 @@ public class AddListActivity extends AppCompatActivity {
 
         return attempt;
     }
+
 }

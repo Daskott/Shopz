@@ -24,6 +24,7 @@ import com.pear.shopz.objects.ShoppingListController;
 
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity implements ShoppingListAdapter.ViewHolder.ClickListener{
@@ -39,6 +40,9 @@ public class MainActivity extends AppCompatActivity implements ShoppingListAdapt
     private Toolbar toolbar;
     private ActionModeCallback actionModeCallback = new ActionModeCallback();
 
+    private final String LISTID = "LISTID";
+    private final String LISTNAME = "LISTNAME";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,15 +56,13 @@ public class MainActivity extends AppCompatActivity implements ShoppingListAdapt
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, AddListActivity.class);
                 startActivity(intent);
+                //finish();
             }
         });
 
-        setActionListeners();
         setUpList(null);
     }
 
-    public void setActionListeners() {
-    }
 
     public void setUpList(ArrayList<ShoppingList> currLists)
     {
@@ -83,19 +85,22 @@ public class MainActivity extends AppCompatActivity implements ShoppingListAdapt
         shopinListView.setItemAnimator(new DefaultItemAnimator());
     }
 
-    //check if List is up to date & update it
-    public void upDateList()
-    {
-        ArrayList<ShoppingList> currList = new ShoppingListController(this).getShoppingLists();
-
-        if(currList.size() != lists.size())
-        {
-            if (this.actionMode != null)
-                this.actionMode.finish();
-
-            setUpList(currList);
-        }
-    }
+//    //check if List is up to date & update it
+//    public void upDateList()
+//    {
+//
+//        Bundle extras = getIntent().getExtras();
+//
+//        if(extras!=null)
+//        {
+//            ArrayList<ShoppingList> currList = new ShoppingListController(this).getShoppingLists();
+//
+//            if (this.actionMode != null)
+//                this.actionMode.finish();
+//
+//            setUpList(currList);
+//        }
+//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -126,7 +131,8 @@ public class MainActivity extends AppCompatActivity implements ShoppingListAdapt
         super.onResume();
 
         //if list has changed, update it
-        upDateList();
+        //upDateList();
+        //setUpList(null);
     }
 
 
@@ -138,6 +144,7 @@ public class MainActivity extends AppCompatActivity implements ShoppingListAdapt
         else
         {
             Intent intent = new Intent(MainActivity.this, ShopinItemsActivity.class);
+            intent.putExtra(LISTID, lists.get(position).getListID());
             startActivity(intent);
         }
     }
@@ -173,6 +180,16 @@ public class MainActivity extends AppCompatActivity implements ShoppingListAdapt
         }
     }
 
+    private ArrayList<ShoppingList> getSelectedLists()
+    {
+        ArrayList<ShoppingList> result = new ArrayList<ShoppingList>();
+        List<Integer> selection = listAdapter.getSelectedItems();
+        for(Integer i: selection)
+            result.add(lists.get(i));
+
+        return result;
+    }
+
     private class ActionModeCallback implements ActionMode.Callback {
         @SuppressWarnings("unused")
         private final String TAG = ActionModeCallback.class.getSimpleName();
@@ -200,12 +217,17 @@ public class MainActivity extends AppCompatActivity implements ShoppingListAdapt
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.delete_menu_item:
-                    // TODO: actually remove items
+                    //delete from db & list
+                    shoppingListController.deleteShoppingLists(getSelectedLists());
                     listAdapter.removeItems(listAdapter.getSelectedItems());
                     mode.finish();
                     return true;
                 case R.id.edit_menu_item:
-                    //TODO: Actually edit item
+                    Intent intent = new Intent(MainActivity.this,AddListActivity.class);
+                    intent.putExtra(LISTID, lists.get(listAdapter.getSelectedItems().get(0)).getListID());
+                    intent.putExtra(LISTNAME, lists.get(listAdapter.getSelectedItems().get(0)).getListName());
+                    startActivity(intent);
+                    finish();
                 default:
                     return false;
             }
@@ -221,5 +243,6 @@ public class MainActivity extends AppCompatActivity implements ShoppingListAdapt
               //  getWindow().setStatusBarColor(statusBarColor);
         }
     }
+
 }
 

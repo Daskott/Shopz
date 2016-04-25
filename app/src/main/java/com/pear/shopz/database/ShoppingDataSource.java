@@ -71,12 +71,12 @@ public class ShoppingDataSource {
     }
 
     //get all shopping items from a list in database
-    public ArrayList<ShoppingListItem> readListItems(ShoppingList shoppingList)
+    public ArrayList<ShoppingListItem> readListItems(int listID)
     {
         SQLiteDatabase database = open();
         Cursor cursor = database.rawQuery(
                 "SELECT * FROM " + shoppingSQLiteHelper.GROCERY_ITEMS_TABLE +
-                        "WHERE " + shoppingSQLiteHelper.COLUMN_FOREIGN_KEY_SLIST_ID + " = " + shoppingList.getListID(), null);
+                        " WHERE " + shoppingSQLiteHelper.COLUMN_FOREIGN_KEY_SLIST_ID + " = " + listID, null);
 
 
 
@@ -95,7 +95,7 @@ public class ShoppingDataSource {
                         getDoubleFromColumnName(cursor, ShoppingSQLiteHelper.COLUMN_ITEM_PRICE),
                         getStringFromColumnName(cursor, ShoppingSQLiteHelper.COLUMN_ITEM_CATEGORY),
                         getStringFromColumnName(cursor, ShoppingSQLiteHelper.COLUMN_ITEM_AISLE),
-                        getStringFromColumnName(cursor, shoppingSQLiteHelper.COLUMN_ITEM_BOUGHT)
+                        getIntFromColumnName(cursor, shoppingSQLiteHelper.COLUMN_ITEM_BOUGHT)
                 );
 
                 //add record to list
@@ -201,7 +201,7 @@ public class ShoppingDataSource {
         updateShoppingListItemValues.put(shoppingSQLiteHelper.COLUMN_ITEM_CATEGORY,shoppingListItem.getItemCategory());
         updateShoppingListItemValues.put(shoppingSQLiteHelper.COLUMN_ITEM_BOUGHT,shoppingListItem.getItemBought());
         updateShoppingListItemValues.put(shoppingSQLiteHelper.COLUMN_FOREIGN_KEY_SLIST_ID,shoppingListItem.getListID());
-        database.update(shoppingSQLiteHelper.SHOPPING_LIST_TABLE,
+        database.update(shoppingSQLiteHelper.GROCERY_ITEMS_TABLE,
                 updateShoppingListItemValues,
                 String.format("%s=%d", BaseColumns._ID, shoppingListItem.getItemID()), null);
 

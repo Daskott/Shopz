@@ -6,4 +6,5 @@
     <color name="white">#FFFFFF</color>
     <color name="select">#C5CAE9</color>
     <color name="unselect">#FAFAFA</color>
+    <color name="light_grey">#EEEEEE</color>
 </resources>

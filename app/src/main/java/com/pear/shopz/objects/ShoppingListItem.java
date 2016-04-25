@@ -10,9 +10,9 @@ public class ShoppingListItem {
     private double itemPrice;
     private String itemCategory;
     private String itemAisle;
-    private String itemBought;
+    private int itemBought;
 
-    public ShoppingListItem(int listID, int itemID, String itemName, double itemPrice, String itemCategory, String itemAisle, String itemBought) {
+    public ShoppingListItem(int listID, int itemID, String itemName, double itemPrice, String itemCategory, String itemAisle, int itemBought) {
         this.listID = listID;
         this.itemID = itemID;
         this.itemName = itemName;
@@ -70,11 +70,11 @@ public class ShoppingListItem {
         this.itemAisle = itemAisle;
     }
 
-    public String getItemBought() {
+    public int getItemBought() {
         return itemBought;
     }
 
-    public void setItemBought(String itemBought) {
+    public void setItemBought(int itemBought) {
         this.itemBought = itemBought;
     }
 }

@@ -30,15 +30,25 @@ public class ShoppingListController {
         this.shoppingLists = shoppingLists;
     }
 
-    public void addShoppingList(String listName, String store)
+    public void addShoppingList(ShoppingList newList)
     {
-        ShoppingList newList = new ShoppingList(-1, listName,store);
-
-        //update list
-        shoppingLists.add(newList);
-
-        //update db
         dataSource.createList(newList);
+    }
+
+    public void updateShoppingList(ShoppingList list)
+    {
+        dataSource.updateList(list);
+    }
+
+    public void deleteShoppingList(int listID)
+    {
+        dataSource.deleteList(listID);
+    }
+
+    public void deleteShoppingLists(ArrayList<ShoppingList> lists)
+    {
+        for(ShoppingList list : lists)
+            dataSource.deleteList(list.getListID());
     }
 
 

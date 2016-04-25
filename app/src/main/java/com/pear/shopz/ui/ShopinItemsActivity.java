@@ -1,23 +1,42 @@
 package com.pear.shopz.ui;
 
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.ActionMode;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.pear.shopz.R;
 import com.pear.shopz.adapters.ShoppingItemAdapter;
+import com.pear.shopz.objects.ShoppingListItem;
+import com.pear.shopz.objects.ShoppingListItemController;
 
-public class ShopinItemsActivity extends AppCompatActivity {
+import java.util.ArrayList;
+import java.util.List;
+
+public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingItemAdapter.ViewHolder.ClickListener{
 
     private RecyclerView shopinListView;
-    private RecyclerView.Adapter listAdapter;
+    private ShoppingItemAdapter listAdapter;
     private RecyclerView.LayoutManager layoutManager;
-    private String[] lists;
+    private ArrayList<ShoppingListItem> lists;
+    private ActionModeCallback actionModeCallback = new ActionModeCallback();
+    private ActionMode actionMode;
+    private ShoppingListItemController shoppingListItemController;
+
+    private  int listId = -1;
+    private final String LISTID = "LISTID";
+    private final String ITEM_ID = "ITEM_ID";
+    private final String ITEM_NAME = "ITEM_NAME";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,22 +44,34 @@ public class ShopinItemsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_shopin_items);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        setUpLists();
+        Bundle extras = getIntent().getExtras();
+
+        if(extras != null)listId = extras.getInt(LISTID);
+
+        shopinListView = (RecyclerView) findViewById(R.id.shopin_list_view);
+
+        setUpLists(null);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                  //      .setAction("Action", null).show();
+                Intent intent = new Intent(ShopinItemsActivity.this, AddItemActivity.class);
+                intent.putExtra(LISTID,listId);
+                startActivity(intent);
+                finish();
             }
         });
+        
     }
 
-    public void setUpLists()
+    public void setUpLists( ArrayList<ShoppingListItem> currList)
     {
-        lists = new String[]{"Yams", "Eggs","Plantain","Donut","Meat","Milk"};
-        shopinListView = (RecyclerView) findViewById(R.id.shopin_list_view);
+
+        shoppingListItemController = new ShoppingListItemController(this,listId);
+        lists = currList == null? shoppingListItemController.getShoppingListItems() : currList;
 
         // use this setting to improve performance if you know that changes
         // in content do not change the cardView size of the RecyclerView
@@ -51,8 +82,163 @@ public class ShopinItemsActivity extends AppCompatActivity {
         shopinListView.setLayoutManager(layoutManager);
 
         // specify an adapter
-        listAdapter = new ShoppingItemAdapter(lists, this);
+        listAdapter = new ShoppingItemAdapter(lists, this, this);
         shopinListView.setAdapter(listAdapter);
-//        startActivity();
+        shopinListView.setItemAnimator(new DefaultItemAnimator());
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent(ShopinItemsActivity.this,MainActivity.class);
+        startActivity(intent);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onItemClicked(int position) {
+        if (actionMode != null) {
+            toggleSelection(position);
+        }
+    }
+
+    @Override
+    public boolean onItemLongClicked(int position) {
+        int count = listAdapter.getSelectedItemCount();
+
+        if (actionMode == null) {
+            actionMode = startActionMode(actionModeCallback);
+        }
+
+        toggleSelection(position);
+        return true;
+    }
+
+    private void toggleSelection(int position) {
+        listAdapter.toggleSelection(position);
+        int count = listAdapter.getSelectedItemCount();
+
+        if (count == 0) {
+            actionMode.finish();
+        } else {
+
+            //disable edit if multiple items selected
+            if(count > 1)
+                findViewById(R.id.edit_menu_item).setVisibility(View.GONE);
+            else
+                findViewById(R.id.edit_menu_item).setVisibility(View.VISIBLE);
+
+            actionMode.setTitle(String.valueOf(count));
+            actionMode.invalidate();
+        }
+    }
+
+    //check if List is up to date & update it
+    public void upDateList()
+    {
+        ArrayList<ShoppingListItem> currList = new ShoppingListItemController(this,listId).getShoppingListItems();
+
+        if(shopinListView != null && currList.size() != lists.size())
+        {
+            if (this.actionMode != null)
+                this.actionMode.finish();
+
+            listAdapter.addItem(currList.get(currList.size()-1));
+            //setUpLists(currList);
+            //listAdapter.notifyItemInserted(lists.size()-1);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //upDateList();
+    }
+
+    private ArrayList<ShoppingListItem> getSelectedItems()
+    {
+        ArrayList<ShoppingListItem> result = new ArrayList<ShoppingListItem>();
+        List<Integer> selection = listAdapter.getSelectedItems();
+        for(Integer i: selection)
+            result.add(lists.get(i));
+
+        return result;
+    }
+
+    private class ActionModeCallback implements ActionMode.Callback {
+        @SuppressWarnings("unused")
+        private final String TAG = ActionModeCallback.class.getSimpleName();
+        private int statusBarColor;
+
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            mode.getMenuInflater().inflate (R.menu.menu_shopping_lists, menu);
+
+            //hold current color of status bar(post-lollipop)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                statusBarColor = getWindow().getStatusBarColor();
+                //set your gray color
+                getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimaryDark));
+            }
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.delete_menu_item:
+                    //delete from db & list
+                    shoppingListItemController.deleteShoppingListItems(getSelectedItems());
+                    listAdapter.removeItems(listAdapter.getSelectedItems());
+                    mode.finish();
+                    return true;
+                case R.id.edit_menu_item:
+                    Intent intent = new Intent(ShopinItemsActivity.this,AddItemActivity.class);
+                    intent.putExtra(LISTID, lists.get(listAdapter.getSelectedItems().get(0)).getListID());
+                    intent.putExtra(ITEM_ID, lists.get(listAdapter.getSelectedItems().get(0)).getItemID());
+                    intent.putExtra(ITEM_NAME, lists.get(listAdapter.getSelectedItems().get(0)).getItemName());
+                    startActivity(intent);
+                    finish();
+                default:
+                    return false;
+            }
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            listAdapter.clearSelection();
+            actionMode = null;
+
+            //return to "old" color of status bar
+            //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+            //  getWindow().setStatusBarColor(statusBarColor);
+        }
     }
 }
