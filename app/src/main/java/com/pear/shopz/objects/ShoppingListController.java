@@ -32,7 +32,7 @@ public class ShoppingListController {
 
     public void addShoppingList(String listName, String store)
     {
-        ShoppingList newList = new ShoppingList(listName,store);
+        ShoppingList newList = new ShoppingList(-1, listName,store);
 
         //update list
         shoppingLists.add(newList);

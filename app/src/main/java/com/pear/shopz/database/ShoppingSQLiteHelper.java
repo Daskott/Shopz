@@ -31,18 +31,18 @@ public class ShoppingSQLiteHelper extends SQLiteOpenHelper{
     public static final String COLUMN_ITEM_CATEGORY = "CATEGORY";
     public static final String COLUMN_ITEM_AISLE = "AISLE";
     public static final String COLUMN_ITEM_BOUGHT = "BOUGHT";
-    public static final String COLUMN_FOREIGN_KEY_SLIST = "SHOPPING_LIST_ID";
+    public static final String COLUMN_FOREIGN_KEY_SLIST_ID = "SHOPPING_LIST_ID";
 
     private static String CREATE_GROCERY_ITEMS =
             "CREATE TABLE "+GROCERY_ITEMS_TABLE+ "("+
                     BaseColumns._ID+" INTEGER PRIMARY KEY AUTOINCREMENT, "+
                     COLUMN_ITEM_NAME+" TEXT,"+
-                    COLUMN_ITEM_PRICE+" INTEGER, "+
+                    COLUMN_ITEM_PRICE+" REAL, "+
                     COLUMN_ITEM_CATEGORY+" TEXT, "+
                     COLUMN_ITEM_AISLE+" TEXT, "+
                     COLUMN_ITEM_BOUGHT+" INTEGER, "+
-                    COLUMN_FOREIGN_KEY_SLIST+" INTEGER, "+
-                    "FOREIGN KEY("+COLUMN_FOREIGN_KEY_SLIST+") REFERENCES  SHOPPING_LISTS(_ID))";
+                    COLUMN_FOREIGN_KEY_SLIST_ID +" INTEGER, "+
+                    "FOREIGN KEY("+ COLUMN_FOREIGN_KEY_SLIST_ID +") REFERENCES  SHOPPING_LISTS(_ID))";
 
     public ShoppingSQLiteHelper(Context context){
         super(context, DB_NAME, null, DB_VERSION);

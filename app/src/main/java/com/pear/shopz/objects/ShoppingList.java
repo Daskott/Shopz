@@ -9,9 +9,9 @@ public class ShoppingList {
     private String listName;
     private String store;
 
-    public ShoppingList(String listName, String store)
+    public ShoppingList(int listID, String listName, String store)
     {
-        this.listID = -1;
+        this.listID = listID;
         this.listName = listName;
         this.store = store;
     }
