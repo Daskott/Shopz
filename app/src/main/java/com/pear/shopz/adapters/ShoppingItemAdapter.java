@@ -131,10 +131,16 @@ public class ShoppingItemAdapter  extends SelectableAdapter<ShoppingItemAdapter.
             holder.groceryNameTextview.setPaintFlags(holder.groceryNameTextview.getPaintFlags() & (~ Paint.STRIKE_THRU_TEXT_FLAG));
         }
 
+        //if selected or deselected on long click
         if(isSelected(position))
-            holder.cardItem.setBackgroundColor(mContext.getResources().getColor(R.color.select));
+            holder.itemLayout.setBackgroundColor(mContext.getResources().getColor(R.color.select));
         else
-            holder.cardItem.setBackgroundColor(mContext.getResources().getColor(R.color.unselect));
+        {
+            if(mDataset.get(position).getItemBought() == 1)
+                holder.itemLayout.setBackgroundColor(mContext.getResources().getColor(R.color.light_grey));
+            else if(mDataset.get(position).getItemBought() == 0)
+                holder.itemLayout.setBackgroundColor(mContext.getResources().getColor(R.color.unselect));
+        }
 
     }
 
