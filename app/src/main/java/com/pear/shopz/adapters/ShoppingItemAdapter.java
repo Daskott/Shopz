@@ -66,10 +66,12 @@ public class ShoppingItemAdapter  extends SelectableAdapter<ShoppingItemAdapter.
                 if(mDataset.get(getPosition()).getItemBought() == 1) {
                     itemLayout.setBackgroundColor(context.getResources().getColor(R.color.light_grey));
                     groceryNameTextview.setPaintFlags(groceryNameTextview.getPaintFlags()| Paint.STRIKE_THRU_TEXT_FLAG);
+                    groceryNameTextview.setTextColor(context.getResources().getColor(R.color.dark_grey));
                 }
                 else if(mDataset.get(getPosition()).getItemBought() == 0) {
                     itemLayout.setBackgroundColor(context.getResources().getColor(R.color.unselect));
                     groceryNameTextview.setPaintFlags(groceryNameTextview.getPaintFlags() & (~ Paint.STRIKE_THRU_TEXT_FLAG));
+                    groceryNameTextview.setTextColor(context.getResources().getColor(R.color.black));
                 }
             }
         }
@@ -118,16 +120,18 @@ public class ShoppingItemAdapter  extends SelectableAdapter<ShoppingItemAdapter.
         // - replace the contents of the view with that element
 
         //set checkboxes text
-        holder.groceryNameTextview.setText(mDataset.get(position).getItemName());
+        holder.groceryNameTextview.setText(mDataset.get(position).getItemName().toLowerCase());
 
         //*** IF YOU CHECK AN ITEM SET THAT ATTRIBUTE TO TRUE, IF TRUE SET CARD TO GREY & MOVE TO BUTTOM ***
         //if item is bought, set card to grey & strike text
         if(mDataset.get(position).getItemBought() == 1) {
             holder.itemLayout.setBackgroundColor(mContext.getResources().getColor(R.color.light_grey));
+            holder.groceryNameTextview.setTextColor(mContext.getResources().getColor(R.color.dark_grey));
             holder.groceryNameTextview.setPaintFlags(holder.groceryNameTextview.getPaintFlags()| Paint.STRIKE_THRU_TEXT_FLAG);
         }
         else if(mDataset.get(position).getItemBought() == 0) {
             holder.itemLayout.setBackgroundColor(mContext.getResources().getColor(R.color.unselect));
+            holder.groceryNameTextview.setTextColor(mContext.getResources().getColor(R.color.black));
             holder.groceryNameTextview.setPaintFlags(holder.groceryNameTextview.getPaintFlags() & (~ Paint.STRIKE_THRU_TEXT_FLAG));
         }
 

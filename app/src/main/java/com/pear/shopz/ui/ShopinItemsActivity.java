@@ -3,9 +3,11 @@ package com.pear.shopz.ui;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -34,22 +36,45 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
     private ShoppingListItemController shoppingListItemController;
 
     private  int listId = -1;
+    private String listName = "";
+
     private final String LISTID = "LISTID";
     private final String ITEM_ID = "ITEM_ID";
     private final String ITEM_NAME = "ITEM_NAME";
+    private final String LISTNAME = "LISTNAME";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shopin_items);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        //setSupportActionBar(toolbar);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimaryDark));
+        }
+
         Bundle extras = getIntent().getExtras();
 
-        if(extras != null)listId = extras.getInt(LISTID);
+        if(extras != null)
+        {
+            listId = extras.getInt(LISTID);
+            listName = extras.getString(LISTNAME);
+        }
 
+        //set title bar
+        String title = listName.substring(0,1).toUpperCase()+""+listName.substring(1).toLowerCase();
+        ((CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar_layout)).setTitle(title);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.app_bar);
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                backToMain();
+            }
+        });
+
+        //list view
         shopinListView = (RecyclerView) findViewById(R.id.shopin_list_view);
-
         setUpLists(null);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -60,6 +85,7 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
                   //      .setAction("Action", null).show();
                 Intent intent = new Intent(ShopinItemsActivity.this, AddItemActivity.class);
                 intent.putExtra(LISTID,listId);
+                intent.putExtra(LISTNAME,listName);
                 startActivity(intent);
                 finish();
             }
@@ -84,14 +110,20 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
         // specify an adapter
         listAdapter = new ShoppingItemAdapter(lists, this, this);
         shopinListView.setAdapter(listAdapter);
+
         shopinListView.setItemAnimator(new DefaultItemAnimator());
+    }
+
+    public void backToMain()
+    {
+        Intent intent = new Intent(ShopinItemsActivity.this,MainActivity.class);
+        startActivity(intent);
     }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        Intent intent = new Intent(ShopinItemsActivity.this,MainActivity.class);
-        startActivity(intent);
+        backToMain();
     }
 
     @Override

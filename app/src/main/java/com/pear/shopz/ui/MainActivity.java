@@ -7,6 +7,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -80,8 +81,13 @@ public class MainActivity extends AppCompatActivity implements ShoppingListAdapt
 
         // specify an adapter
         listAdapter = new ShoppingListAdapter(lists, this, this);
-
         shopinListView.setAdapter(listAdapter);
+
+        //GridLayout
+        //shopinListView.setLayoutManager(new GridLayoutManager(this, 2));
+        //listAdapter = new ShoppingListAdapter(lists, this, this);
+        //shopinListView.setAdapter(listAdapter);
+
         shopinListView.setItemAnimator(new DefaultItemAnimator());
     }
 
@@ -125,6 +131,10 @@ public class MainActivity extends AppCompatActivity implements ShoppingListAdapt
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onBackPressed() {
+        moveTaskToBack(true);
+    }
 
     @Override
     protected void onResume() {
@@ -145,6 +155,7 @@ public class MainActivity extends AppCompatActivity implements ShoppingListAdapt
         {
             Intent intent = new Intent(MainActivity.this, ShopinItemsActivity.class);
             intent.putExtra(LISTID, lists.get(position).getListID());
+            intent.putExtra(LISTNAME, lists.get(position).getListName());
             startActivity(intent);
         }
     }

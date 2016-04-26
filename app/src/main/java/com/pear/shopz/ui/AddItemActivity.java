@@ -18,9 +18,11 @@ public class AddItemActivity extends AppCompatActivity {
 
     private int listId = -1;
     private int itemId = -1;
+    private String listName ="";
     private String itemName = "";
     private final String DEFAULT_STORE = "Default";
     private final String LISTID = "LISTID";
+    private final String LISTNAME = "LISTNAME";
     private final String ITEM_ID = "ITEM_ID";
     private final String ITEM_NAME = "ITEM_NAME";
 
@@ -32,6 +34,7 @@ public class AddItemActivity extends AppCompatActivity {
         if(extras != null)
         {
             listId = extras.getInt(LISTID);
+            listName = extras.getString(LISTNAME);
             itemName = extras.getString(ITEM_NAME,"");
             itemId = extras.getInt(ITEM_ID, -1);
         }
@@ -89,6 +92,7 @@ public class AddItemActivity extends AppCompatActivity {
 
                     Intent intent = new Intent(AddItemActivity.this, ShopinItemsActivity.class);
                     intent.putExtra(LISTID,listId);
+                    intent.putExtra(LISTNAME,listName);
                     startActivity(intent);
                     finish();
                 }
