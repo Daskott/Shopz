@@ -60,6 +60,7 @@ public class AddListActivity extends AppCompatActivity {
                     {
                         shoppingListController.addShoppingList(new ShoppingList(-1, nameTextView.getText().toString(), DEFAULT_STORE));
                         intent = new Intent(AddListActivity.this, ShopinItemsActivity.class);
+                        intent.putExtra(LISTNAME,nameTextView.getText().toString());
                     }
                     else
                     {
