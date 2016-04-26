@@ -10,26 +10,30 @@
     android:paddingLeft="10dp"
     android:paddingRight="5dp"
     android:layout_marginTop="0dp"
+    card_view:cardElevation="0dp"
     android:layout_marginBottom="0dp">
 
     <LinearLayout
+        android:id="@+id/item_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <CheckBox
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:layout_marginLeft="10dp"
+            android:layout_marginLeft="25dp"
+            android:textColor="@color/black"
             android:text="Yams"
-            android:id="@+id/item_checkBox" />
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:id="@+id/grocery_name" />
         <View
             android:id="@+id/separator"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginTop="7dp"
-            android:background="@color/light_grey" />
+            android:layout_marginTop="14dp"
+            android:background="@color/grey" />
 
     </LinearLayout>
 

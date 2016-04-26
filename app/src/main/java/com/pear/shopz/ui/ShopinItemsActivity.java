@@ -64,7 +64,7 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
                 finish();
             }
         });
-        
+
     }
 
     public void setUpLists( ArrayList<ShoppingListItem> currList)
@@ -122,6 +122,12 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
         if (actionMode != null) {
             toggleSelection(position);
         }
+        else{
+            //update adapter & db indicating whether item is bought or not
+            listAdapter.toggleItemBought(position);
+            ShoppingListItemController itemController= new ShoppingListItemController(ShopinItemsActivity.this,listId);
+            itemController.updateShoppingListItem(listAdapter.getmDataset().get(position));
+        }
     }
 
     @Override
@@ -154,6 +160,7 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
             actionMode.invalidate();
         }
     }
+
 
     //check if List is up to date & update it
     public void upDateList()
