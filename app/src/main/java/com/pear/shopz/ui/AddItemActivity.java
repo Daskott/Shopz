@@ -89,15 +89,25 @@ public class AddItemActivity extends AppCompatActivity {
                                 )));
 
                     }
+                    bacKToList();
 
-                    Intent intent = new Intent(AddItemActivity.this, ShopinItemsActivity.class);
-                    intent.putExtra(LISTID,listId);
-                    intent.putExtra(LISTNAME,listName);
-                    startActivity(intent);
-                    finish();
                 }
             }
         });
+    }
+
+    public void bacKToList()
+    {
+        Intent intent = new Intent(AddItemActivity.this, ShopinItemsActivity.class);
+        intent.putExtra(LISTID,listId);
+        intent.putExtra(LISTNAME,listName);
+        startActivity(intent);
+        finish();
+    }
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        bacKToList();
     }
 
     private boolean attemptSave()

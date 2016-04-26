@@ -43,12 +43,12 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
     private final String ITEM_NAME = "ITEM_NAME";
     private final String LISTNAME = "LISTNAME";
 
+    private Toolbar toolbar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shopin_items);
-        //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        //setSupportActionBar(toolbar);
+        
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimaryDark));
         }
@@ -64,7 +64,7 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
         //set title bar
         String title = listName.substring(0,1).toUpperCase()+""+listName.substring(1).toLowerCase();
         ((CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar_layout)).setTitle(title);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.app_bar);
+        toolbar = (Toolbar) findViewById(R.id.app_bar);
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -81,8 +81,6 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                  //      .setAction("Action", null).show();
                 Intent intent = new Intent(ShopinItemsActivity.this, AddItemActivity.class);
                 intent.putExtra(LISTID,listId);
                 intent.putExtra(LISTNAME,listName);
@@ -168,6 +166,7 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
 
         if (actionMode == null) {
             actionMode = startActionMode(actionModeCallback);
+            toolbar.setVisibility(View.INVISIBLE);
         }
 
         toggleSelection(position);
@@ -274,7 +273,7 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
         public void onDestroyActionMode(ActionMode mode) {
             listAdapter.clearSelection();
             actionMode = null;
-
+            toolbar.setVisibility(View.VISIBLE);
             //return to "old" color of status bar
             //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             //  getWindow().setStatusBarColor(statusBarColor);
