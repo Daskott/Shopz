@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.provider.BaseColumns;
+import android.util.Log;
 
 import com.pear.shopz.objects.ShoppingList;
 import com.pear.shopz.objects.ShoppingListItem;
@@ -105,6 +106,7 @@ public class ShoppingDataSource {
 
         cursor.close();
         close(database);
+        Log.v("itemlistsize", shoppingListItems.size() + " " + listID);
         return shoppingListItems;
     }
 
@@ -166,20 +168,23 @@ public class ShoppingDataSource {
     }
 
     //add new shopping list to database
-    public void createList(ShoppingList shoppingList){
+    public int createList(ShoppingList shoppingList){
 
         SQLiteDatabase database = open();
         database.beginTransaction();
 
         //implementation
+        int id = -1;
         ContentValues shoppingListValues = new ContentValues();
         shoppingListValues.put(shoppingSQLiteHelper.COLUMN_SLIST_NAME, shoppingList.getListName());
         shoppingListValues.put(shoppingSQLiteHelper.COLUMN_SLIST_STORE,shoppingList.getStore());
-        database.insert(shoppingSQLiteHelper.SHOPPING_LIST_TABLE,null,shoppingListValues);
+        id = (int)database.insert(shoppingSQLiteHelper.SHOPPING_LIST_TABLE,null,shoppingListValues);
 
         database.setTransactionSuccessful();
         database.endTransaction();
         close(database);
+
+        return id;
     }
 
     //add new items to a shopping list to database
@@ -189,6 +194,7 @@ public class ShoppingDataSource {
         database.beginTransaction();
 
         //implementation
+        int id = -1;
         ContentValues shoppingListItemValues = new ContentValues();
         shoppingListItemValues.put(shoppingSQLiteHelper.COLUMN_ITEM_NAME, shoppingListItem.getItemName());
         shoppingListItemValues.put(shoppingSQLiteHelper.COLUMN_ITEM_PRICE,shoppingListItem.getItemPrice());
@@ -199,6 +205,7 @@ public class ShoppingDataSource {
 
         database.insert(shoppingSQLiteHelper.GROCERY_ITEMS_TABLE,null,shoppingListItemValues);
 
+        Log.v("Add-to-List-Source", shoppingListItem.getListID() + "");
         database.setTransactionSuccessful();
         database.endTransaction();
         close(database);

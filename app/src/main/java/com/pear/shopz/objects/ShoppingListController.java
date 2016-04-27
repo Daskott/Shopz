@@ -30,9 +30,9 @@ public class ShoppingListController {
         this.shoppingLists = shoppingLists;
     }
 
-    public void addShoppingList(ShoppingList newList)
+    public int addShoppingList(ShoppingList newList)
     {
-        dataSource.createList(newList);
+        return dataSource.createList(newList);
     }
 
     public void updateShoppingList(ShoppingList list)

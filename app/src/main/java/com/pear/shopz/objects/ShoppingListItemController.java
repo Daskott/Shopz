@@ -42,6 +42,7 @@ public class ShoppingListItemController {
     public void addShoppingListItem(ShoppingListItem newItem)
     {
         dataSource.createItem(newItem);
+        Log.v("Add-to-List", newItem.getItemName());
     }
 
     public void updateShoppingListItem(ShoppingListItem item)

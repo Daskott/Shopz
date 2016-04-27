@@ -58,9 +58,10 @@ public class AddListActivity extends AppCompatActivity {
                     //check if its an edit/add
                     if(listId == -1)
                     {
-                        shoppingListController.addShoppingList(new ShoppingList(-1, nameTextView.getText().toString(), DEFAULT_STORE));
+                        listId = shoppingListController.addShoppingList(new ShoppingList(-1, nameTextView.getText().toString(), DEFAULT_STORE));
                         intent = new Intent(AddListActivity.this, ShopinItemsActivity.class);
                         intent.putExtra(LISTNAME,nameTextView.getText().toString());
+                        intent.putExtra(LISTID, listId);
                     }
                     else
                     {
