@@ -1,8 +1,13 @@
 package com.pear.shopz.objects;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.pear.shopz.database.ShoppingDataSource;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -49,6 +54,36 @@ public class ShoppingListItemController {
     {
         for(ShoppingListItem item : Items)
             dataSource.deleteListItem(item.getItemID());
+    }
+
+    public String[] getListArray()
+    {
+        ArrayList<String> itemNameList = new ArrayList<String>();
+        String[] result = null;
+
+        for (ShoppingListItem item: shoppingListItems)
+        {
+            itemNameList.add(item.getItemName());
+        }
+
+        if (itemNameList != null) result = (String[]) itemNameList.toArray(new String[itemNameList.size()]);
+        return result;
+    }
+
+    public void addNetworkData(JSONObject json) throws JSONException {
+        JSONObject data = json.getJSONObject("data");
+
+        for (ShoppingListItem listItem: shoppingListItems) {
+            JSONArray listArray = data.getJSONArray(listItem.getItemName());
+
+            for(int i=0; i<listArray.length(); i++)
+            {
+                JSONObject json_data = listArray.getJSONObject(i);
+                listItem.serverData.add(new Item(json_data.getString("name"), json_data.getString("aisle")));
+            }
+            Log.v("listDDD", listItem.serverData.toString());
+        }
+
     }
 
 

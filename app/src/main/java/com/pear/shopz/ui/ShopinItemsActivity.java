@@ -11,19 +11,35 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.pear.shopz.Network.NetworkTask;
 import com.pear.shopz.R;
 import com.pear.shopz.adapters.ShoppingItemAdapter;
 import com.pear.shopz.objects.ShoppingListItem;
 import com.pear.shopz.objects.ShoppingListItemController;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingItemAdapter.ViewHolder.ClickListener{
 
@@ -42,6 +58,8 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
     private final String ITEM_ID = "ITEM_ID";
     private final String ITEM_NAME = "ITEM_NAME";
     private final String LISTNAME = "LISTNAME";
+
+    private final OkHttpClient client = new OkHttpClient();
 
     private Toolbar toolbar;
     @Override
@@ -77,6 +95,15 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
         shopinListView = (RecyclerView) findViewById(R.id.shopin_list_view);
         setUpLists(null);
 
+        //test network
+        try {
+            run();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        //Toast.makeText(this, reslt[0], Toast.LENGTH_LONG).show();
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -89,6 +116,51 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
             }
         });
 
+    }
+
+    private void run() throws Exception{
+        String url = "http://ec2-52-39-22-233.us-west-2.compute.amazonaws.com/api/";
+        final MediaType JSON
+                = MediaType.parse("application/json; charset=utf-8");
+
+        String[] list = shoppingListItemController.getListArray();//{"Milk", "Baby", "Fish"};
+        JSONObject json = new JSONObject();
+
+        json.put("list", new JSONArray(Arrays.asList(list)));
+
+        RequestBody body = RequestBody.create(JSON, String.valueOf(json));
+        Log.v("JSON", String.valueOf(json));
+        Request request = new Request.Builder()
+                .url(url + "items")
+                .post(body)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+
+                //res[0] = response.body().toString();
+                try {
+                    print(response.body().string());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+
+            }
+        });
+    }
+
+    private void print(String data) throws JSONException {
+        JSONObject jsonData = new JSONObject(data);
+        Log.v("NetworkDATA", jsonData.getString("data"));
+        shoppingListItemController.addNetworkData(jsonData);
     }
 
     public void setUpLists( ArrayList<ShoppingListItem> currList)
