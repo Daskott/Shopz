@@ -124,37 +124,42 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
                 = MediaType.parse("application/json; charset=utf-8");
 
         String[] list = shoppingListItemController.getListArray();//{"Milk", "Baby", "Fish"};
-        JSONObject json = new JSONObject();
 
-        json.put("list", new JSONArray(Arrays.asList(list)));
+        if(list.length != 0)
+        {
+            JSONObject json = new JSONObject();
 
-        RequestBody body = RequestBody.create(JSON, String.valueOf(json));
-        Log.v("JSON", String.valueOf(json));
-        Request request = new Request.Builder()
-                .url(url + "items")
-                .post(body)
-                .build();
+            json.put("list", new JSONArray(Arrays.asList(list)));
 
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                e.printStackTrace();
-            }
+            RequestBody body = RequestBody.create(JSON, String.valueOf(json));
+            Log.v("JSON", String.valueOf(json));
+            Request request = new Request.Builder()
+                    .url(url + "items")
+                    .post(body)
+                    .build();
 
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
-
-                //res[0] = response.body().toString();
-                try {
-                    print(response.body().string());
-                } catch (JSONException e) {
+            client.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
                     e.printStackTrace();
                 }
 
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    if (!response.isSuccessful())
+                        throw new IOException("Unexpected code " + response);
 
-            }
-        });
+                    //res[0] = response.body().toString();
+                    try {
+                        print(response.body().string());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+
+                }
+            });
+        }
     }
 
     private void print(String data) throws JSONException {

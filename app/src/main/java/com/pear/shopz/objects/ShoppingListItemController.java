@@ -31,6 +31,10 @@ public class ShoppingListItemController {
         return shoppingListItems;
     }
 
+    public ShoppingListItem getShoppingListItem(int itemID) {
+        return dataSource.getItem(itemID);
+    }
+
     public void setShoppingListItems(ArrayList<ShoppingListItem> shoppingListItems) {
         this.shoppingListItems = shoppingListItems;
     }
