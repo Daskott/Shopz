@@ -77,6 +77,7 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
     private Toolbar toolbar;
     private FrameLayout frameLayout;
     private CollapsingToolbarLayout collapseBar;
+    private AppBarLayout appBar;
     FloatingActionButton playFab,stopFab;
 
     @Override
@@ -97,7 +98,7 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
         }
 
         //init layouts in toolbar
-        AppBarLayout appBar =  ((AppBarLayout) findViewById(R.id.app_bar_layout));
+        appBar =  ((AppBarLayout) findViewById(R.id.app_bar_layout));
         collapseBar = ((CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar_layout));
         frameLayout = (FrameLayout)findViewById(R.id.fragment_placeholder);
 
@@ -127,6 +128,8 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
         }
 
         //Toast.makeText(this, reslt[0], Toast.LENGTH_LONG).show();
+        //final ArrayList<String> list = new ArrayList<String>(1000000);
+        //list.s
 
         CardView addButton = (CardView) findViewById(R.id.add_item_button);
         addButton.setOnClickListener(new View.OnClickListener() {
@@ -135,6 +138,7 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
                 Intent intent = new Intent(ShopinItemsActivity.this, AddItemActivity.class);
                 intent.putExtra(LISTID,listId);
                 intent.putExtra(LISTNAME,listName);
+                //intent.putStringArrayListExtra("lol",list);
                 startActivity(intent);
                 finish();
             }
@@ -147,6 +151,7 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
                 startShopping();
                 playFab.setVisibility(View.GONE);
                 stopFab.setVisibility(View.VISIBLE);
+                appBar.setExpanded(true);
            }
         });
 
@@ -184,6 +189,7 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
             title ="";
             toolbar.setNavigationIcon(null);
             isShopping = true;
+            //toolbar
 
         }
     }
