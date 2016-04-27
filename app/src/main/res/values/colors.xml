@@ -9,5 +9,6 @@
     <color name="light_grey">#EEEEEE</color>
     <color name="grey">#E0E0E0</color>
     <color name="dark_grey">#BDBDBD</color>
-    <color name="black">#000000</color>
+    <color name="black">#212121</color>
+    <color name="btwn_primary">#3949AB</color>
 </resources>

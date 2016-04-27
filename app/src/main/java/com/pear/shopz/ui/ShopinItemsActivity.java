@@ -1,11 +1,17 @@
 package com.pear.shopz.ui;
 
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.view.ViewCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,11 +22,12 @@ import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
+import android.widget.FrameLayout;
 
 import com.pear.shopz.Network.NetworkTask;
 import com.pear.shopz.R;
 import com.pear.shopz.adapters.ShoppingItemAdapter;
+import com.pear.shopz.fragments.ViewPagerFragment;
 import com.pear.shopz.objects.ShoppingListItem;
 import com.pear.shopz.objects.ShoppingListItemController;
 
@@ -41,7 +48,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingItemAdapter.ViewHolder.ClickListener{
+public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingItemAdapter.ViewHolder.ClickListener, AppBarLayout.OnOffsetChangedListener{
 
     private RecyclerView shopinListView;
     private ShoppingItemAdapter listAdapter;
@@ -53,15 +60,25 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
 
     private  int listId = -1;
     private String listName = "";
-
+    private boolean isShopping = false;
+    private String title;
     private final String LISTID = "LISTID";
     private final String ITEM_ID = "ITEM_ID";
     private final String ITEM_NAME = "ITEM_NAME";
     private final String LISTNAME = "LISTNAME";
+    public static final String ITEM_IDS = "ITEM_IDS";
+
+
+    public static final String PAGER_FRAGMENT = "PAGER_FRAGMENT";
+
 
     private final OkHttpClient client = new OkHttpClient();
 
     private Toolbar toolbar;
+    private FrameLayout frameLayout;
+    private CollapsingToolbarLayout collapseBar;
+    FloatingActionButton playFab,stopFab;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,9 +96,14 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
             listName = extras.getString(LISTNAME);
         }
 
-        //set title bar
-        String title = listName.substring(0,1).toUpperCase()+""+listName.substring(1).toLowerCase();
-        ((CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar_layout)).setTitle(title);
+        //init layouts in toolbar
+        AppBarLayout appBar =  ((AppBarLayout) findViewById(R.id.app_bar_layout));
+        collapseBar = ((CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar_layout));
+        frameLayout = (FrameLayout)findViewById(R.id.fragment_placeholder);
+
+        //initialize title bar
+        title = listName.substring(0,1).toUpperCase()+""+listName.substring(1).toLowerCase();
+        collapseBar.setTitle(title);
         toolbar = (Toolbar) findViewById(R.id.app_bar);
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -90,6 +112,8 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
                 backToMain();
             }
         });
+
+        appBar.addOnOffsetChangedListener(this);
 
         //list view
         shopinListView = (RecyclerView) findViewById(R.id.shopin_list_view);
@@ -104,8 +128,8 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
 
         //Toast.makeText(this, reslt[0], Toast.LENGTH_LONG).show();
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        CardView addButton = (CardView) findViewById(R.id.add_item_button);
+        addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(ShopinItemsActivity.this, AddItemActivity.class);
@@ -116,6 +140,77 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
             }
         });
 
+        playFab = (FloatingActionButton) findViewById(R.id.play_fab);
+        playFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startShopping();
+                playFab.setVisibility(View.GONE);
+                stopFab.setVisibility(View.VISIBLE);
+           }
+        });
+
+        stopFab = (FloatingActionButton) findViewById(R.id.stop_fab);
+        stopFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                stopShopping();
+                stopFab.setVisibility(View.GONE);
+                playFab.setVisibility(View.VISIBLE);
+            }
+        });
+
+
+        ViewPagerFragment currFragment = (ViewPagerFragment)getFragmentManager().findFragmentByTag(PAGER_FRAGMENT);
+        Bundle bundle = new Bundle();
+        if(currFragment == null) {
+            ViewPagerFragment fragment = new ViewPagerFragment();
+            bundle.putIntegerArrayList(ITEM_IDS,getItemIDs(lists));
+            bundle.putInt(LISTID,listId);
+            fragment.setArguments(bundle);
+            FragmentManager fragmentManager = getFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.add(R.id.fragment_placeholder, fragment, PAGER_FRAGMENT);
+            fragmentTransaction.commit();
+        }
+    }
+
+    public void startShopping()
+    {
+        ViewPager pager = (ViewPager)findViewById(R.id.view_pager);
+        if(!title.equals("")){
+            collapseBar.setTitle("");
+            frameLayout.setVisibility(View.VISIBLE);
+            title ="";
+            toolbar.setNavigationIcon(null);
+            isShopping = true;
+
+        }
+    }
+
+    public void stopShopping()
+    {
+        ViewPager pager = (ViewPager)findViewById(R.id.view_pager);
+        if(title.equals(""))
+        {
+            title = listName.substring(0,1).toUpperCase()+""+listName.substring(1).toLowerCase();
+            collapseBar.setTitle(title);
+            frameLayout.setVisibility(View.GONE);
+            toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.arrow_left));
+            isShopping = false;
+        }
+    }
+
+
+    //get ID's of all items
+    public ArrayList<Integer> getItemIDs(ArrayList<ShoppingListItem> list)
+    {
+        ArrayList<Integer> result = new ArrayList<Integer>();
+
+        for(ShoppingListItem item: list)
+            result.add(item.getItemID());
+
+        return result;
     }
 
     private void run() throws Exception{
@@ -270,22 +365,6 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
     }
 
 
-    //check if List is up to date & update it
-    public void upDateList()
-    {
-        ArrayList<ShoppingListItem> currList = new ShoppingListItemController(this,listId).getShoppingListItems();
-
-        if(shopinListView != null && currList.size() != lists.size())
-        {
-            if (this.actionMode != null)
-                this.actionMode.finish();
-
-            listAdapter.addItem(currList.get(currList.size()-1));
-            //setUpLists(currList);
-            //listAdapter.notifyItemInserted(lists.size()-1);
-        }
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -300,6 +379,27 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
             result.add(lists.get(i));
 
         return result;
+    }
+
+    @Override
+    public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+
+        CollapsingToolbarLayout collapseBar = ((CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar_layout));
+
+        //control collapsebar behaviour when shopping
+        if(collapseBar.getHeight() + verticalOffset < 2 * ViewCompat.getMinimumHeight(collapseBar) && isShopping)
+        {
+            String title = listName.substring(0,1).toUpperCase()+""+listName.substring(1).toLowerCase();
+            collapseBar.setTitle(title);
+            frameLayout.setVisibility(View.GONE);
+            toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.arrow_left));
+        }else if(collapseBar.getHeight() + verticalOffset > 2 * ViewCompat.getMinimumHeight(collapseBar) && isShopping)
+        {
+            collapseBar.setTitle("");
+            frameLayout.setVisibility(View.VISIBLE);
+            toolbar.setNavigationIcon(null);
+        }
+
     }
 
     private class ActionModeCallback implements ActionMode.Callback {
@@ -356,4 +456,5 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
             //  getWindow().setStatusBarColor(statusBarColor);
         }
     }
+
 }
