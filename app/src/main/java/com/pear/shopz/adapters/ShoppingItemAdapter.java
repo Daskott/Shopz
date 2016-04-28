@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.pear.shopz.R;
 import com.pear.shopz.objects.ShoppingList;
@@ -122,7 +123,8 @@ public class ShoppingItemAdapter  extends SelectableAdapter<ShoppingItemAdapter.
         //set checkboxes text
         holder.groceryNameTextview.setText(mDataset.get(position).getItemName().toLowerCase());
 
-        //*** IF YOU CHECK AN ITEM SET THAT ATTRIBUTE TO TRUE, IF TRUE SET CARD TO GREY & MOVE TO BUTTOM ***
+        //TODO IF YOU CHECK AN ITEM SET THAT ATTRIBUTE TO TRUE, IF TRUE SET CARD TO GREY & MOVE TO BUTTOM
+
         //if item is bought, set card to grey & strike text
         if(mDataset.get(position).getItemBought() == 1) {
             holder.itemLayout.setBackgroundColor(mContext.getResources().getColor(R.color.light_grey));
@@ -150,13 +152,17 @@ public class ShoppingItemAdapter  extends SelectableAdapter<ShoppingItemAdapter.
 
     public void toggleItemBought(int position)
     {
-        if(mDataset.get(position).getItemBought() == 0) {
+        if(mDataset.get(position).getItemBought() == 0)
             mDataset.get(position).setItemBought(1);
-        }
         else
-        {
             mDataset.get(position).setItemBought(0);
-        }
+    }
+
+    public void setDataSet(ArrayList<ShoppingListItem> newDataSet)
+    {
+        mDataset.clear();
+        mDataset.addAll(newDataSet);
+        notifyDataSetChanged();
     }
 
     public ArrayList<ShoppingListItem> getmDataset()

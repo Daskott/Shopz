@@ -35,33 +35,6 @@
 
             </FrameLayout>
 
-            <!--<android.support.design.widget.FloatingActionButton-->
-                <!--android:id="@+id/play_fab"-->
-                <!--app:layout_collapseMode="parallax"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_gravity="bottom|end"-->
-                <!--android:layout_margin="@dimen/fab_margin"-->
-                <!--android:src="@drawable/ic_play_arrow_white_48dp" />-->
-
-            <!--<android.support.v4.view.ViewPager xmlns:android="http://schemas.android.com/apk/res/android"-->
-            <!--android:id="@+id/pager"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent" />-->
-
-            <!--<android.support.design.widget.FloatingActionButton-->
-                <!--android:id="@+id/play_fab"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_marginEnd="10dp"-->
-                <!--android:layout_marginTop="10dp"-->
-                <!--android:layout_marginRight="10dp"-->
-                <!--app:layout_collapseMode="parallax"-->
-                <!--android:src="@drawable/ic_add_white_48dp"-->
-                <!--app:layout_anchor="@id/collapsing_toolbar_layout"-->
-                <!--android:layout_gravity="bottom|end"-->
-                <!--/>-->
-
             <android.support.v7.widget.Toolbar
                 android:id="@+id/app_bar"
                 android:layout_width="match_parent"

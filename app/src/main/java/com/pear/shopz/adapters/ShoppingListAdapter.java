@@ -99,7 +99,7 @@ public class ShoppingListAdapter extends SelectableAdapter<ShoppingListAdapter.V
         ShoppingList listItem = mDataset.get(position);
 
         TextView listName = (TextView) holder.cardView.findViewById(R.id.list_name);
-        listName.setText(listItem.getListName());
+        listName.setText(capitalize(listItem.getListName()));
 
         // Highlight the item if it's selected
         if(isSelected(position))
@@ -160,4 +160,11 @@ public class ShoppingListAdapter extends SelectableAdapter<ShoppingListAdapter.V
         notifyItemRangeRemoved(positionStart, itemCount);
     }
 
+    public String capitalize(String word)
+    {
+        if(word.length() == 1)
+            return word.toUpperCase();
+
+        return word.substring(0,1).toUpperCase()+""+word.substring(1).toLowerCase();
+    }
 }

@@ -1,17 +1,13 @@
 package com.pear.shopz.fragments;
 
 import android.app.Fragment;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v13.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.ImageView;
-import android.widget.TextView;
-
 import com.pear.shopz.R;
 import com.pear.shopz.objects.Item;
 import com.pear.shopz.objects.ShoppingListItem;
@@ -28,6 +24,13 @@ public class PagerContentFragment extends Fragment{
     private final String INDEX = "INDEX";
     private final String LIST_SIZE = "LIST_SIZE";
 
+    private ShoppingListItem item;
+    private CheckBox itemCheckBox;
+    private ShoppingListItemController shoppingListItemController;
+
+    private int itemID;
+    private OnCompleteListener mListener;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -38,35 +41,85 @@ public class PagerContentFragment extends Fragment{
         int index = getArguments().getInt(INDEX);
         int listSize = getArguments().getInt(LIST_SIZE);
         int listID = getArguments().getInt(LISTID);
-        int itemID = getArguments().getInt(ITEM_ID);
-        ShoppingListItemController shoppingListItemController = new ShoppingListItemController(getActivity(),listID);
-        ShoppingListItem item = shoppingListItemController.getShoppingListItem(itemID);
+        itemID = getArguments().getInt(ITEM_ID);
+        shoppingListItemController = new ShoppingListItemController(getActivity(),listID);
+        item = shoppingListItemController.getShoppingListItem(itemID);
 
-        ArrayList<Item> data = item.serverData;
-        //if 1st item, don't show back button
-        //if last item, don't show next button
+        //ArrayList<Item> data = item.serverData;
+
 
         //init display text
-        CheckBox itemCheckBox = (CheckBox) view.findViewById(R.id.grocery_name);
-        itemCheckBox.setText(item.getItemName());
+        itemCheckBox = (CheckBox) view.findViewById(R.id.grocery_name);
+        itemCheckBox.setText(capitalize(item.getItemName()));
 
 
-
-        if(item.getItemBought() == 0)
-            itemCheckBox.setChecked(false);
-        else
-            itemCheckBox.setChecked(true);
+        //set checkbox to true if item is bought
+        initItemCheckBox(item);
 
         itemCheckBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //// TODO: 2016-04-27 set item to bought or not
+                toggleItemBought(item);
+                mListener.onComplete();
             }
         });
-        //name.setText("ListID: "+getArguments().getInt(LISTID)+" ItemID: "+getArguments().getInt(ITEM_ID));
 
         return view;
     }
 
+    public void toggleItemBought(ShoppingListItem item)
+    {
+        if(item.getItemBought() == 0)
+        {
+            itemCheckBox.setChecked(true);
+            item.setItemBought(1);
+            shoppingListItemController.updateShoppingListItem(item);
+        }
+        else
+        {
+            itemCheckBox.setChecked(false);
+            item.setItemBought(0);
+            shoppingListItemController.updateShoppingListItem(item);
+        }
+    }
 
+    public void initItemCheckBox(ShoppingListItem item)
+    {
+        if(item.getItemBought() == 0)
+            itemCheckBox.setChecked(false);
+        else
+            itemCheckBox.setChecked(true);
+    }
+
+    //update view from parent fragment
+    public void updateView() {
+
+        item = shoppingListItemController.getShoppingListItem(itemID);
+        initItemCheckBox(item);
+    }
+
+    public static interface OnCompleteListener {
+        public abstract void onComplete();
+    }
+
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        try {
+            this.mListener = (OnCompleteListener)context;
+        }
+        catch (final ClassCastException e) {
+            throw new ClassCastException(context.toString() + " must implement OnCompleteListener");
+        }
+    }
+
+    public String capitalize(String word)
+    {
+        if(word.length() == 1)
+            return word.toUpperCase();
+
+        return word.substring(0,1).toUpperCase()+""+word.substring(1).toLowerCase();
+    }
 }

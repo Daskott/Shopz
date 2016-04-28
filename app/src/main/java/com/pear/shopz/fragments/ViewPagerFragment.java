@@ -8,7 +8,6 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import com.pear.shopz.R;
 
@@ -17,7 +16,7 @@ import java.util.ArrayList;
 /**
  * Created by edmondcotterell on 2016-04-26.
  */
-public class ViewPagerFragment extends Fragment{
+public class ViewPagerFragment extends Fragment {
 
     public static final String ITEM_IDS = "ITEM_IDS";
     public static final String ITEM_ID = "ITEM_ID";
@@ -25,7 +24,6 @@ public class ViewPagerFragment extends Fragment{
     private final String INDEX = "INDEX";
     private final String LIST_SIZE = "LIST_SIZE";
 
-    private ImageView back_button, next_button;
     private ViewPager viewPager;
 
     public static int listSize;
@@ -35,6 +33,8 @@ public class ViewPagerFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.pager_fragment,container,false);
+        viewPager = (ViewPager)view.findViewById(R.id.view_pager);
+
 
         //get arguments
         final ArrayList<Integer> itemIDs = getArguments().getIntegerArrayList(ITEM_IDS);
@@ -43,7 +43,6 @@ public class ViewPagerFragment extends Fragment{
 
        final ArrayList<PagerContentFragment> pagerContentFragments = createItemFragments(itemIDs,listID);
 
-        viewPager = (ViewPager)view.findViewById(R.id.view_pager);
         viewPager.setAdapter(new FragmentPagerAdapter(getFragmentManager()) {
             @Override
             public Fragment getItem(int position) {
@@ -54,58 +53,24 @@ public class ViewPagerFragment extends Fragment{
             public int getCount() {
                 return listSize;
             }
+
+            @Override
+            public int getItemPosition(Object object) {
+                if (object instanceof PagerContentFragment) {
+                    ((PagerContentFragment)object).updateView();
+                }
+                return super.getItemPosition(object);
+            }
+
+            //if only one page, fill screen, else show part of next page
+            @Override public float getPageWidth(int position) { return listSize <=1? 1.0f:(0.85f); }
         });
 
-        setActionListener(view);
+        viewPager.setOffscreenPageLimit(6);
 
         return view;
     }
 
-    public void setActionListener(View view)
-    {
-
-        next_button = (ImageView) view.findViewById(R.id.next_item);
-        back_button = (ImageView) view.findViewById(R.id.prev_item);
-
-        toggleNavigationArrows();
-
-        next_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                viewPager.setCurrentItem(viewPager.getCurrentItem()+1);
-                getActivity().invalidateOptionsMenu();
-                toggleNavigationArrows();
-            }
-        });
-
-        back_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                viewPager.setCurrentItem(viewPager.getCurrentItem()-1);
-                getActivity().invalidateOptionsMenu();
-                toggleNavigationArrows();
-            }
-        });
-    }
-
-    public void toggleNavigationArrows()
-    {
-        if(viewPager.getCurrentItem() == 0)
-        {
-            back_button.setVisibility(View.INVISIBLE);
-            next_button.setVisibility(View.VISIBLE);
-        }
-        else if(viewPager.getCurrentItem() == listSize-1)
-        {
-            next_button.setVisibility(View.INVISIBLE);
-            back_button.setVisibility(View.VISIBLE);
-        }
-        else
-        {
-            back_button.setVisibility(View.VISIBLE);
-            next_button.setVisibility(View.VISIBLE);
-        }
-    }
 
     public ArrayList<PagerContentFragment> createItemFragments(ArrayList<Integer> itemIDs, int listID)
     {
@@ -128,4 +93,14 @@ public class ViewPagerFragment extends Fragment{
         return result;
     }
 
+    public ViewPager getViewPager()
+    {
+        return viewPager;
+    }
+
+    public void setCurrentPage(int position)
+    {
+        if(position != viewPager.getCurrentItem())
+            viewPager.setCurrentItem(position);
+    }
 }

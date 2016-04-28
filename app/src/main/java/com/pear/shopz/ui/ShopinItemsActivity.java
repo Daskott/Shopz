@@ -8,12 +8,12 @@ import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -24,9 +24,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 
-import com.pear.shopz.Network.NetworkTask;
 import com.pear.shopz.R;
 import com.pear.shopz.adapters.ShoppingItemAdapter;
+import com.pear.shopz.fragments.PagerContentFragment;
 import com.pear.shopz.fragments.ViewPagerFragment;
 import com.pear.shopz.objects.ShoppingListItem;
 import com.pear.shopz.objects.ShoppingListItemController;
@@ -48,7 +48,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingItemAdapter.ViewHolder.ClickListener, AppBarLayout.OnOffsetChangedListener{
+public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingItemAdapter.ViewHolder.ClickListener, AppBarLayout.OnOffsetChangedListener,PagerContentFragment.OnCompleteListener{
 
     private RecyclerView shopinListView;
     private ShoppingItemAdapter listAdapter;
@@ -80,6 +80,9 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
     private AppBarLayout appBar;
     FloatingActionButton playFab,stopFab;
 
+    FragmentManager fragmentManager;
+    ViewPagerFragment viewPagerFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,13 +100,15 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
             listName = extras.getString(LISTNAME);
         }
 
+        fragmentManager = getFragmentManager();
+
         //init layouts in toolbar
         appBar =  ((AppBarLayout) findViewById(R.id.app_bar_layout));
         collapseBar = ((CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar_layout));
         frameLayout = (FrameLayout)findViewById(R.id.fragment_placeholder);
 
         //initialize title bar
-        title = listName.substring(0,1).toUpperCase()+""+listName.substring(1).toLowerCase();
+        title = capitalize(listName);
         collapseBar.setTitle(title);
         toolbar = (Toolbar) findViewById(R.id.app_bar);
 
@@ -128,8 +133,6 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
         }
 
         //Toast.makeText(this, reslt[0], Toast.LENGTH_LONG).show();
-        //final ArrayList<String> list = new ArrayList<String>(1000000);
-        //list.s
 
         CardView addButton = (CardView) findViewById(R.id.add_item_button);
         addButton.setOnClickListener(new View.OnClickListener() {
@@ -138,20 +141,52 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
                 Intent intent = new Intent(ShopinItemsActivity.this, AddItemActivity.class);
                 intent.putExtra(LISTID,listId);
                 intent.putExtra(LISTNAME,listName);
-                //intent.putStringArrayListExtra("lol",list);
                 startActivity(intent);
                 finish();
             }
         });
 
+
+
         playFab = (FloatingActionButton) findViewById(R.id.play_fab);
         playFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startShopping();
-                playFab.setVisibility(View.GONE);
-                stopFab.setVisibility(View.VISIBLE);
-                appBar.setExpanded(true);
+
+                //if list is not empty enable shopping mode
+                if(!(lists.size() <= 0))
+                {
+                    startShopping();
+                    playFab.setVisibility(View.GONE);
+                    stopFab.setVisibility(View.VISIBLE);
+                    appBar.setExpanded(true);
+
+                    //Snack bar to indicate editing is disabled
+                    final Snackbar snackBar = Snackbar.make(view, "Editing Disabled", Snackbar.LENGTH_LONG);
+                    snackBar.setAction("Dismiss", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            snackBar.dismiss();
+                            stopFab.setTranslationY(0);
+                        }
+                    });
+                    snackBar.show();
+                }
+                else
+                {
+                    //Snack bar to indicate no items in list
+                    final Snackbar snackBar = Snackbar.make(view, "\""+title.trim()+"\" is empty", Snackbar.LENGTH_LONG);
+                    snackBar.setAction("Dismiss", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            snackBar.dismiss();
+                            stopFab.setTranslationY(0);
+                        }
+                    });
+                    snackBar.show();
+                }
+
+
            }
         });
 
@@ -162,48 +197,73 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
                 stopShopping();
                 stopFab.setVisibility(View.GONE);
                 playFab.setVisibility(View.VISIBLE);
+
+                //Snack bar to indicate editing is enabled
+                final Snackbar snackBar = Snackbar.make(view, "Editing Enabled", Snackbar.LENGTH_LONG);
+                snackBar.setAction("Dismiss", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        snackBar.dismiss();
+                        playFab.setTranslationY(0);
+                    }
+                });
+                snackBar.show();
             }
         });
 
+        addViewPagerFragment();
+    }
 
+    public String capitalize(String word)
+    {
+        if(word.length() == 1)
+            return word.toUpperCase();
+
+        return word.substring(0,1).toUpperCase()+""+word.substring(1).toLowerCase();
+    }
+
+    public void addViewPagerFragment()
+    {
         ViewPagerFragment currFragment = (ViewPagerFragment)getFragmentManager().findFragmentByTag(PAGER_FRAGMENT);
-        Bundle bundle = new Bundle();
-        if(currFragment == null) {
-            ViewPagerFragment fragment = new ViewPagerFragment();
+        if(currFragment == null)
+        {
+            viewPagerFragment = new ViewPagerFragment();
+            Bundle bundle = new Bundle();
             bundle.putIntegerArrayList(ITEM_IDS,getItemIDs(lists));
             bundle.putInt(LISTID,listId);
-            fragment.setArguments(bundle);
-            FragmentManager fragmentManager = getFragmentManager();
+            viewPagerFragment.setArguments(bundle);
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.add(R.id.fragment_placeholder, fragment, PAGER_FRAGMENT);
+            fragmentTransaction.add(R.id.fragment_placeholder, viewPagerFragment, PAGER_FRAGMENT);
             fragmentTransaction.commit();
         }
     }
 
     public void startShopping()
     {
-        ViewPager pager = (ViewPager)findViewById(R.id.view_pager);
+        isShopping = true;
+
         if(!title.equals("")){
             collapseBar.setTitle("");
             frameLayout.setVisibility(View.VISIBLE);
             title ="";
             toolbar.setNavigationIcon(null);
-            isShopping = true;
-            //toolbar
-
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+                getWindow().setStatusBarColor(getResources().getColor(R.color.dark_grey));
         }
     }
 
     public void stopShopping()
     {
-        ViewPager pager = (ViewPager)findViewById(R.id.view_pager);
+        isShopping = false;
+
         if(title.equals(""))
         {
-            title = listName.substring(0,1).toUpperCase()+""+listName.substring(1).toLowerCase();
+            title = capitalize(listName);
             collapseBar.setTitle(title);
             frameLayout.setVisibility(View.GONE);
             toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.arrow_left));
-            isShopping = false;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+                getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimaryDark));
         }
     }
 
@@ -290,6 +350,13 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
         shopinListView.setItemAnimator(new DefaultItemAnimator());
     }
 
+    public void updateList()
+    {
+        shoppingListItemController = new ShoppingListItemController(this,listId);
+        lists = shoppingListItemController.getShoppingListItems();
+        listAdapter.setDataSet(lists);
+    }
+
     public void backToMain()
     {
         Intent intent = new Intent(ShopinItemsActivity.this,MainActivity.class);
@@ -335,6 +402,17 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
             listAdapter.toggleItemBought(position);
             ShoppingListItemController itemController= new ShoppingListItemController(ShopinItemsActivity.this,listId);
             itemController.updateShoppingListItem(listAdapter.getmDataset().get(position));
+
+            //update slide fragment when item clicked
+            if(isShopping)
+            {
+                if(viewPagerFragment == null)
+                    viewPagerFragment = (ViewPagerFragment) fragmentManager.findFragmentByTag(PAGER_FRAGMENT);
+
+                viewPagerFragment.getViewPager().getAdapter().notifyDataSetChanged();
+                viewPagerFragment.setCurrentPage(position);
+            }
+
         }
     }
 
@@ -342,13 +420,19 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
     public boolean onItemLongClicked(int position) {
         int count = listAdapter.getSelectedItemCount();
 
-        if (actionMode == null) {
-            actionMode = startActionMode(actionModeCallback);
-            toolbar.setVisibility(View.INVISIBLE);
+        if(!isShopping)
+        {
+            if (actionMode == null ) {
+                actionMode = startActionMode(actionModeCallback);
+                toolbar.setVisibility(View.INVISIBLE);
+            }
+
+            toggleSelection(position);
+
+            return true;
         }
 
-        toggleSelection(position);
-        return true;
+        return false;
     }
 
     private void toggleSelection(int position) {
@@ -374,7 +458,6 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
     @Override
     protected void onResume() {
         super.onResume();
-        //upDateList();
     }
 
     private ArrayList<ShoppingListItem> getSelectedItems()
@@ -395,7 +478,7 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
         //control collapsebar behaviour when shopping
         if(collapseBar.getHeight() + verticalOffset < 2 * ViewCompat.getMinimumHeight(collapseBar) && isShopping)
         {
-            String title = listName.substring(0,1).toUpperCase()+""+listName.substring(1).toLowerCase();
+            String title = capitalize(listName);
             collapseBar.setTitle(title);
             frameLayout.setVisibility(View.GONE);
             toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.arrow_left));
@@ -406,6 +489,13 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
             toolbar.setNavigationIcon(null);
         }
 
+    }
+
+    @Override
+    public void onComplete() {
+
+        //called when checkbox in fragment is clicked -PageContentFragment.java
+        updateList();
     }
 
     private class ActionModeCallback implements ActionMode.Callback {
