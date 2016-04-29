@@ -75,21 +75,21 @@ public class ShoppingListItemController {
         return result;
     }
 
-    public void addNetworkData(JSONObject json) throws JSONException {
-        JSONObject data = json.getJSONObject("data");
-
-        for (ShoppingListItem listItem: shoppingListItems) {
-            JSONArray listArray = data.getJSONArray(listItem.getItemName());
-
-            for(int i=0; i<listArray.length(); i++)
-            {
-                JSONObject json_data = listArray.getJSONObject(i);
-                listItem.serverData.add(new Item(json_data.getString("name"), json_data.getString("aisle")));
-            }
-            Log.v("listDDD", listItem.serverData.toString());
-        }
-
-    }
+//    public void addNetworkData(JSONObject json) throws JSONException {
+//        JSONObject data = json.getJSONObject("data");
+//
+//        for (ShoppingListItem listItem: shoppingListItems) {
+//            JSONArray listArray = data.getJSONArray(listItem.getItemName());
+//
+//            for(int i=0; i<listArray.length(); i++)
+//            {
+//                JSONObject json_data = listArray.getJSONObject(i);
+//                listItem.serverData.add(new Item(json_data.getString("name"), json_data.getString("aisle")));
+//            }
+//            Log.v("listDDD", listItem.serverData.toString());
+//        }
+//
+//    }
 
 
 }

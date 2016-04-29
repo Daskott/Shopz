@@ -28,6 +28,7 @@ import com.pear.shopz.R;
 import com.pear.shopz.adapters.ShoppingItemAdapter;
 import com.pear.shopz.fragments.PagerContentFragment;
 import com.pear.shopz.fragments.ViewPagerFragment;
+import com.pear.shopz.objects.Item;
 import com.pear.shopz.objects.ShoppingListItem;
 import com.pear.shopz.objects.ShoppingListItemController;
 
@@ -58,6 +59,8 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
     private ActionMode actionMode;
     private ShoppingListItemController shoppingListItemController;
 
+    private ArrayList<Item> serverData = null;
+
     private  int listId = -1;
     private String listName = "";
     private boolean isShopping = false;
@@ -68,11 +71,13 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
     private final String LISTNAME = "LISTNAME";
     public static final String ITEM_IDS = "ITEM_IDS";
 
+    private final String SERVERDATA = "SERVERDATA";
+
 
     public static final String PAGER_FRAGMENT = "PAGER_FRAGMENT";
 
 
-    private final OkHttpClient client = new OkHttpClient();
+
 
     private Toolbar toolbar;
     private FrameLayout frameLayout;
@@ -98,7 +103,10 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
         {
             listId = extras.getInt(LISTID);
             listName = extras.getString(LISTNAME);
+            serverData = extras.getParcelableArrayList(SERVERDATA);
         }
+
+        //Log.v("passed", String.valueOf(serverData));
 
         fragmentManager = getFragmentManager();
 
@@ -125,12 +133,7 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
         shopinListView = (RecyclerView) findViewById(R.id.shopin_list_view);
         setUpLists(null);
 
-        //test network
-        try {
-            run();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+
 
         //Toast.makeText(this, reslt[0], Toast.LENGTH_LONG).show();
 
@@ -141,6 +144,7 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
                 Intent intent = new Intent(ShopinItemsActivity.this, AddItemActivity.class);
                 intent.putExtra(LISTID,listId);
                 intent.putExtra(LISTNAME,listName);
+                intent.putParcelableArrayListExtra(SERVERDATA, serverData);
                 startActivity(intent);
                 finish();
             }
@@ -279,55 +283,6 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
         return result;
     }
 
-    private void run() throws Exception{
-        String url = "http://ec2-52-39-22-233.us-west-2.compute.amazonaws.com/api/";
-        final MediaType JSON
-                = MediaType.parse("application/json; charset=utf-8");
-
-        String[] list = shoppingListItemController.getListArray();//{"Milk", "Baby", "Fish"};
-
-        if(list.length != 0)
-        {
-            JSONObject json = new JSONObject();
-
-            json.put("list", new JSONArray(Arrays.asList(list)));
-
-            RequestBody body = RequestBody.create(JSON, String.valueOf(json));
-            Log.v("JSON", String.valueOf(json));
-            Request request = new Request.Builder()
-                    .url(url + "items")
-                    .post(body)
-                    .build();
-
-            client.newCall(request).enqueue(new Callback() {
-                @Override
-                public void onFailure(Call call, IOException e) {
-                    e.printStackTrace();
-                }
-
-                @Override
-                public void onResponse(Call call, Response response) throws IOException {
-                    if (!response.isSuccessful())
-                        throw new IOException("Unexpected code " + response);
-
-                    //res[0] = response.body().toString();
-                    try {
-                        print(response.body().string());
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-
-                }
-            });
-        }
-    }
-
-    private void print(String data) throws JSONException {
-        JSONObject jsonData = new JSONObject(data);
-        Log.v("NetworkDATA", jsonData.getString("data"));
-        shoppingListItemController.addNetworkData(jsonData);
-    }
 
     public void setUpLists( ArrayList<ShoppingListItem> currList)
     {
@@ -535,6 +490,7 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
                     intent.putExtra(LISTID, lists.get(listAdapter.getSelectedItems().get(0)).getListID());
                     intent.putExtra(ITEM_ID, lists.get(listAdapter.getSelectedItems().get(0)).getItemID());
                     intent.putExtra(ITEM_NAME, lists.get(listAdapter.getSelectedItems().get(0)).getItemName());
+                    intent.putParcelableArrayListExtra(SERVERDATA, serverData);
                     startActivity(intent);
                     finish();
                 default:

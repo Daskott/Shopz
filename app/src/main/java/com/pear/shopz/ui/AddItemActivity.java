@@ -4,17 +4,23 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.pear.shopz.R;
+import com.pear.shopz.objects.Item;
 import com.pear.shopz.objects.ShoppingListItem;
 import com.pear.shopz.objects.ShoppingListItemController;
+
+import java.util.ArrayList;
 
 public class AddItemActivity extends AppCompatActivity {
 
     private Button saveButton;
-    private TextView nameTextView;
+    private AutoCompleteTextView nameTextView;
 
     private int listId = -1;
     private int itemId = -1;
@@ -25,6 +31,10 @@ public class AddItemActivity extends AppCompatActivity {
     private final String LISTNAME = "LISTNAME";
     private final String ITEM_ID = "ITEM_ID";
     private final String ITEM_NAME = "ITEM_NAME";
+
+    private ArrayList<Item> serverData = null;
+
+    private final String SERVERDATA = "SERVERDATA";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +47,7 @@ public class AddItemActivity extends AppCompatActivity {
             listName = extras.getString(LISTNAME);
             itemName = extras.getString(ITEM_NAME,"");
             itemId = extras.getInt(ITEM_ID, -1);
+            serverData = extras.getParcelableArrayList(SERVERDATA);
         }
 
 
@@ -46,7 +57,14 @@ public class AddItemActivity extends AppCompatActivity {
     private void init()
     {
         saveButton = (Button)findViewById(R.id.save_button_item);
-        nameTextView = (TextView)findViewById(R.id.item_name);
+        nameTextView = (AutoCompleteTextView) findViewById(R.id.item_name);
+
+        String[] serverItems = getArray();
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,serverItems);
+        nameTextView.setAdapter(adapter);
+        nameTextView.setThreshold(1);
+        //Toast.makeText(this, serverItems[0], Toast.LENGTH_LONG).show();
 
         //check if its an edit/add
         if(itemId != -1)
@@ -96,11 +114,26 @@ public class AddItemActivity extends AppCompatActivity {
         });
     }
 
+    private String[] getArray() {
+
+        if (serverData == null || serverData.size() == 0) return new String[0];
+
+        String[] itemNames = new String[serverData.size()];
+
+        for (int i = 0; i < serverData.size(); i++)
+        {
+            itemNames[i] = serverData.get(i).getName();
+        }
+
+        return itemNames;
+    }
+
     public void bacKToList()
     {
         Intent intent = new Intent(AddItemActivity.this, ShopinItemsActivity.class);
         intent.putExtra(LISTID,listId);
         intent.putExtra(LISTNAME,listName);
+        intent.putParcelableArrayListExtra(SERVERDATA, serverData);
         startActivity(intent);
         finish();
     }

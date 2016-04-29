@@ -9,8 +9,11 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.pear.shopz.R;
+import com.pear.shopz.objects.Item;
 import com.pear.shopz.objects.ShoppingList;
 import com.pear.shopz.objects.ShoppingListController;
+
+import java.util.ArrayList;
 
 public class AddListActivity extends AppCompatActivity {
 
@@ -24,6 +27,10 @@ public class AddListActivity extends AppCompatActivity {
     private final String LISTID = "LISTID";
     private final String LISTNAME = "LISTNAME";
 
+    private ArrayList<Item> serverData = null;
+
+    private final String SERVERDATA = "SERVERDATA";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,6 +40,7 @@ public class AddListActivity extends AppCompatActivity {
         if(extras!=null) {
             listId = extras.getInt(LISTID);
             listName = extras.getString(LISTNAME);
+            serverData = extras.getParcelableArrayList(SERVERDATA);
         }
 
         init();
@@ -62,6 +70,7 @@ public class AddListActivity extends AppCompatActivity {
                         intent = new Intent(AddListActivity.this, ShopinItemsActivity.class);
                         intent.putExtra(LISTNAME,nameTextView.getText().toString());
                         intent.putExtra(LISTID, listId);
+                        intent.putParcelableArrayListExtra(SERVERDATA, serverData);
                     }
                     else
                     {

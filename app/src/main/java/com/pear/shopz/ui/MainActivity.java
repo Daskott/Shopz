@@ -1,6 +1,9 @@
 package com.pear.shopz.ui;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -11,6 +14,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.ActionMode;
 import android.view.View;
 import android.view.Menu;
@@ -20,12 +24,28 @@ import android.widget.Toast;
 
 import com.pear.shopz.R;
 import com.pear.shopz.adapters.ShoppingListAdapter;
+import com.pear.shopz.objects.Item;
 import com.pear.shopz.objects.ShoppingList;
 import com.pear.shopz.objects.ShoppingListController;
+import com.pear.shopz.objects.ShoppingListItem;
 
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 
 public class MainActivity extends AppCompatActivity implements ShoppingListAdapter.ViewHolder.ClickListener{
@@ -43,6 +63,10 @@ public class MainActivity extends AppCompatActivity implements ShoppingListAdapt
 
     private final String LISTID = "LISTID";
     private final String LISTNAME = "LISTNAME";
+    private final String SERVERDATA = "SERVERDATA";
+
+    private ArrayList<Item> serverData = null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,9 +85,132 @@ public class MainActivity extends AppCompatActivity implements ShoppingListAdapt
             }
         });
 
-        setUpList(null);
+        //test network
+        try {
+            run();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        //setUpList(null);
     }
 
+    private void run() throws Exception{
+        String url = "http://ec2-52-39-22-233.us-west-2.compute.amazonaws.com/api/";
+        final MediaType JSON
+                = MediaType.parse("application/json; charset=utf-8");
+
+        if (isNetworkAvailable() && serverData == null)
+        {
+            OkHttpClient client = new OkHttpClient();
+            Request request = new Request.Builder()
+                    .url(url + "items")
+                    .build();
+
+            client.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    e.printStackTrace();
+                    alertUserAboutFailure();
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    if (!response.isSuccessful()) {
+                        alertUserAboutFailure();
+                        throw new IOException("Unexpected code " + response);
+                    }
+
+                    //res[0] = response.body().toString();
+                    try {
+                        process(response.body().string());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+
+                }
+            });
+        }
+        else
+        {
+            Toast.makeText(this, "Network unavailable", Toast.LENGTH_LONG).show();
+        }
+        setUpList(null);
+
+        //String[] list = shoppingListItemController.getListArray();//{"Milk", "Baby", "Fish"};
+
+//        if(list.length != 0)
+//        {
+//            JSONObject json = new JSONObject();
+//
+//            json.put("list", new JSONArray(Arrays.asList(list)));
+//
+//            //RequestBody body = RequestBody.create(JSON, String.valueOf(json));
+//            Log.v("JSON", String.valueOf(json));
+//            Request request = new Request.Builder()
+//                    .url(url + "items")
+//                    .build();
+//
+//            client.newCall(request).enqueue(new Callback() {
+//                @Override
+//                public void onFailure(Call call, IOException e) {
+//                    e.printStackTrace();
+//                }
+//
+//                @Override
+//                public void onResponse(Call call, Response response) throws IOException {
+//                    if (!response.isSuccessful())
+//                        throw new IOException("Unexpected code " + response);
+//
+//                    //res[0] = response.body().toString();
+//                    try {
+//                        print(response.body().string());
+//                    } catch (JSONException e) {
+//                        e.printStackTrace();
+//                    }
+//
+//
+//                }
+//            });
+//        }
+    }
+
+    private void alertUserAboutFailure() {
+        Toast.makeText(this, "Network Failure", Toast.LENGTH_LONG).show();
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager manager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = manager.getActiveNetworkInfo();
+        boolean isAvailable = false;
+
+        if(networkInfo != null && networkInfo.isConnected())
+        {
+            isAvailable = true;
+        }
+
+        return isAvailable;
+
+    }
+
+    private void process(String data) throws JSONException {
+        JSONObject jsonData = new JSONObject(data);
+       // Log.v("NetworkDATA", jsonData.getString("data"));
+        addNetworkData(jsonData);
+        //shoppingListItemController.addNetworkData(jsonData);
+    }
+
+    public void addNetworkData(JSONObject json) throws JSONException {
+        JSONArray listArray = json.getJSONArray("data");
+
+        serverData = new ArrayList<Item>();
+        for(int i=0; i<listArray.length(); i++)
+        {
+            JSONObject json_data = listArray.getJSONObject(i);
+            serverData.add(new Item(json_data.getString("name"), json_data.getString("aisle")));
+        }
+
+    }
 
     public void setUpList(ArrayList<ShoppingList> currLists)
     {
@@ -156,6 +303,7 @@ public class MainActivity extends AppCompatActivity implements ShoppingListAdapt
             Intent intent = new Intent(MainActivity.this, ShopinItemsActivity.class);
             intent.putExtra(LISTID, lists.get(position).getListID());
             intent.putExtra(LISTNAME, lists.get(position).getListName());
+            intent.putParcelableArrayListExtra(SERVERDATA, serverData);
             startActivity(intent);
         }
     }
@@ -237,6 +385,7 @@ public class MainActivity extends AppCompatActivity implements ShoppingListAdapt
                     Intent intent = new Intent(MainActivity.this,AddListActivity.class);
                     intent.putExtra(LISTID, lists.get(listAdapter.getSelectedItems().get(0)).getListID());
                     intent.putExtra(LISTNAME, lists.get(listAdapter.getSelectedItems().get(0)).getListName());
+                    intent.putParcelableArrayListExtra(SERVERDATA, serverData);
                     startActivity(intent);
                     finish();
                 default:
