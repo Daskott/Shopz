@@ -526,6 +526,7 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
     @Override
     protected void onResume() {
         super.onResume();
+        updateList();
     }
 
     private ArrayList<ShoppingListItem> getSelectedItems()
@@ -541,7 +542,7 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
     @Override
     public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
 
-        CollapsingToolbarLayout collapseBar = ((CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar_layout));
+//        CollapsingToolbarLayout collapseBar = ((CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar_layout));
 
 //        //control collapsebar behaviour when shopping
 //        if(collapseBar.getHeight() + verticalOffset < 2 * ViewCompat.getMinimumHeight(collapseBar) && isShopping)
@@ -561,9 +562,16 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
 
     @Override
     public void onComplete() {
-
-        //called when checkbox in fragment is clicked -PageContentFragment.java
+        //called when checkbox in
+        // fragment is clicked -PageContentFragment.java
         updateList();
+    }
+
+    public void clearItemSelection()
+    {
+        listAdapter.clearSelection();
+        actionMode = null;
+        toolbar.setVisibility(View.VISIBLE);
     }
 
     private class ActionModeCallback implements ActionMode.Callback {
@@ -604,7 +612,6 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
                     intent.putExtra(ITEM_ID, lists.get(listAdapter.getSelectedItems().get(0)).getItemID());
                     intent.putExtra(ITEM_NAME, lists.get(listAdapter.getSelectedItems().get(0)).getItemName());
                     startActivity(intent);
-                    finish();
                 default:
                     return false;
             }
@@ -612,9 +619,7 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
 
         @Override
         public void onDestroyActionMode(ActionMode mode) {
-            listAdapter.clearSelection();
-            actionMode = null;
-            toolbar.setVisibility(View.VISIBLE);
+            clearItemSelection();
             //return to "old" color of status bar
             //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             //  getWindow().setStatusBarColor(statusBarColor);
