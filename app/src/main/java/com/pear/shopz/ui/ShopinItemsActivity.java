@@ -22,6 +22,8 @@ import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -82,7 +84,7 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
 
 
 
-    private EditText add_item_view;
+    private AutoCompleteTextView add_item_view;
     private Toolbar toolbar;
     private RelativeLayout viewFragmentLayout;
     private CollapsingToolbarLayout collapseBar;
@@ -147,22 +149,19 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
         //Toast.makeText(this, reslt[0], Toast.LENGTH_LONG).show();
 
         //Add item text box
-        final EditText add_item_view = (EditText)findViewById(R.id.add_item_edit_view);
+        final AutoCompleteTextView add_item_view = (AutoCompleteTextView) findViewById(R.id.add_item_edit_view);
         final CardView addItemCard = (CardView)findViewById(R.id.add_item_card);
+        String[] serverItems = getArray();
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,serverItems);
+        add_item_view.setAdapter(adapter);
+        add_item_view.setThreshold(1);
         add_item_view.clearFocus();
         add_item_view.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
             }
-//            @Override
-//            public void onClick(View view) {
-//                Intent intent = new Intent(ShopinItemsActivity.this, AddItemActivity.class);
-//                intent.putExtra(LISTID,listId);
-//                intent.putExtra(LISTNAME,listName);
-//                startActivity(intent);
-//                finish();
-//            }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -271,6 +270,20 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
         });
 
         addViewPagerFragment();
+    }
+
+    private String[] getArray() {
+
+        if (serverData == null || serverData.size() == 0) return new String[0];
+
+        String[] itemNames = new String[serverData.size()];
+
+        for (int i = 0; i < serverData.size(); i++)
+        {
+            itemNames[i] = serverData.get(i).getName();
+        }
+
+        return itemNames;
     }
 
     public String capitalize(String word)

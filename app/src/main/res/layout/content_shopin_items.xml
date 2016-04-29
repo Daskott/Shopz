@@ -35,7 +35,8 @@
             <LinearLayout android:focusable="true"
                 android:focusableInTouchMode="true" android:layout_width="0px"
                 android:layout_height="0px" />
-            <EditText
+
+            <AutoCompleteTextView
                 android:layout_width="match_parent"
                 android:layout_marginLeft="28dp"
                 android:layout_marginRight="28dp"
