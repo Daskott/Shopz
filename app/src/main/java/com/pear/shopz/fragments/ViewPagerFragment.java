@@ -26,8 +26,6 @@ public class ViewPagerFragment extends Fragment {
 
     private ViewPager viewPager;
 
-    public static int listSize;
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -39,9 +37,16 @@ public class ViewPagerFragment extends Fragment {
         //get arguments
         final ArrayList<Integer> itemIDs = getArguments().getIntegerArrayList(ITEM_IDS);
         int listID = getArguments().getInt(LISTID);
-        listSize = itemIDs.size();
 
-       final ArrayList<PagerContentFragment> pagerContentFragments = createItemFragments(itemIDs,listID);
+        setUpViewPager(itemIDs, listID);
+
+        return view;
+    }
+
+    public void setUpViewPager(ArrayList<Integer> itemIDs, int listID)
+    {
+        final ArrayList<PagerContentFragment> pagerContentFragments = createItemFragments(itemIDs,listID);
+        final int listSize = itemIDs.size();
 
         viewPager.setAdapter(new FragmentPagerAdapter(getFragmentManager()) {
             @Override
@@ -68,7 +73,6 @@ public class ViewPagerFragment extends Fragment {
 
         viewPager.setOffscreenPageLimit(6);
 
-        return view;
     }
 
 

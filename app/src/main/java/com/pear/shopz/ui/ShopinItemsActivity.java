@@ -9,20 +9,22 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.view.ViewCompat;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.FrameLayout;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import com.pear.shopz.R;
 import com.pear.shopz.adapters.ShoppingItemAdapter;
@@ -57,6 +59,7 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
     private ActionModeCallback actionModeCallback = new ActionModeCallback();
     private ActionMode actionMode;
     private ShoppingListItemController shoppingListItemController;
+    private ShoppingListItemController shoppingListController;
 
     private  int listId = -1;
     private String listName = "";
@@ -74,14 +77,17 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
 
     private final OkHttpClient client = new OkHttpClient();
 
+    private EditText add_item_view;
     private Toolbar toolbar;
-    private FrameLayout frameLayout;
+    private RelativeLayout viewFragmentLayout;
     private CollapsingToolbarLayout collapseBar;
     private AppBarLayout appBar;
-    FloatingActionButton playFab,stopFab;
+    FloatingActionButton playFab,stopFab,saveItemFab;
 
     FragmentManager fragmentManager;
     ViewPagerFragment viewPagerFragment;
+    private LinearLayout fregment_sapce_holder;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,10 +108,13 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
 
         fragmentManager = getFragmentManager();
 
+        shoppingListController = new ShoppingListItemController(ShopinItemsActivity.this,listId);
+
         //init layouts in toolbar
         appBar =  ((AppBarLayout) findViewById(R.id.app_bar_layout));
         collapseBar = ((CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar_layout));
-        frameLayout = (FrameLayout)findViewById(R.id.fragment_placeholder);
+        viewFragmentLayout = (RelativeLayout)findViewById(R.id.fragment_placeholder);
+        fregment_sapce_holder = (LinearLayout) findViewById(R.id.space_holder);
 
         //initialize title bar
         title = capitalize(listName);
@@ -134,19 +143,75 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
 
         //Toast.makeText(this, reslt[0], Toast.LENGTH_LONG).show();
 
-        CardView addButton = (CardView) findViewById(R.id.add_item_button);
-        addButton.setOnClickListener(new View.OnClickListener() {
+        //Add item text box
+        final EditText add_item_view = (EditText)findViewById(R.id.add_item_edit_view);
+        final CardView addItemCard = (CardView)findViewById(R.id.add_item_card);
+        add_item_view.clearFocus();
+        add_item_view.addTextChangedListener(new TextWatcher() {
             @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(ShopinItemsActivity.this, AddItemActivity.class);
-                intent.putExtra(LISTID,listId);
-                intent.putExtra(LISTNAME,listName);
-                startActivity(intent);
-                finish();
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                //toggle visibility of save fab
+                if(add_item_view.getText().toString().length() > 0)
+                {
+                    playFab.setVisibility(View.GONE);
+                    saveItemFab.setVisibility(View.VISIBLE);
+                }
+                else
+                {
+                    saveItemFab.setVisibility(View.GONE);
+                    playFab.setVisibility(View.VISIBLE);
+                }
             }
         });
 
+        saveItemFab = (FloatingActionButton) findViewById(R.id.save_item_fab);
+        saveItemFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
+                //save new item to db
+                shoppingListController.addShoppingListItem
+                        (new ShoppingListItem(
+                                listId,
+                                -1,
+                                add_item_view.getText().toString(),
+                                0,
+                                "",
+                                "",
+                                0
+
+                        ));
+
+                //clear text and update list view
+                add_item_view.setText("");
+                updateList();
+
+                //refresh viewpager for shopping mode - ViewPagerFragment
+                ShoppingListItemController shoppingListItemController = new ShoppingListItemController(ShopinItemsActivity.this,listId);
+                viewPagerFragment.setUpViewPager(getItemIDs(shoppingListItemController.getShoppingListItems()), listId);
+
+                //Snack bar to indicate data saved
+                final Snackbar snackBar = Snackbar.make(v, "New item added to list", Snackbar.LENGTH_LONG);
+                snackBar.setAction("Dismiss", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        snackBar.dismiss();
+                        playFab.setTranslationY(0);
+                    }
+                });
+                snackBar.show();
+            }
+        });
 
         playFab = (FloatingActionButton) findViewById(R.id.play_fab);
         playFab.setOnClickListener(new View.OnClickListener() {
@@ -156,21 +221,11 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
                 //if list is not empty enable shopping mode
                 if(!(lists.size() <= 0))
                 {
-                    startShopping();
-                    playFab.setVisibility(View.GONE);
-                    stopFab.setVisibility(View.VISIBLE);
-                    appBar.setExpanded(true);
+                    startShopping(view);
 
-                    //Snack bar to indicate editing is disabled
-                    final Snackbar snackBar = Snackbar.make(view, "Shopping Mode Enabled", Snackbar.LENGTH_LONG);
-                    snackBar.setAction("Dismiss", new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            snackBar.dismiss();
-                            stopFab.setTranslationY(0);
-                        }
-                    });
-                    snackBar.show();
+                    //disable adding textbox
+                    addItemCard.setVisibility(View.GONE);
+
                 }
                 else
                 {
@@ -194,20 +249,10 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
         stopFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                stopShopping();
-                stopFab.setVisibility(View.GONE);
-                playFab.setVisibility(View.VISIBLE);
+                stopShopping(view);
 
-                //Snack bar to indicate editing is enabled
-                final Snackbar snackBar = Snackbar.make(view, "Shopping Mode Disabled", Snackbar.LENGTH_LONG);
-                snackBar.setAction("Dismiss", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        snackBar.dismiss();
-                        playFab.setTranslationY(0);
-                    }
-                });
-                snackBar.show();
+                //enable adding textbox
+                addItemCard.setVisibility(View.VISIBLE);
             }
         });
 
@@ -238,33 +283,52 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
         }
     }
 
-    public void startShopping()
+    public void startShopping(View notifyView)
     {
         isShopping = true;
+        viewFragmentLayout.getLayoutParams().height = (int) getResources().getDimension(R.dimen.view_pager_height);
+        viewFragmentLayout.setVisibility(View.VISIBLE);
 
-        if(!title.equals("")){
-            collapseBar.setTitle("");
-            frameLayout.setVisibility(View.VISIBLE);
-            title ="";
-            toolbar.setNavigationIcon(null);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-                getWindow().setStatusBarColor(getResources().getColor(R.color.dark_grey));
-        }
+        //toggle fab icons
+        playFab.setVisibility(View.GONE);
+        stopFab.setVisibility(View.VISIBLE);
+
+        appBar.setExpanded(false);
+
+        //Snack bar to indicate editing is disabled
+        final Snackbar snackBar = Snackbar.make(notifyView, "Shopping Mode Enabled", Snackbar.LENGTH_LONG);
+        snackBar.setAction("Dismiss", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                snackBar.dismiss();
+                stopFab.setTranslationY(0);
+            }
+        });
+        snackBar.show();
     }
 
-    public void stopShopping()
-    {
+    public void stopShopping(View notifyView) {
         isShopping = false;
+        viewFragmentLayout.getLayoutParams().height = (int) getResources().getDimension(R.dimen.view_pager_close_height);
+        viewFragmentLayout.setVisibility(View.INVISIBLE);
 
-        if(title.equals(""))
-        {
-            title = capitalize(listName);
-            collapseBar.setTitle(title);
-            frameLayout.setVisibility(View.GONE);
-            toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.arrow_left));
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-                getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimaryDark));
-        }
+        //toggle fab icons
+        stopFab.setVisibility(View.GONE);
+        playFab.setVisibility(View.VISIBLE);
+
+        appBar.setExpanded(true);
+
+        //Snack bar to indicate editing is enabled
+        final Snackbar snackBar = Snackbar.make(notifyView, "Shopping Mode Disabled", Snackbar.LENGTH_LONG);
+        snackBar.setAction("Dismiss", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                snackBar.dismiss();
+                playFab.setTranslationY(0);
+            }
+        });
+        snackBar.show();
+
     }
 
 
@@ -284,7 +348,7 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
         final MediaType JSON
                 = MediaType.parse("application/json; charset=utf-8");
 
-        String[] list = shoppingListItemController.getListArray();//{"Milk", "Baby", "Fish"};
+        String[] list = shoppingListItemController.getListArray();
 
         if(list.length != 0)
         {
@@ -346,6 +410,7 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
         // specify an adapter
         listAdapter = new ShoppingItemAdapter(lists, this, this);
         shopinListView.setAdapter(listAdapter);
+        //shopinListView.setfoci
 
         shopinListView.setItemAnimator(new DefaultItemAnimator());
     }
@@ -414,6 +479,9 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
             }
 
         }
+        shopinListView.smoothScrollToPosition(position);
+        //LinearLayoutManager lp = (LinearLayoutManager)shopinListView.getLayoutManager();
+        //lp.scrollToPositionWithOffset(position, 0);;
     }
 
     @Override
@@ -475,19 +543,19 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
 
         CollapsingToolbarLayout collapseBar = ((CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar_layout));
 
-        //control collapsebar behaviour when shopping
-        if(collapseBar.getHeight() + verticalOffset < 2 * ViewCompat.getMinimumHeight(collapseBar) && isShopping)
-        {
-            String title = capitalize(listName);
-            collapseBar.setTitle(title);
-            frameLayout.setVisibility(View.GONE);
-            toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.arrow_left));
-        }else if(collapseBar.getHeight() + verticalOffset > 2 * ViewCompat.getMinimumHeight(collapseBar) && isShopping)
-        {
-            collapseBar.setTitle("");
-            frameLayout.setVisibility(View.VISIBLE);
-            toolbar.setNavigationIcon(null);
-        }
+//        //control collapsebar behaviour when shopping
+//        if(collapseBar.getHeight() + verticalOffset < 2 * ViewCompat.getMinimumHeight(collapseBar) && isShopping)
+//        {
+//            String title = capitalize(listName);
+//            collapseBar.setTitle(title);
+//            viewFragmentLayout.setVisibility(View.GONE);
+//            toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.arrow_left));
+//        }else if(collapseBar.getHeight() + verticalOffset > 2 * ViewCompat.getMinimumHeight(collapseBar) && isShopping)
+//        {
+//            collapseBar.setTitle("");
+//            viewFragmentLayout.setVisibility(View.VISIBLE);
+//            toolbar.setNavigationIcon(null);
+//        }
 
     }
 
