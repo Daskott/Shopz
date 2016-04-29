@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.pear.shopz.R;
 import com.pear.shopz.objects.ShoppingList;
+import com.pear.shopz.objects.ShoppingListItemController;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -98,8 +99,19 @@ public class ShoppingListAdapter extends SelectableAdapter<ShoppingListAdapter.V
 
         ShoppingList listItem = mDataset.get(position);
 
+        //set list name
         TextView listName = (TextView) holder.cardView.findViewById(R.id.list_name);
         listName.setText(capitalize(listItem.getListName()));
+
+        //set progress
+        ShoppingListItemController listItemController = new ShoppingListItemController(mContext,listItem.getListID());
+        int total = listItemController.getSize();
+        int totalItemsBought = listItem.getTotalBoughtItems(mContext);
+
+        //init progress
+        TextView listProgress = (TextView) holder.cardView.findViewById(R.id.list_progress_view);
+        listProgress.setText(totalItemsBought+"/"+total);
+        if(total !=0 && total == totalItemsBought)listProgress.setBackgroundColor(mContext.getResources().getColor(R.color.green));
 
         // Highlight the item if it's selected
         if(isSelected(position))

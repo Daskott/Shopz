@@ -162,7 +162,7 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
                     appBar.setExpanded(true);
 
                     //Snack bar to indicate editing is disabled
-                    final Snackbar snackBar = Snackbar.make(view, "Editing Disabled", Snackbar.LENGTH_LONG);
+                    final Snackbar snackBar = Snackbar.make(view, "Shopping Mode Enabled", Snackbar.LENGTH_LONG);
                     snackBar.setAction("Dismiss", new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -180,7 +180,7 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
                         @Override
                         public void onClick(View v) {
                             snackBar.dismiss();
-                            stopFab.setTranslationY(0);
+                            playFab.setTranslationY(0);
                         }
                     });
                     snackBar.show();
@@ -199,7 +199,7 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
                 playFab.setVisibility(View.VISIBLE);
 
                 //Snack bar to indicate editing is enabled
-                final Snackbar snackBar = Snackbar.make(view, "Editing Enabled", Snackbar.LENGTH_LONG);
+                final Snackbar snackBar = Snackbar.make(view, "Shopping Mode Disabled", Snackbar.LENGTH_LONG);
                 snackBar.setAction("Dismiss", new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

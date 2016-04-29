@@ -19,12 +19,14 @@ public class ShoppingListItemController {
     private ArrayList<ShoppingListItem> shoppingListItems;
     private ShoppingDataSource dataSource;
     private Context context;
+    private int size;
 
     public ShoppingListItemController(Context context, int listID)
     {
         dataSource = new ShoppingDataSource(context);
         shoppingListItems = dataSource.readListItems(listID);
         this.context = context;
+        size = shoppingListItems.size();
     }
 
     public ArrayList<ShoppingListItem> getShoppingListItems() {
@@ -44,6 +46,11 @@ public class ShoppingListItemController {
         dataSource.createItem(newItem);
         Log.v("Add-to-List", newItem.getItemName());
     }
+
+    public int getSize() {
+        return size;
+    }
+
 
     public void updateShoppingListItem(ShoppingListItem item)
     {
