@@ -237,6 +237,9 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
                     //disable adding textbox
                     addItemCard.setVisibility(View.GONE);
 
+                    //clear selected items if any
+                    clearItemSelection();
+
                 }
                 else
                 {
@@ -372,7 +375,6 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
         // specify an adapter
         listAdapter = new ShoppingItemAdapter(lists, this, this);
         shopinListView.setAdapter(listAdapter);
-        //shopinListView.setfoci
 
         shopinListView.setItemAnimator(new DefaultItemAnimator());
     }
@@ -489,6 +491,12 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
     protected void onResume() {
         super.onResume();
         updateList();
+
+        //refresh viewpager for shopping mode - ViewPagerFragment
+        viewPagerFragment.setUpViewPager(getItemIDs(shoppingListItemController.getShoppingListItems()), listId);
+
+        //update slide fragment when item clicked
+        viewPagerFragment.getViewPager().getAdapter().notifyDataSetChanged();
     }
 
     private ArrayList<ShoppingListItem> getSelectedItems()
@@ -532,6 +540,7 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
     public void clearItemSelection()
     {
         listAdapter.clearSelection();
+        actionMode.finish();
         actionMode = null;
         toolbar.setVisibility(View.VISIBLE);
     }
@@ -569,7 +578,7 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
                     mode.finish();
                     return true;
                 case R.id.edit_menu_item:
-                    Intent intent = new Intent(ShopinItemsActivity.this,AddItemActivity.class);
+                    Intent intent = new Intent(ShopinItemsActivity.this,EditItemActivity.class);
                     intent.putExtra(LISTID, lists.get(listAdapter.getSelectedItems().get(0)).getListID());
                     intent.putExtra(ITEM_ID, lists.get(listAdapter.getSelectedItems().get(0)).getItemID());
                     intent.putExtra(ITEM_NAME, lists.get(listAdapter.getSelectedItems().get(0)).getItemName());

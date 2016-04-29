@@ -26,7 +26,7 @@
             android:label="@string/title_activity_shopin_items"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".ui.AddListActivity" />
-        <activity android:name=".ui.AddItemActivity"></activity>
+        <activity android:name=".ui.EditItemActivity"></activity>
     </application>
 
 </manifest>

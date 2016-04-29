@@ -17,7 +17,7 @@ import com.pear.shopz.objects.ShoppingListItemController;
 
 import java.util.ArrayList;
 
-public class AddItemActivity extends AppCompatActivity {
+public class EditItemActivity extends AppCompatActivity {
 
     private Button saveButton;
     private AutoCompleteTextView nameTextView;
@@ -66,52 +66,32 @@ public class AddItemActivity extends AppCompatActivity {
         nameTextView.setThreshold(1);
         //Toast.makeText(this, serverItems[0], Toast.LENGTH_LONG).show();
 
-        //check if its an edit/add
-        if(itemId != -1)
-            nameTextView.setText(itemName);
+        nameTextView.setText(itemName);
 
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ShoppingListItemController shoppingListController = new ShoppingListItemController(AddItemActivity.this,listId);
+                ShoppingListItemController shoppingListController = new ShoppingListItemController(EditItemActivity.this,listId);
 
                 if(attemptSave()) {
+                    shoppingListController.updateShoppingListItem(
+                            (new ShoppingListItem(
+                                    listId,
+                                    itemId,
+                                    nameTextView.getText().toString(),
+                                    0,
+                                    "",
+                                    "",
+                                    0
 
-                    //check if its an edit/add
-                    if(itemId == -1) {
-                        shoppingListController.addShoppingListItem
-                                (new ShoppingListItem(
-                                        listId,
-                                        -1,
-                                        nameTextView.getText().toString(),
-                                        0,
-                                        "",
-                                        "",
-                                        0
-
-                                ));
-
-                    }
-                    else
-                    {
-                        shoppingListController.updateShoppingListItem(
-                                (new ShoppingListItem(
-                                        listId,
-                                        itemId,
-                                        nameTextView.getText().toString(),
-                                        0,
-                                        "",
-                                        "",
-                                        0
-
-                                )));
+                            )));
 
                     }
                     finish();
 
                 }
             }
-        });
+        );
     }
 
     private String[] getArray() {
