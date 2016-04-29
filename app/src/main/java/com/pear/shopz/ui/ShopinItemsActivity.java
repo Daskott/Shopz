@@ -553,7 +553,9 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
     public void clearItemSelection()
     {
         listAdapter.clearSelection();
-        actionMode.finish();
+        if(actionMode != null)
+            actionMode.finish();
+        
         actionMode = null;
         toolbar.setVisibility(View.VISIBLE);
     }
