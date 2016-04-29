@@ -9,64 +9,79 @@
     tools:context="com.pear.shopz.ui.ShopinItemsActivity"
     tools:showIn="@layout/activity_shopin_items">
 
-    <!-- A RecyclerView with some commonly used attributes -->
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/shopin_list_view"
-        android:scrollbars="none"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
 
     <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
         xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/add_item_button"
+        android:id="@+id/add_item_card"
         android:layout_gravity="top"
-        android:layout_below="@+id/shopin_list_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         card_view:cardCornerRadius="1dp"
         android:layout_marginTop="0dp"
-        card_view:cardElevation="0dp"
+        card_view:cardElevation="2dp"
         android:layout_marginBottom="0dp"
         android:foreground="?android:attr/selectableItemBackground">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/activity_vertical_margin"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/activity_vertical_margin"
+            android:gravity="bottom|center_horizontal">
 
-            <LinearLayout
-                android:id="@+id/item_layout"
+            <!--just to remove focus from edit box-->
+            <LinearLayout android:focusable="true"
+                android:focusableInTouchMode="true" android:layout_width="0px"
+                android:layout_height="0px" />
+            <EditText
                 android:layout_width="match_parent"
+                android:layout_marginLeft="28dp"
+                android:layout_marginRight="28dp"
                 android:layout_height="wrap_content"
-                android:paddingTop="@dimen/activity_vertical_margin"
-                android:paddingBottom="@dimen/activity_vertical_margin"
-                android:paddingRight="@dimen/activity_vertical_margin"
-                android:paddingLeft="@dimen/activity_vertical_margin"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginLeft="32dp"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:text="+  Add Item"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:id="@+id/grocery_name" />
-
-            </LinearLayout>
-            <View
-                android:id="@+id/separator"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_alignBottom="@id/item_layout"
-                android:background="@color/grey" />
+                android:hint="Add Item"
+                android:textColorHint="@color/dark_grey"
+                android:backgroundTint="#00000000"
+                android:id="@+id/add_item_edit_view"
+                android:layout_centerVertical="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
 
         </RelativeLayout>
 
 
     </android.support.v7.widget.CardView>
 
+    <!--Layout that holds ViewPager Fragment-->
+    <RelativeLayout
+        android:id="@+id/fragment_placeholder"
+        android:visibility="invisible"
+        android:backgroundTint="@color/black"
+        android:layout_width="match_parent"
+
+        android:background="?attr/colorPrimary"
+        android:layout_height="@dimen/view_pager_close_height">
+
+    </RelativeLayout>
+
+    <!--Layout to act as anchor for recycler view-->
+    <LinearLayout
+        android:visibility="invisible"
+        android:layout_below="@+id/add_item_card"
+        android:id="@+id/space_holder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+    </LinearLayout>
+    <!-- A RecyclerView with some commonly used attributes -->
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/shopin_list_view"
+        android:scrollbars="none"
+        android:layout_below="@+id/fragment_placeholder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 
 
 </RelativeLayout>

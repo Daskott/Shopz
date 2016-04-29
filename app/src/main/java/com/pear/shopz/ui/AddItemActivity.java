@@ -107,7 +107,7 @@ public class AddItemActivity extends AppCompatActivity {
                                 )));
 
                     }
-                    bacKToList();
+                    finish();
 
                 }
             }
@@ -128,19 +128,10 @@ public class AddItemActivity extends AppCompatActivity {
         return itemNames;
     }
 
-    public void bacKToList()
-    {
-        Intent intent = new Intent(AddItemActivity.this, ShopinItemsActivity.class);
-        intent.putExtra(LISTID,listId);
-        intent.putExtra(LISTNAME,listName);
-        intent.putParcelableArrayListExtra(SERVERDATA, serverData);
-        startActivity(intent);
-        finish();
-    }
+
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        bacKToList();
     }
 
     private boolean attemptSave()
