@@ -198,7 +198,8 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
                                 0,
                                 "",
                                 "",
-                                0
+                                0,
+                                1
 
                         ));
 

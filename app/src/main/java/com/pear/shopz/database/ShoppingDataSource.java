@@ -96,7 +96,8 @@ public class ShoppingDataSource {
                         getDoubleFromColumnName(cursor, ShoppingSQLiteHelper.COLUMN_ITEM_PRICE),
                         getStringFromColumnName(cursor, ShoppingSQLiteHelper.COLUMN_ITEM_CATEGORY),
                         getStringFromColumnName(cursor, ShoppingSQLiteHelper.COLUMN_ITEM_AISLE),
-                        getIntFromColumnName(cursor, shoppingSQLiteHelper.COLUMN_ITEM_BOUGHT)
+                        getIntFromColumnName(cursor, shoppingSQLiteHelper.COLUMN_ITEM_BOUGHT),
+                        getIntFromColumnName(cursor, shoppingSQLiteHelper.COLUMN_ITEM_QUANTITY)
                 );
 
                 //add record to list
@@ -135,7 +136,8 @@ public class ShoppingDataSource {
                         getDoubleFromColumnName(cursor, ShoppingSQLiteHelper.COLUMN_ITEM_PRICE),
                         getStringFromColumnName(cursor, ShoppingSQLiteHelper.COLUMN_ITEM_CATEGORY),
                         getStringFromColumnName(cursor, ShoppingSQLiteHelper.COLUMN_ITEM_AISLE),
-                        getIntFromColumnName(cursor, shoppingSQLiteHelper.COLUMN_ITEM_BOUGHT)
+                        getIntFromColumnName(cursor, shoppingSQLiteHelper.COLUMN_ITEM_BOUGHT),
+                        getIntFromColumnName(cursor, shoppingSQLiteHelper.COLUMN_ITEM_QUANTITY)
                 );
 
             }while(cursor.moveToNext());
@@ -201,6 +203,7 @@ public class ShoppingDataSource {
         shoppingListItemValues.put(shoppingSQLiteHelper.COLUMN_ITEM_AISLE,shoppingListItem.getItemAisle());
         shoppingListItemValues.put(shoppingSQLiteHelper.COLUMN_ITEM_CATEGORY,shoppingListItem.getItemCategory());
         shoppingListItemValues.put(shoppingSQLiteHelper.COLUMN_ITEM_BOUGHT,shoppingListItem.getItemBought());
+        shoppingListItemValues.put(shoppingSQLiteHelper.COLUMN_ITEM_QUANTITY,shoppingListItem.getItemQuantity());
         shoppingListItemValues.put(shoppingSQLiteHelper.COLUMN_FOREIGN_KEY_SLIST_ID,shoppingListItem.getListID());
 
         database.insert(shoppingSQLiteHelper.GROCERY_ITEMS_TABLE,null,shoppingListItemValues);
@@ -243,6 +246,7 @@ public class ShoppingDataSource {
         updateShoppingListItemValues.put(shoppingSQLiteHelper.COLUMN_ITEM_AISLE,shoppingListItem.getItemAisle());
         updateShoppingListItemValues.put(shoppingSQLiteHelper.COLUMN_ITEM_CATEGORY,shoppingListItem.getItemCategory());
         updateShoppingListItemValues.put(shoppingSQLiteHelper.COLUMN_ITEM_BOUGHT,shoppingListItem.getItemBought());
+        updateShoppingListItemValues.put(shoppingSQLiteHelper.COLUMN_ITEM_QUANTITY,shoppingListItem.getItemQuantity());
         updateShoppingListItemValues.put(shoppingSQLiteHelper.COLUMN_FOREIGN_KEY_SLIST_ID,shoppingListItem.getListID());
         database.update(shoppingSQLiteHelper.GROCERY_ITEMS_TABLE,
                 updateShoppingListItemValues,

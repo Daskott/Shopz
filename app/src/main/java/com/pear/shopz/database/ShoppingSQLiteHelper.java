@@ -31,6 +31,7 @@ public class ShoppingSQLiteHelper extends SQLiteOpenHelper{
     public static final String COLUMN_ITEM_CATEGORY = "CATEGORY";
     public static final String COLUMN_ITEM_AISLE = "AISLE";
     public static final String COLUMN_ITEM_BOUGHT = "BOUGHT";
+    public static final String COLUMN_ITEM_QUANTITY = "QUANTITY";
     public static final String COLUMN_FOREIGN_KEY_SLIST_ID = "SHOPPING_LIST_ID";
 
     private static String CREATE_GROCERY_ITEMS =
@@ -41,6 +42,7 @@ public class ShoppingSQLiteHelper extends SQLiteOpenHelper{
                     COLUMN_ITEM_CATEGORY+" TEXT, "+
                     COLUMN_ITEM_AISLE+" TEXT, "+
                     COLUMN_ITEM_BOUGHT+" INTEGER, "+
+                    COLUMN_ITEM_QUANTITY+" INTEGER, "+
                     COLUMN_FOREIGN_KEY_SLIST_ID +" INTEGER, "+
                     "FOREIGN KEY("+ COLUMN_FOREIGN_KEY_SLIST_ID +") REFERENCES  SHOPPING_LISTS(_ID))";
 

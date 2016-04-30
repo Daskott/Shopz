@@ -14,11 +14,13 @@ public class ShoppingListItem {
     private String itemCategory;
     private String itemAisle;
     private int itemBought;
+    private int itemQuantity;
 
 
-    public ArrayList<Item> serverData;
+    //public ArrayList<Item> serverData;
 
-    public ShoppingListItem(int listID, int itemID, String itemName, double itemPrice, String itemCategory, String itemAisle, int itemBought) {
+
+    public ShoppingListItem(int listID, int itemID, String itemName, double itemPrice, String itemCategory, String itemAisle, int itemBought, int itemQuantity) {
         this.listID = listID;
         this.itemID = itemID;
         this.itemName = itemName;
@@ -26,7 +28,7 @@ public class ShoppingListItem {
         this.itemCategory = itemCategory;
         this.itemAisle = itemAisle;
         this.itemBought = itemBought;
-        this.serverData = new ArrayList<Item>();
+        this.itemQuantity = itemQuantity;
     }
 
     public int getListID() {
@@ -85,11 +87,19 @@ public class ShoppingListItem {
         this.itemBought = itemBought;
     }
 
-    public ArrayList<Item> getServerData() {
-        return serverData;
+    public int getItemQuantity() {
+        return itemQuantity;
     }
 
-    public void setServerData(ArrayList<Item> serverData) {
-        this.serverData = serverData;
+    public void setItemQuantity(int itemQuantity) {
+        this.itemQuantity = itemQuantity;
     }
+
+//    public ArrayList<Item> getServerData() {
+//        return serverData;
+//    }
+//
+//    public void setServerData(ArrayList<Item> serverData) {
+//        this.serverData = serverData;
+//    }
 }
