@@ -193,7 +193,7 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
                 shoppingListController.addShoppingListItem
                         (new ShoppingListItem(
                                 listId,
-                                -1,
+                                1,
                                 add_item_view.getText().toString(),
                                 0,
                                 "",
@@ -555,7 +555,7 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
         listAdapter.clearSelection();
         if(actionMode != null)
             actionMode.finish();
-        
+
         actionMode = null;
         toolbar.setVisibility(View.VISIBLE);
     }

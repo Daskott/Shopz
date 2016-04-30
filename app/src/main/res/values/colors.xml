@@ -12,4 +12,6 @@
     <color name="black">#212121</color>
     <color name="btwn_primary">#3949AB</color>
     <color name="green">#66BB6A</color>
+    <color name="grey_icon">#616161</color>
+    <color name="transparent">#00000000</color>
 </resources>
