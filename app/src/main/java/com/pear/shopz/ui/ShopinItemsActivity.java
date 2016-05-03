@@ -1,5 +1,6 @@
 package com.pear.shopz.ui;
 
+import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
@@ -9,6 +10,7 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -27,6 +29,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.pear.shopz.R;
 import com.pear.shopz.adapters.ShoppingItemAdapter;
@@ -93,7 +96,6 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
 
     FragmentManager fragmentManager;
     ViewPagerFragment viewPagerFragment;
-    private LinearLayout fregment_sapce_holder;
 
 
     @Override
@@ -114,8 +116,6 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
             serverData = extras.getParcelableArrayList(SERVERDATA);
         }
 
-        //Log.v("passed", String.valueOf(serverData));
-
         fragmentManager = getFragmentManager();
 
         shoppingListController = new ShoppingListItemController(ShopinItemsActivity.this,listId);
@@ -124,7 +124,6 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
         appBar =  ((AppBarLayout) findViewById(R.id.app_bar_layout));
         collapseBar = ((CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar_layout));
         viewFragmentLayout = (RelativeLayout)findViewById(R.id.fragment_placeholder);
-        fregment_sapce_holder = (LinearLayout) findViewById(R.id.space_holder);
 
         //initialize title bar
         title = capitalize(listName);
@@ -196,7 +195,7 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
                                 1,
                                 add_item_view.getText().toString(),
                                 0,
-                                "",
+                                "0",
                                 "",
                                 0,
                                 1
@@ -208,7 +207,6 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
                 updateList();
 
                 //refresh viewpager for shopping mode - ViewPagerFragment
-                ShoppingListItemController shoppingListItemController = new ShoppingListItemController(ShopinItemsActivity.this,listId);
                 viewPagerFragment.setUpViewPager(getItemIDs(shoppingListItemController.getShoppingListItems()), listId);
 
                 //Snack bar to indicate data saved
@@ -309,7 +307,9 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
             fragmentTransaction.add(R.id.fragment_placeholder, viewPagerFragment, PAGER_FRAGMENT);
             fragmentTransaction.commit();
         }
+
     }
+
 
     public void startShopping(View notifyView)
     {
@@ -508,9 +508,6 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
 
         //refresh viewpager for shopping mode - ViewPagerFragment
         viewPagerFragment.setUpViewPager(getItemIDs(shoppingListItemController.getShoppingListItems()), listId);
-
-        //update slide fragment when item clicked
-        viewPagerFragment.getViewPager().getAdapter().notifyDataSetChanged();
     }
 
     private ArrayList<ShoppingListItem> getSelectedItems()
@@ -590,7 +587,9 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
                 case R.id.delete_menu_item:
                     //delete from db & list
                     shoppingListItemController.deleteShoppingListItems(getSelectedItems());
-                    listAdapter.removeItems(listAdapter.getSelectedItems());
+                    updateList();
+                    viewPagerFragment.setUpViewPager(getItemIDs(shoppingListItemController.getShoppingListItems()), listId);
+
                     mode.finish();
                     return true;
                 case R.id.edit_menu_item:

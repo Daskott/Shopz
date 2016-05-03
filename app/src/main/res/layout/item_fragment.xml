@@ -73,7 +73,7 @@
                         android:textColor="@color/white"
                         android:textAppearance="?android:attr/textAppearanceMedium"
                         android:adjustViewBounds="true"
-                        android:text="8"
+                        android:text="--"
                         android:padding="8dp"
 
                         android:layout_alignBottom="@+id/category"

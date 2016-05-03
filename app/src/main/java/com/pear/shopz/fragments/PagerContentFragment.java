@@ -8,12 +8,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.Spinner;
+import android.widget.TextView;
+
 import com.pear.shopz.R;
-import com.pear.shopz.objects.Item;
 import com.pear.shopz.objects.ShoppingListItem;
 import com.pear.shopz.objects.ShoppingListItemController;
-
-import java.util.ArrayList;
 
 /**
  * Created by edmondcotterell on 2016-04-26.
@@ -23,9 +23,11 @@ public class PagerContentFragment extends Fragment{
     private final String LISTID = "LISTID";
     private final String INDEX = "INDEX";
     private final String LIST_SIZE = "LIST_SIZE";
+    public static final String ITEM_NAME = "ITEM_NAME";
 
     private ShoppingListItem item;
     private CheckBox itemCheckBox;
+    private TextView itemCategoryTextView;
     private ShoppingListItemController shoppingListItemController;
 
     private int itemID;
@@ -45,12 +47,15 @@ public class PagerContentFragment extends Fragment{
         shoppingListItemController = new ShoppingListItemController(getActivity(),listID);
         item = shoppingListItemController.getShoppingListItem(itemID);
 
+
         //ArrayList<Item> data = item.serverData;
 
 
         //init display text
         itemCheckBox = (CheckBox) view.findViewById(R.id.grocery_name);
+        itemCategoryTextView = (TextView)view.findViewById(R.id.category);
         itemCheckBox.setText(capitalize(item.getItemName()));
+        itemCategoryTextView.setText(shoppingListItemController.getPossibleItemCategories().get(Integer.parseInt(item.getItemCategory())));
 
 
         //set checkbox to true if item is bought

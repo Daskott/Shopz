@@ -6,6 +6,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -75,16 +77,12 @@ public class EditItemActivity extends AppCompatActivity {
         ShoppingListItemController itemController = new ShoppingListItemController(this,listId);
         final ShoppingListItem item = itemController.getShoppingListItem(itemId);
 
-        String[] timeItems = new String[]{"Other","Meat","Pharmacy","Bakery"}; //spinner array
+        String[] itemCategories = itemController.getPossibleItemCategories().toArray(new String[0]); //spinner array
         saveItemFab = (FloatingActionButton) findViewById(R.id.save_item_fab);
         nameTextView = (AutoCompleteTextView) findViewById(R.id.item_name);
         quantityTextView = (AutoCompleteTextView) findViewById(R.id.quantity_view_edit);
         priceTextView = (AutoCompleteTextView) findViewById(R.id.price_view_edit);
         categorySpinner = (Spinner) findViewById(R.id.category_spinner);
-
-
-        ArrayAdapter<String>categoryAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, timeItems);
-        categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
 
         String[] serverItems = getArray();
@@ -94,14 +92,38 @@ public class EditItemActivity extends AppCompatActivity {
         nameTextView.setThreshold(1);
         nameTextView.setHintTextColor(getResources().getColor(R.color.white));
 
-        //Toast.makeText(this, serverItems[0], Toast.LENGTH_LONG).show();
-
         //init edit view content
         nameTextView.setText(item.getItemName());
         priceTextView.setText(item.getItemPrice()+"");
-        categorySpinner.setAdapter(categoryAdapter);
-        categorySpinner.setSelection(item.getItemCategory().trim().equals("")?0:Integer.parseInt(item.getItemCategory()));
+        quantityTextView.setText(item.getItemQuantity()+"");
 
+
+        //category adapter
+        final int padding = (int)getResources().getDimension(R.dimen.view_pager_close_height);
+        ArrayAdapter<CharSequence> categoryAdapter = new ArrayAdapter<CharSequence>(EditItemActivity.this, android.R.layout.simple_spinner_item, itemCategories){
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View view =super.getView(position, convertView, parent);
+                TextView textView=(TextView) view.findViewById(android.R.id.text1);
+
+                //text view in category dropdown menu
+                textView.setTextSize(20);
+
+                //set selected item text color
+                if(item.getItemCategory().trim().equals("") && position == 0)
+                    textView.setTextColor(getResources().getColor(R.color.white));
+                else if(!item.getItemCategory().trim().equals("") && position == Integer.parseInt(item.getItemCategory()))
+                    textView.setTextColor(getResources().getColor(R.color.white));
+
+                textView.setPadding(4,4,4,4);
+
+                return view;
+            }
+        };
+
+        categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
+        categorySpinner.setAdapter(categoryAdapter);
+        categorySpinner.setSelection(Integer.parseInt(item.getItemCategory().trim()));
 
         saveItemFab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -114,11 +136,25 @@ public class EditItemActivity extends AppCompatActivity {
                     item.setItemName(nameTextView.getText().toString());
                     item.setItemPrice(Double.parseDouble(priceTextView.getText().toString()));
                     item.setItemCategory(String.valueOf(categorySpinner.getSelectedItemPosition()));
-                    //TODO add quantity to db
+                    item.setItemQuantity(Integer.parseInt(quantityTextView.getText().toString()));
 
                     shoppingListController.updateShoppingListItem((item));
                     finish();
                 }
+
+            }
+        });
+
+        categorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                TextView selectedItem = (TextView)categorySpinner.getSelectedView();
+                if(selectedItem != null)
+                    selectedItem.setTextColor(getResources().getColor(R.color.white));
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
 
             }
         });

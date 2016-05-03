@@ -8,6 +8,18 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+
+        <!--For TextInput hint-->
+        <item name="android:textColorHint">@color/dark_grey</item>
+        <item name="colorControlNormal">@color/dark_grey</item>
+        <!--<item name="colorControlActivated">@color/dark_grey</item>-->
+        <!--<item name="colorControlHighlight">@color/dark_grey</item>-->
+
+        <!-- For the resting Spinner style -->
+        <item name="android:spinnerItemStyle">
+            @style/spinnerItemStyle
+        </item>
+
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -21,6 +33,12 @@
 
     <style name="CustomActionMode" parent="@style/Widget.AppCompat.ActionMode">
         <item name="background">@color/colorPrimary</item>
+    </style>
+
+    <style name="spinnerItemStyle">
+        <item name="android:padding">10dp</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/black</item>
     </style>
 
 </resources>

@@ -34,9 +34,8 @@
                 <!-- Name-->
                 <android.support.design.widget.TextInputLayout
                     android:id="@+id/item_name_view"
-                    android:textColorHint="@color/white"
-                    android:backgroundTint="@color/white"
                     android:layout_gravity="right"
+                    android:theme="@style/AppTheme"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
@@ -47,9 +46,6 @@
                         android:textAppearance="?android:attr/textAppearanceLarge"
                         android:hint="Item name"
                         android:focusable="true"
-                        android:shadowColor="@color/white"
-                        android:textColorHint="@color/white"
-                        android:backgroundTint="@color/black"
                         android:textColor="@color/white"
                         android:inputType="text"
                         android:maxLines="1"
@@ -61,24 +57,26 @@
                     android:id="@+id/category_label"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/item_name_view"
-                    android:paddingLeft="6dp"
+                    android:textColor="@color/dark_grey"
+                    android:paddingLeft="4dp"
                     android:paddingTop="8dp"
+                    android:textSize="12dp"
                     android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:textColor="@color/white"
-                    android:text="Category"/>
+                    android:text="Category"
+                    android:layout_below="@+id/item_name_view"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true" />
 
                 <Spinner
                     android:layout_width="match_parent"
-                    android:layout_marginTop="8dp"
                     android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:backgroundTint="@color/transparent"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:layout_marginTop="6dp"
+                    android:layout_marginLeft="3dp"
                     android:id="@+id/category_spinner"
                     android:layout_below="@+id/category_label"
                     android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                     />
+                    android:layout_alignParentStart="true" />
 
             </RelativeLayout>
 

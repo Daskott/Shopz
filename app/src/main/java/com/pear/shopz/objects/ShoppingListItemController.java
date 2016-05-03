@@ -10,36 +10,32 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created by edmondcotterell on 2016-04-21.
  */
 public class ShoppingListItemController {
 
-    private ArrayList<ShoppingListItem> shoppingListItems;
     private ShoppingDataSource dataSource;
     private Context context;
-    private int size;
+    private int listID;
 
     public ShoppingListItemController(Context context, int listID)
     {
         dataSource = new ShoppingDataSource(context);
-        shoppingListItems = dataSource.readListItems(listID);
         this.context = context;
-        size = shoppingListItems.size();
+        this.listID = listID;
     }
 
     public ArrayList<ShoppingListItem> getShoppingListItems() {
-        return shoppingListItems;
+        return dataSource.readListItems(listID);
     }
 
     public ShoppingListItem getShoppingListItem(int itemID) {
         return dataSource.getItem(itemID);
     }
 
-    public void setShoppingListItems(ArrayList<ShoppingListItem> shoppingListItems) {
-        this.shoppingListItems = shoppingListItems;
-    }
 
     public void addShoppingListItem(ShoppingListItem newItem)
     {
@@ -48,7 +44,7 @@ public class ShoppingListItemController {
     }
 
     public int getSize() {
-        return size;
+        return dataSource.readListItems(listID).size();
     }
 
 
@@ -73,6 +69,8 @@ public class ShoppingListItemController {
         ArrayList<String> itemNameList = new ArrayList<String>();
         String[] result = null;
 
+        ArrayList<ShoppingListItem> shoppingListItems = dataSource.readListItems(listID);
+
         for (ShoppingListItem item: shoppingListItems)
         {
             itemNameList.add(item.getItemName());
@@ -80,6 +78,13 @@ public class ShoppingListItemController {
 
         if (itemNameList != null) result = (String[]) itemNameList.toArray(new String[itemNameList.size()]);
         return result;
+    }
+
+    public ArrayList<String>  getPossibleItemCategories()
+    {
+        ArrayList<String> itemCategories = new ArrayList<String>(Arrays.asList("Other","Meat","Pharmacy","Bakery"));
+
+        return itemCategories;
     }
 
 //    public void addNetworkData(JSONObject json) throws JSONException {
