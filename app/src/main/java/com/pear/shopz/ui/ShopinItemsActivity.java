@@ -206,9 +206,6 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
                 add_item_view.setText("");
                 updateList();
 
-                //refresh viewpager for shopping mode - ViewPagerFragment
-                viewPagerFragment.setUpViewPager(getItemIDs(shoppingListItemController.getShoppingListItems()), listId);
-
                 //Snack bar to indicate data saved
                 final Snackbar snackBar = Snackbar.make(v, "New item added to list", Snackbar.LENGTH_LONG);
                 snackBar.setAction("Dismiss", new View.OnClickListener() {
@@ -226,6 +223,9 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
         playFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                //refresh viewpager for shopping mode - ViewPagerFragment
+                viewPagerFragment.setUpViewPager(getItemIDs(shoppingListItemController.getShoppingListItems()), listId);
 
                 //if list is not empty enable shopping mode
                 if(!(lists.size() <= 0))
