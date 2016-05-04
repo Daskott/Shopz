@@ -35,8 +35,9 @@
                 <android.support.design.widget.TextInputLayout
                     android:id="@+id/item_name_view"
                     android:layout_gravity="right"
-                    android:theme="@style/AppTheme"
+                    android:theme="@style/TextLabelTheme"
                     android:layout_width="match_parent"
+                    android:textColorHint="@color/white"
                     android:layout_height="wrap_content">
 
                     <AutoCompleteTextView
@@ -49,7 +50,8 @@
                         android:textColor="@color/white"
                         android:inputType="text"
                         android:maxLines="1"
-                        android:singleLine="true" />
+                        android:singleLine="true"
+                        android:theme="@style/TextLabelTheme"/>
 
                 </android.support.design.widget.TextInputLayout>
 
@@ -57,7 +59,7 @@
                     android:id="@+id/category_label"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/dark_grey"
+                    android:textColor="@color/white"
                     android:paddingLeft="4dp"
                     android:paddingTop="8dp"
                     android:textSize="12dp"

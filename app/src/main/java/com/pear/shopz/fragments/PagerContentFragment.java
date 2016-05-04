@@ -28,6 +28,7 @@ public class PagerContentFragment extends Fragment{
     private ShoppingListItem item;
     private CheckBox itemCheckBox;
     private TextView itemCategoryTextView;
+    private TextView itemAisle;
     private ShoppingListItemController shoppingListItemController;
 
     private int itemID;
@@ -54,9 +55,10 @@ public class PagerContentFragment extends Fragment{
         //init display text
         itemCheckBox = (CheckBox) view.findViewById(R.id.grocery_name);
         itemCategoryTextView = (TextView)view.findViewById(R.id.category);
+        itemAisle = (TextView)view.findViewById(R.id.aisle_number);
         itemCheckBox.setText(capitalize(item.getItemName()));
         itemCategoryTextView.setText(shoppingListItemController.getPossibleItemCategories().get(Integer.parseInt(item.getItemCategory())));
-
+        itemAisle.setText(item.getItemAisle().trim());
 
         //set checkbox to true if item is bought
         initItemCheckBox(item);

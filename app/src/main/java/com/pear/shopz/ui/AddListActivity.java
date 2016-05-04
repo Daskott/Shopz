@@ -5,7 +5,10 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.pear.shopz.R;
@@ -19,6 +22,7 @@ public class AddListActivity extends AppCompatActivity {
 
     private Button saveButton;
     private TextView nameTextView;
+    private Spinner storeSpinner;
 
     private int listId = -1;
     private String listName = "";
@@ -48,12 +52,42 @@ public class AddListActivity extends AppCompatActivity {
 
     private void init()
     {
+        ShoppingListController listController = new ShoppingListController(this);
+        String[] storeOptions = listController.getStoreOptions().toArray(new String[0]); //spinner array
+        //ShoppingList list = new ShoppingList(listController.get)***get shopping list with id
         saveButton = (Button)findViewById(R.id.save_button_ls);
         nameTextView = (TextView)findViewById(R.id.list_name);
+        storeSpinner = (Spinner) findViewById(R.id.store_spinner);
 
         //check if its an edit/add
         if(listId != -1)
             nameTextView.setText(listName);
+
+        final int padding = (int)getResources().getDimension(R.dimen.view_pager_close_height);
+        ArrayAdapter<CharSequence> storeAdapter = new ArrayAdapter<CharSequence>(AddListActivity.this, android.R.layout.simple_spinner_item, storeOptions){
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View view =super.getView(position, convertView, parent);
+                TextView textView=(TextView) view.findViewById(android.R.id.text1);
+
+                //text view in category dropdown menu
+                textView.setTextSize(17);
+
+                //set selected item text color
+//                if(item.getItemCategory().trim().equals("") && position == 0)
+//                    textView.setTextColor(getResources().getColor(R.color.white));
+//                else if(!item.getItemCategory().trim().equals("") && position == Integer.parseInt(item.getItemCategory()))
+//                    textView.setTextColor(getResources().getColor(R.color.white));
+
+                textView.setPadding(4,4,4,4);
+
+                return view;
+            }
+        };
+
+        storeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
+        storeSpinner.setAdapter(storeAdapter);
+        //storeSpinner.setSelection(Integer.parseInt(item.getItemCategory().trim()));
 
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -5,6 +5,7 @@ import android.content.Context;
 import com.pear.shopz.database.ShoppingDataSource;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created by edmondcotterell on 2016-04-21.
@@ -51,5 +52,11 @@ public class ShoppingListController {
             dataSource.deleteList(list.getListID());
     }
 
+    public ArrayList<String>  getStoreOptions()
+    {
+        ArrayList<String> storeOptions = new ArrayList<String>(Arrays.asList("General Store","Superstore(CA)"));
+
+        return storeOptions;
+    }
 
 }

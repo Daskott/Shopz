@@ -10,20 +10,18 @@ public class ShoppingList {
     private int listID;
     private String listName;
     private String store;
-    private int totalBought;
 
     public ShoppingList(int listID, String listName, String store)
     {
         this.listID = listID;
         this.listName = listName;
         this.store = store;
-        totalBought = 0;
     }
 
     public int getTotalBoughtItems(Context context) {
 
         ShoppingListItemController itemController =  new ShoppingListItemController(context,listID);
-
+        int totalBought = 0;
         for(ShoppingListItem item: itemController.getShoppingListItems())
         {
             if(item.getItemBought() == 1)

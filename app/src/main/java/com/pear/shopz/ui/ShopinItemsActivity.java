@@ -326,15 +326,15 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
         appBar.setExpanded(false);
 
         //Snack bar to indicate editing is disabled
-        final Snackbar snackBar = Snackbar.make(notifyView, "Shopping Mode Enabled", Snackbar.LENGTH_LONG);
-        snackBar.setAction("Dismiss", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                snackBar.dismiss();
-                stopFab.setTranslationY(0);
-            }
-        });
-        snackBar.show();
+//        final Snackbar snackBar = Snackbar.make(notifyView, "Shopping Mode Enabled", Snackbar.LENGTH_LONG);
+//        snackBar.setAction("Dismiss", new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                snackBar.dismiss();
+//                stopFab.setTranslationY(0);
+//            }
+//        });
+//        snackBar.show();
     }
 
     public void stopShopping(View notifyView) {
@@ -348,16 +348,16 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
 
         appBar.setExpanded(true);
 
-        //Snack bar to indicate editing is enabled
-        final Snackbar snackBar = Snackbar.make(notifyView, "Shopping Mode Disabled", Snackbar.LENGTH_LONG);
-        snackBar.setAction("Dismiss", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                snackBar.dismiss();
-                playFab.setTranslationY(0);
-            }
-        });
-        snackBar.show();
+//        //Snack bar to indicate editing is enabled
+//        final Snackbar snackBar = Snackbar.make(notifyView, "Shopping Mode Disabled", Snackbar.LENGTH_LONG);
+//        snackBar.setAction("Dismiss", new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                snackBar.dismiss();
+//                playFab.setTranslationY(0);
+//            }
+//        });
+//        snackBar.show();
 
     }
 

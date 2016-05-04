@@ -106,13 +106,12 @@ public class ShoppingListAdapter extends SelectableAdapter<ShoppingListAdapter.V
         //set progress
         ShoppingListItemController listItemController = new ShoppingListItemController(mContext,listItem.getListID());
         int total = listItemController.getSize();
-        int totalItemsBought = 0;
-        totalItemsBought = listItem.getTotalBoughtItems(mContext);
+        int totalItemsBought = listItem.getTotalBoughtItems(mContext);
 
         //init progress
         TextView listProgress = (TextView) holder.cardView.findViewById(R.id.list_progress_view);
         listProgress.setText(totalItemsBought+"/"+total);
-        if(total !=0 && total == totalItemsBought)listProgress.setBackgroundColor(mContext.getResources().getColor(R.color.green));
+        //if(total !=0 && total == totalItemsBought)listProgress.setBackgroundColor(mContext.getResources().getColor(R.color.green));
 
         // Highlight the item if it's selected
         if(isSelected(position))
