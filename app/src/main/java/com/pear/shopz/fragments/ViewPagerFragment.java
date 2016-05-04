@@ -34,14 +34,15 @@ public class ViewPagerFragment extends Fragment {
     private final String LIST_SIZE = "LIST_SIZE";
 
     private ViewPager viewPager;
-    private ArrayList<PagerContentFragment> pagerContentFragments;
+    private View view;
+
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.pager_fragment,container,false);
-        viewPager = (ViewPager)view.findViewById(R.id.view_pager);
+        this.view = view;
 
         //get arguments
         ArrayList<Integer> itemIDs = getArguments().getIntegerArrayList(ITEM_IDS);
@@ -52,12 +53,18 @@ public class ViewPagerFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+    }
+
     public void setUpViewPager(ArrayList<Integer> itemIDs, int listID)
     {
-        pagerContentFragments = createItemFragments(itemIDs,listID);
-        PagerAdapter pagerAdapter = new PagerAdapter(getFragmentManager(),itemIDs,pagerContentFragments, listID);
+        ArrayList<PagerContentFragment> pagerContentFragments = createItemFragments(itemIDs,listID);
 
-        viewPager.setAdapter(pagerAdapter);
+        viewPager = (ViewPager)view.findViewById(R.id.view_pager);
+        viewPager.setAdapter(new PagerAdapter(getFragmentManager(),itemIDs,pagerContentFragments, listID));
         viewPager.setOffscreenPageLimit(6);
 
     }
@@ -67,24 +74,20 @@ public class ViewPagerFragment extends Fragment {
     {
         int size = itemIDs.size();
         ArrayList<PagerContentFragment> pagerContentFragments = new ArrayList<>();
-        ShoppingListItemController shoppingListItemController = new ShoppingListItemController(getActivity(),listID);
 
         //create fragments
         for (int i = 0; i< size; i++)
         {
-            if(shoppingListItemController.getShoppingListItem(itemIDs.get(i)) == null)
-                continue;
-
             //set arguments to pass to fragment
             Bundle bundle = new Bundle();
             bundle.putInt(ITEM_ID,itemIDs.get(i));
-            bundle.putString(ITEM_NAME, shoppingListItemController.getShoppingListItem(itemIDs.get(i)).getItemName());
             bundle.putInt(LISTID,listID);
             bundle.putInt(INDEX,i);
             bundle.putInt(LIST_SIZE,size);
 
-            pagerContentFragments.add(i, new PagerContentFragment());
-            pagerContentFragments.get(i).setArguments(bundle);
+            PagerContentFragment pagerContentFragment = new PagerContentFragment();
+            pagerContentFragment.setArguments(bundle);
+            pagerContentFragments.add(pagerContentFragment);
         }
 
         return pagerContentFragments;

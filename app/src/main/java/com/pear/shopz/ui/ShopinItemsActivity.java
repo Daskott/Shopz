@@ -143,6 +143,9 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
         shopinListView = (RecyclerView) findViewById(R.id.shopin_list_view);
         setUpLists(null);
 
+        viewPagerFragment = new ViewPagerFragment();
+        addViewPagerFragment();
+
 
 
         //Toast.makeText(this, reslt[0], Toast.LENGTH_LONG).show();
@@ -224,6 +227,7 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
             @Override
             public void onClick(View view) {
 
+                //addViewPagerFragment();
                 //refresh viewpager for shopping mode - ViewPagerFragment
                 viewPagerFragment.setUpViewPager(getItemIDs(shoppingListItemController.getShoppingListItems()), listId);
 
@@ -268,7 +272,6 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
             }
         });
 
-        addViewPagerFragment();
     }
 
     private String[] getArray() {
@@ -298,7 +301,6 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
         ViewPagerFragment currFragment = (ViewPagerFragment)getFragmentManager().findFragmentByTag(PAGER_FRAGMENT);
         if(currFragment == null)
         {
-            viewPagerFragment = new ViewPagerFragment();
             Bundle bundle = new Bundle();
             bundle.putIntegerArrayList(ITEM_IDS,getItemIDs(lists));
             bundle.putInt(LISTID,listId);
@@ -457,7 +459,8 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
             }
 
         }
-        shopinListView.smoothScrollToPosition(position);
+
+        //shopinListView.smoothScrollToPosition(position);
         //LinearLayoutManager lp = (LinearLayoutManager)shopinListView.getLayoutManager();
         //lp.scrollToPositionWithOffset(position, 0);;
     }
@@ -505,9 +508,6 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
     protected void onResume() {
         super.onResume();
         updateList();
-
-        //refresh viewpager for shopping mode - ViewPagerFragment
-        viewPagerFragment.setUpViewPager(getItemIDs(shoppingListItemController.getShoppingListItems()), listId);
     }
 
     private ArrayList<ShoppingListItem> getSelectedItems()
@@ -588,8 +588,6 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
                     //delete from db & list
                     shoppingListItemController.deleteShoppingListItems(getSelectedItems());
                     updateList();
-                    viewPagerFragment.setUpViewPager(getItemIDs(shoppingListItemController.getShoppingListItems()), listId);
-
                     mode.finish();
                     return true;
                 case R.id.edit_menu_item:

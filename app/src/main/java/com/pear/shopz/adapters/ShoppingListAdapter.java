@@ -106,7 +106,8 @@ public class ShoppingListAdapter extends SelectableAdapter<ShoppingListAdapter.V
         //set progress
         ShoppingListItemController listItemController = new ShoppingListItemController(mContext,listItem.getListID());
         int total = listItemController.getSize();
-        int totalItemsBought = listItem.getTotalBoughtItems(mContext);
+        int totalItemsBought = 0;
+        totalItemsBought = listItem.getTotalBoughtItems(mContext);
 
         //init progress
         TextView listProgress = (TextView) holder.cardView.findViewById(R.id.list_progress_view);

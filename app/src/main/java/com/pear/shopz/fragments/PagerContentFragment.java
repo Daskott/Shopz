@@ -23,7 +23,7 @@ public class PagerContentFragment extends Fragment{
     private final String LISTID = "LISTID";
     private final String INDEX = "INDEX";
     private final String LIST_SIZE = "LIST_SIZE";
-    public static final String ITEM_NAME = "ITEM_NAME";
+//    public static final String ITEM_NAME = "ITEM_NAME";
 
     private ShoppingListItem item;
     private CheckBox itemCheckBox;
