@@ -13,10 +13,10 @@
     <color name="grey">#E0E0E0</color>
     <color name="dark_grey">#BDBDBD</color>
     <color name="black">#212121</color>
-    <color name="btwn_primary">#3949AB</color>
+    <color name="blue">#2196F3</color>
     <color name="green">#009688</color>
     <color name="grey_icon">#616161</color>
     <color name="transparent">#00000000</color>
     <color name="red">#f44336</color>
-    <color name="yellow">#FFEB3B</color>
+    <color name="yellow">#FFC107</color>
 </resources>

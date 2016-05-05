@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,7 +29,7 @@ public class PagerContentFragment extends Fragment{
     private ShoppingListItem item;
     private CheckBox itemCheckBox;
     private TextView itemCategoryTextView;
-    private TextView itemAisle;
+    private TextView itemAisle, quantity_price_view;
     private ShoppingListItemController shoppingListItemController;
 
     private int itemID;
@@ -54,11 +55,28 @@ public class PagerContentFragment extends Fragment{
 
         //init display text
         itemCheckBox = (CheckBox) view.findViewById(R.id.grocery_name);
+        itemCheckBox.setEllipsize(TextUtils.TruncateAt.END);
         itemCategoryTextView = (TextView)view.findViewById(R.id.category);
         itemAisle = (TextView)view.findViewById(R.id.aisle_number);
+        quantity_price_view = (TextView)view.findViewById(R.id.quantity_price_view);
+
         itemCheckBox.setText(capitalize(item.getItemName()));
         itemCategoryTextView.setText(shoppingListItemController.getPossibleItemCategories().get(Integer.parseInt(item.getItemCategory())));
         itemAisle.setText(item.getItemAisle().trim());
+        String dollarSign = getResources().getString(R.string.dollar_sign);
+        String quantity = String.valueOf(item.getItemQuantity());
+        String price = dollarSign+String.valueOf(item.getItemPrice());
+
+        //display price & quantity
+        if(item.getItemQuantity() <=1 && item.getItemPrice() >0.0)
+            quantity_price_view.setText("("+quantity+") "+ (item.getItemPrice() != 0.0? price:""));
+        else if(item.getItemQuantity() > 1 & item.getItemPrice() >0.0)
+        {
+            price = dollarSign+String.valueOf((Double)item.getItemPrice()*item.getItemQuantity());
+            quantity_price_view.setText("(" + quantity + " x " +dollarSign+item.getItemPrice() + ")   " + (item.getItemPrice() != 0.0 ? price : ""));
+        }
+        else
+            quantity_price_view.setVisibility(View.GONE);
 
         //set checkbox to true if item is bought
         initItemCheckBox(item);

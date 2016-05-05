@@ -52,11 +52,4 @@ public class ShoppingListController {
             dataSource.deleteList(list.getListID());
     }
 
-    public ArrayList<String>  getStoreOptions()
-    {
-        ArrayList<String> storeOptions = new ArrayList<String>(Arrays.asList("General Store","Superstore(CA)"));
-
-        return storeOptions;
-    }
-
 }

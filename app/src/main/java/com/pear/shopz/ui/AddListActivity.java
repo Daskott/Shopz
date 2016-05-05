@@ -1,27 +1,31 @@
 package com.pear.shopz.ui;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.pear.shopz.R;
 import com.pear.shopz.objects.Item;
+import com.pear.shopz.objects.Settings;
 import com.pear.shopz.objects.ShoppingList;
 import com.pear.shopz.objects.ShoppingListController;
 
 import java.util.ArrayList;
 
+
 public class AddListActivity extends AppCompatActivity {
 
-    private Button saveButton;
+    private TextView saveButton;
     private TextView nameTextView;
+    private ImageView addStoreButton;
     private Spinner storeSpinner;
 
     private int listId = -1;
@@ -53,42 +57,59 @@ public class AddListActivity extends AppCompatActivity {
     private void init()
     {
         ShoppingListController listController = new ShoppingListController(this);
-        String[] storeOptions = listController.getStoreOptions().toArray(new String[0]); //spinner array
-        //ShoppingList list = new ShoppingList(listController.get)***get shopping list with id
-        saveButton = (Button)findViewById(R.id.save_button_ls);
+        final ArrayList<String> currStoreOptions = Settings.getStoreOptions(this);//spinner/dropdown list
+        //ShoppingList currList = new ShoppingList(listController.get(listId))***get shopping list with id
+        saveButton = (TextView)findViewById(R.id.save_button_ls);
         nameTextView = (TextView)findViewById(R.id.list_name);
         storeSpinner = (Spinner) findViewById(R.id.store_spinner);
+        addStoreButton = (ImageView)findViewById(R.id.add_store_icon);
 
         //check if its an edit/add
         if(listId != -1)
             nameTextView.setText(listName);
 
-        final int padding = (int)getResources().getDimension(R.dimen.view_pager_close_height);
-        ArrayAdapter<CharSequence> storeAdapter = new ArrayAdapter<CharSequence>(AddListActivity.this, android.R.layout.simple_spinner_item, storeOptions){
-            @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
-                View view =super.getView(position, convertView, parent);
-                TextView textView=(TextView) view.findViewById(android.R.id.text1);
-
-                //text view in category dropdown menu
-                textView.setTextSize(17);
-
-                //set selected item text color
-//                if(item.getItemCategory().trim().equals("") && position == 0)
-//                    textView.setTextColor(getResources().getColor(R.color.white));
-//                else if(!item.getItemCategory().trim().equals("") && position == Integer.parseInt(item.getItemCategory()))
-//                    textView.setTextColor(getResources().getColor(R.color.white));
-
-                textView.setPadding(4,4,4,4);
-
-                return view;
-            }
-        };
-
+        //initial store options
+        ArrayAdapter<String> storeAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, currStoreOptions);
         storeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
         storeSpinner.setAdapter(storeAdapter);
-        //storeSpinner.setSelection(Integer.parseInt(item.getItemCategory().trim()));
+        //storeSpinner.setSelection(Integer.parseInt(currList.getStore().trim())); //index of store on dropdown is what we store
 
+        addStoreButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                // Add Store dialog
+                View viewInflated = getLayoutInflater().inflate(R.layout.input_frame, null);
+                final TextView storeNameInput = (TextView)viewInflated.findViewById(R.id.input);
+                AlertDialog.Builder builder = new AlertDialog.Builder(AddListActivity.this);
+                builder.setTitle("Add Store").setView(viewInflated)
+                        .setPositiveButton(getString(android.R.string.ok), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        //add new store to store options
+                        if(attemptSave(storeNameInput)) {
+
+                            //update & save list
+                            currStoreOptions.add(capitalize(storeNameInput.getText().toString()));
+                            Settings.saveSettings(AddListActivity.this,currStoreOptions);
+
+                            //create new spinner adapter & update ui
+                            ArrayAdapter<String> storeAdapter = new ArrayAdapter<String>(AddListActivity.this,android.R.layout.simple_spinner_item, currStoreOptions);
+                            storeAdapter.notifyDataSetChanged();
+                            storeSpinner.setAdapter(storeAdapter);
+                            storeSpinner.setSelection(currStoreOptions.size()-1);
+                        }
+                    }
+                }).setNegativeButton("CANCEL", null);
+                AlertDialog dialog = builder.create();
+
+                if (viewInflated.getParent() != null)
+                    ((ViewGroup) viewInflated.getParent()).removeView(viewInflated); // <- fix
+
+                dialog.show();
+              }
+        });
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -97,20 +118,22 @@ public class AddListActivity extends AppCompatActivity {
 
                 if(attemptSave()) {
 
-                    //check if its an edit/add
-                    if(listId == -1)
+                    ShoppingList list = new ShoppingList(listId, nameTextView.getText().toString(), String.valueOf(storeSpinner.getSelectedItemPosition()));
+
+                    //create new shopping list
+                    if(list.getListID() == -1)
                     {
-                        listId = shoppingListController.addShoppingList(new ShoppingList(-1, nameTextView.getText().toString(), DEFAULT_STORE));
+                        list.setListID(shoppingListController.addShoppingList(list)); //add list to db & get id
                         intent = new Intent(AddListActivity.this, ShopinItemsActivity.class);
                         intent.putExtra(LISTNAME,nameTextView.getText().toString());
-                        intent.putExtra(LISTID, listId);
+                        intent.putExtra(LISTID, list.getListID());
                         intent.putParcelableArrayListExtra(SERVERDATA, serverData);
                     }
+                    //update existing shopping list
                     else
                     {
-                        shoppingListController.updateShoppingList(new ShoppingList(listId, nameTextView.getText().toString(), DEFAULT_STORE));
+                        shoppingListController.updateShoppingList(list);
                         intent = new Intent(AddListActivity.this, MainActivity.class);
-
                     }
                     startActivity(intent);
                     finish();
@@ -118,6 +141,8 @@ public class AddListActivity extends AppCompatActivity {
             }
         });
     }
+
+
 
     private boolean attemptSave()
     {
@@ -128,6 +153,25 @@ public class AddListActivity extends AppCompatActivity {
         }
 
         return attempt;
+    }
+
+    private boolean attemptSave(TextView nameTextView)
+    {
+        boolean attempt = true;
+        if (nameTextView.getText().toString().isEmpty()) {
+            nameTextView.setError(getString(R.string.error_field_required));
+            attempt = false;
+        }
+
+        return attempt;
+    }
+
+    public String capitalize(String word)
+    {
+        if(word.length() == 1)
+            return word.toUpperCase();
+
+        return word.substring(0,1).toUpperCase()+""+word.substring(1).toLowerCase();
     }
 
 }

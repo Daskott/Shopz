@@ -1,6 +1,7 @@
 package com.pear.shopz.adapters;
 
 import android.content.Context;
+import android.os.Build;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseBooleanArray;
@@ -9,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.pear.shopz.R;
 import com.pear.shopz.objects.ShoppingList;
@@ -111,7 +113,33 @@ public class ShoppingListAdapter extends SelectableAdapter<ShoppingListAdapter.V
         //init progress
         TextView listProgress = (TextView) holder.cardView.findViewById(R.id.list_progress_view);
         listProgress.setText(totalItemsBought+"/"+total);
-        //if(total !=0 && total == totalItemsBought)listProgress.setBackgroundColor(mContext.getResources().getColor(R.color.green));
+        double progressPercentage = total == 0? 0:((double)totalItemsBought/total)*100;
+        /*set color indicator for progress
+        */
+        //100%
+        if(progressPercentage == 100)
+        {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
+                listProgress.setBackground(mContext.getResources().getDrawable(R.drawable.green_rect));
+            else
+                listProgress.setBackgroundDrawable(mContext.getResources().getDrawable(R.drawable.green_rect));
+        }
+        //75%
+        else if(progressPercentage >= 50.0)
+        {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
+                listProgress.setBackground(mContext.getResources().getDrawable(R.drawable.yellow_rect));
+            else
+                listProgress.setBackgroundDrawable(mContext.getResources().getDrawable(R.drawable.yellow_rect));
+        }
+        //0%
+        else if(progressPercentage == 0.0)
+        {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
+                listProgress.setBackground(mContext.getResources().getDrawable(R.drawable.red_rect));
+            else
+                listProgress.setBackgroundDrawable(mContext.getResources().getDrawable(R.drawable.red_rect));
+        }
 
         // Highlight the item if it's selected
         if(isSelected(position))

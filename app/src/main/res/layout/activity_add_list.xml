@@ -48,23 +48,54 @@
                     android:singleLine="true" />
 
             </android.support.design.widget.TextInputLayout>
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:tint="@color/grey_icon"
+                android:src="@drawable/ic_store_black_24dp"
+                android:layout_centerVertical="true"
+                android:layout_alignLeft="@+id/list_name_view"
+                android:layout_alignStart="@+id/list_name_view" />
             <Spinner
                 android:id="@+id/store_spinner"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_alignLeft="@+id/list_name_view"
-                android:layout_alignStart="@+id/list_name_view">
-
+                android:layout_alignStart="@+id/list_name_view"
+                android:layout_marginLeft="35dp"
+                android:layout_marginStart="35dp"
+                android:layout_toLeftOf="@+id/add_store_icon"
+                android:layout_toStartOf="@+id/add_store_icon">
             </Spinner>
+            <ImageView
+                android:id="@+id/add_store_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:tint="@color/grey_icon"
+                android:src="@drawable/ic_add_black_24dp"
+                android:layout_centerVertical="true"
+                android:paddingBottom="@dimen/activity_vertical_margin"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/activity_vertical_margin"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:layout_alignRight="@+id/list_name_view"
+                android:layout_alignEnd="@+id/list_name_view" />
 
-            <Button
+            <TextView
                 android:id="@+id/save_button_ls"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Save"
-                android:textColor="@color/white"
+                android:text="CREATE"
+                android:textColor="@color/colorAccent"
+                android:paddingBottom="@dimen/activity_vertical_margin"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/activity_vertical_margin"
+                android:textAppearance="?android:attr/textAppearanceMedium"
                 android:backgroundTint="@color/colorAccent"
+                android:foreground="?android:attr/selectableItemBackground"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true" />
