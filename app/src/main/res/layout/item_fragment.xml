@@ -28,23 +28,27 @@
                 android:id="@+id/item_layout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-
                 android:orientation="vertical"
                 android:gravity="top">
 
                 <CheckBox
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-
                     android:layout_gravity="center_horizontal"
                     android:text="Yams"
                     android:inputType="textCapSentences"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:id="@+id/grocery_name"
-                    android:layout_marginTop="24dp"
                     android:layout_marginLeft="16dp"
+                    android:paddingTop="@dimen/activity_vertical_margin"
+                    android:paddingBottom="@dimen/activity_vertical_margin"
+                    android:paddingRight="@dimen/activity_vertical_margin"
+                    android:textColor="@color/grey_icon"
                     android:layout_below="@+id/linearLayout"
-                    android:layout_centerHorizontal="true" />
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:maxLines="3"
+                    android:ellipsize="middle" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -81,6 +85,21 @@
                         android:layout_toEndOf="@+id/category" />
 
                 </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="@dimen/activity_vertical_margin"
+                    android:paddingBottom="@dimen/activity_vertical_margin"
+                    android:paddingRight="@dimen/activity_vertical_margin"
+                    android:paddingLeft="@dimen/activity_vertical_margin"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="(1) $22"
+                    android:layout_marginLeft="4dp"
+                    android:id="@+id/quantity_price"
+                    android:layout_below="@+id/linearLayout"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true" />
 
             </RelativeLayout>
         </android.support.v7.widget.CardView>

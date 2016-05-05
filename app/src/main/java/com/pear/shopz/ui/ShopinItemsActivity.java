@@ -176,12 +176,25 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
                 if(add_item_view.getText().toString().length() > 0)
                 {
                     playFab.setVisibility(View.GONE);
-                    saveItemFab.setVisibility(View.VISIBLE);
+                    if(saveItemFab.getVisibility() == View.GONE)
+                    {
+                        saveItemFab.setVisibility(View.VISIBLE);
+                        saveItemFab.setScaleX(0);
+                        saveItemFab.setScaleY(0);
+                        saveItemFab.animate().scaleX(1).scaleY(1).start();
+                    }
+
                 }
                 else
                 {
                     saveItemFab.setVisibility(View.GONE);
-                    playFab.setVisibility(View.VISIBLE);
+                    if(playFab.getVisibility() == View.GONE)
+                    {
+                        playFab.setVisibility(View.VISIBLE);
+                        playFab.setScaleX(0);
+                        playFab.setScaleY(0);
+                        playFab.animate().scaleX(1).scaleY(1).start();
+                    }
                 }
             }
         });
@@ -209,16 +222,16 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
                 add_item_view.setText("");
                 updateList();
 
-                //Snack bar to indicate data saved
-                final Snackbar snackBar = Snackbar.make(v, "New item added to list", Snackbar.LENGTH_LONG);
-                snackBar.setAction("Dismiss", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        snackBar.dismiss();
-                        playFab.setTranslationY(0);
-                    }
-                });
-                snackBar.show();
+//                //Snack bar to indicate data saved
+//                final Snackbar snackBar = Snackbar.make(v, "New item added to list", Snackbar.LENGTH_LONG);
+//                snackBar.setAction("Dismiss", new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        snackBar.dismiss();
+//                        playFab.setTranslationY(0);
+//                    }
+//                });
+//                snackBar.show();
             }
         });
 

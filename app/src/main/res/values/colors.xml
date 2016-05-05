@@ -18,4 +18,5 @@
     <color name="grey_icon">#616161</color>
     <color name="transparent">#00000000</color>
     <color name="red">#f44336</color>
+    <color name="yellow">#FFEB3B</color>
 </resources>

@@ -63,7 +63,7 @@ public class ViewPagerFragment extends Fragment {
     {
         ArrayList<PagerContentFragment> pagerContentFragments = createItemFragments(itemIDs,listID);
 
-        viewPager = (ViewPager)view.findViewById(R.id.view_pager);
+        viewPager = (ViewPager)view.getRootView().findViewById(R.id.view_pager);
         viewPager.setAdapter(new PagerAdapter(getFragmentManager(),itemIDs,pagerContentFragments, listID));
         viewPager.setOffscreenPageLimit(6);
 
