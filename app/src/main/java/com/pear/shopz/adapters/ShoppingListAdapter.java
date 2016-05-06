@@ -132,14 +132,6 @@ public class ShoppingListAdapter extends SelectableAdapter<ShoppingListAdapter.V
             else
                 listProgress.setBackgroundDrawable(mContext.getResources().getDrawable(R.drawable.yellow_rect));
         }
-        //0%
-        else if(progressPercentage == 0.0)
-        {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
-                listProgress.setBackground(mContext.getResources().getDrawable(R.drawable.red_rect));
-            else
-                listProgress.setBackgroundDrawable(mContext.getResources().getDrawable(R.drawable.red_rect));
-        }
 
         // Highlight the item if it's selected
         if(isSelected(position))

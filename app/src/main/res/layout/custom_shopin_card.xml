@@ -38,7 +38,7 @@
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:text="0/0"
                     android:padding="8dp"
-                    android:background="@drawable/myrect"
+                    android:background="@drawable/red_rect"
                     android:layout_marginTop="@dimen/activity_vertical_margin"
                     android:layout_marginRight="@dimen/activity_vertical_margin"
                     android:textColor="@color/white"
