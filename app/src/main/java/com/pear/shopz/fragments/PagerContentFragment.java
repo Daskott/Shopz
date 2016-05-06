@@ -16,6 +16,8 @@ import com.pear.shopz.R;
 import com.pear.shopz.objects.ShoppingListItem;
 import com.pear.shopz.objects.ShoppingListItemController;
 
+import java.text.DecimalFormat;
+
 /**
  * Created by edmondcotterell on 2016-04-26.
  */
@@ -65,15 +67,15 @@ public class PagerContentFragment extends Fragment{
         itemAisle.setText(item.getItemAisle().trim());
         String dollarSign = getResources().getString(R.string.dollar_sign);
         String quantity = String.valueOf(item.getItemQuantity());
-        String price = dollarSign+String.valueOf(item.getItemPrice());
+        String price = dollarSign+String.valueOf(roundToDecimals(item.getItemPrice()));
 
         //display price & quantity
         if(item.getItemQuantity() <=1 && item.getItemPrice() >0.0)
             quantity_price_view.setText("("+quantity+") "+ (item.getItemPrice() != 0.0? price:""));
         else if(item.getItemQuantity() > 1 & item.getItemPrice() >0.0)
         {
-            price = dollarSign+String.valueOf(roundToDecimals((Double)item.getItemPrice()*item.getItemQuantity(),2));
-            quantity_price_view.setText("(" + quantity + " x " +dollarSign+item.getItemPrice() + ")   " + (item.getItemPrice() != 0.0 ? price : ""));
+            price = dollarSign+String.valueOf(roundToDecimals((double) item.getItemPrice()*item.getItemQuantity()));
+            quantity_price_view.setText("(" + quantity + " x " +dollarSign+roundToDecimals(item.getItemPrice()) + ")   " + (item.getItemPrice() != 0.0 ? price : ""));
         }
         else
             quantity_price_view.setVisibility(View.GONE);
@@ -148,9 +150,10 @@ public class PagerContentFragment extends Fragment{
         return word.substring(0,1).toUpperCase()+""+word.substring(1).toLowerCase();
     }
 
-    public double roundToDecimals(double number, int decimalPlace)
+    public String roundToDecimals(double number)
     {
-        int temp = (int)(number * Math.pow(10 , decimalPlace));
-        return ((double)temp)/Math.pow(10 , decimalPlace);
+        DecimalFormat df = new DecimalFormat("#.00");
+        return df.format(number);
+
     }
 }
