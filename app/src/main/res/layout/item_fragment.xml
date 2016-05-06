@@ -48,9 +48,9 @@
                     android:maxLength="14"
                     android:maxLines="2"
                     android:ellipsize="end"
-                    android:textColor="@color/grey_icon"
+                    android:textColor="@color/black"
                     android:layout_marginStart="20dp"
-                    android:layout_below="@+id/linearLayout"
+                    android:layout_below="@+id/topPanelLayout"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true" />
 
@@ -59,7 +59,7 @@
                     android:layout_height="wrap_content"
                     android:background="@color/colorPrimary"
                     android:padding="8dp"
-                    android:id="@+id/linearLayout">
+                    android:id="@+id/topPanelLayout">
 
                     <TextView
                         android:id="@+id/category"

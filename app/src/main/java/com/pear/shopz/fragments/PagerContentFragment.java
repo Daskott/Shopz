@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -32,6 +33,7 @@ public class PagerContentFragment extends Fragment{
     private CheckBox itemCheckBox;
     private TextView itemCategoryTextView;
     private TextView itemAisle, quantity_price_view;
+    private LinearLayout topPanelLayout;
     private ShoppingListItemController shoppingListItemController;
 
     private int itemID;
@@ -61,6 +63,7 @@ public class PagerContentFragment extends Fragment{
         itemCategoryTextView = (TextView)view.findViewById(R.id.category);
         itemAisle = (TextView)view.findViewById(R.id.aisle_number);
         quantity_price_view = (TextView)view.findViewById(R.id.quantity_price_view);
+        topPanelLayout = (LinearLayout)view.findViewById(R.id.topPanelLayout);
 
         itemCheckBox.setText(capitalize(item.getItemName()));
         itemCategoryTextView.setText(shoppingListItemController.getPossibleItemCategories().get(Integer.parseInt(item.getItemCategory())));
@@ -69,13 +72,17 @@ public class PagerContentFragment extends Fragment{
         String quantity = String.valueOf(item.getItemQuantity());
         String price = dollarSign+String.valueOf(roundToDecimals(item.getItemPrice()));
 
+        //set top panel layout to white, if no category was picked
+        if(Integer.parseInt(item.getItemCategory()) == 0)
+            topPanelLayout.setBackgroundColor(getResources().getColor(R.color.white));
+
         //display price & quantity
         if(item.getItemQuantity() <=1 && item.getItemPrice() >0.0)
-            quantity_price_view.setText("("+quantity+") "+ (item.getItemPrice() != 0.0? price:""));
+            quantity_price_view.setText("("+quantity+")  "+ (item.getItemPrice() != 0.0? price:""));
         else if(item.getItemQuantity() > 1 & item.getItemPrice() >0.0)
         {
             price = dollarSign+String.valueOf(roundToDecimals((double) item.getItemPrice()*item.getItemQuantity()));
-            quantity_price_view.setText("(" + quantity + " x " +dollarSign+roundToDecimals(item.getItemPrice()) + ")   " + (item.getItemPrice() != 0.0 ? price : ""));
+            quantity_price_view.setText("(" + quantity + " x " +dollarSign+roundToDecimals(item.getItemPrice()) + ")  " + (item.getItemPrice() != 0.0 ? price : ""));
         }
         else
             quantity_price_view.setVisibility(View.GONE);
