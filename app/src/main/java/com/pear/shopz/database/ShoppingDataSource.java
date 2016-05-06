@@ -148,6 +148,37 @@ public class ShoppingDataSource {
         return shoppingListItem;
     }
 
+    public ShoppingList getList(int listID)
+    {
+        ShoppingList shoppingList = null;
+        SQLiteDatabase database = open();
+        Cursor cursor = database.rawQuery(
+                "SELECT * FROM " + shoppingSQLiteHelper.SHOPPING_LIST_TABLE +
+                        " WHERE " + BaseColumns._ID + " = " + listID, null);
+
+
+
+        //ArrayList<ShoppingListItem> shoppingListItems = new ArrayList<ShoppingListItem>();
+
+        if(cursor.moveToFirst())
+        {
+            do
+            {
+                //get each record
+                shoppingList = new ShoppingList(
+                        getIntFromColumnName(cursor, BaseColumns._ID),
+                        getStringFromColumnName(cursor, ShoppingSQLiteHelper.COLUMN_SLIST_NAME),
+                        getStringFromColumnName(cursor, shoppingSQLiteHelper.COLUMN_SLIST_STORE)
+                );
+
+            }while(cursor.moveToNext());
+        }
+
+        cursor.close();
+        close(database);
+        return shoppingList;
+    }
+
     //*****DO ANOTHER QUERY TO GET TOTAL (BOUGHT_ITEMS/ TOTAL_ITEMS)
 
 
