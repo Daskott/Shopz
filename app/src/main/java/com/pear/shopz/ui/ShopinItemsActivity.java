@@ -1,6 +1,7 @@
 package com.pear.shopz.ui;
 
-import android.app.Fragment;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
@@ -10,7 +11,6 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -19,42 +19,27 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import com.pear.shopz.R;
 import com.pear.shopz.adapters.ShoppingItemAdapter;
 import com.pear.shopz.fragments.PagerContentFragment;
 import com.pear.shopz.fragments.ViewPagerFragment;
 import com.pear.shopz.objects.Item;
+import com.pear.shopz.objects.ShoppingList;
+import com.pear.shopz.objects.ShoppingListController;
 import com.pear.shopz.objects.ShoppingListItem;
 import com.pear.shopz.objects.ShoppingListItemController;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
 public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingItemAdapter.ViewHolder.ClickListener, AppBarLayout.OnOffsetChangedListener,PagerContentFragment.OnCompleteListener{
 
@@ -65,7 +50,6 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
     private ActionModeCallback actionModeCallback = new ActionModeCallback();
     private ActionMode actionMode;
     private ShoppingListItemController shoppingListItemController;
-    private ShoppingListItemController shoppingListController;
 
     private ArrayList<Item> serverData = null;
 
@@ -88,6 +72,7 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
 
 
     private AutoCompleteTextView add_item_view;
+    private TextView totalPriceUncheckedView;
     private Toolbar toolbar;
     private RelativeLayout viewFragmentLayout;
     private CollapsingToolbarLayout collapseBar;
@@ -96,6 +81,8 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
 
     FragmentManager fragmentManager;
     ViewPagerFragment viewPagerFragment;
+
+    private ShoppingList currShoppingList;
 
 
     @Override
@@ -118,7 +105,13 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
 
         fragmentManager = getFragmentManager();
 
-        shoppingListController = new ShoppingListItemController(ShopinItemsActivity.this,listId);
+        shoppingListItemController = new ShoppingListItemController(ShopinItemsActivity.this,listId); //for items info
+        ShoppingListController shoppingListController = new ShoppingListController(ShopinItemsActivity.this); //for list info
+        currShoppingList = shoppingListController.getShoppingList(listId);
+
+        //init total unchecked price
+        totalPriceUncheckedView = (TextView)findViewById(R.id.total_price_unchecked);
+        updateTotalPriceUncheckedView();
 
         //init layouts in toolbar
         appBar =  ((AppBarLayout) findViewById(R.id.app_bar_layout));
@@ -147,7 +140,6 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
         addViewPagerFragment();
 
 
-
         //Toast.makeText(this, reslt[0], Toast.LENGTH_LONG).show();
 
         //Add item text box
@@ -173,7 +165,7 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
             @Override
             public void afterTextChanged(Editable s) {
                 //toggle visibility of save fab
-                if(add_item_view.getText().toString().length() > 0)
+                if(add_item_view.getText().toString().trim().length() > 0)
                 {
                     playFab.setVisibility(View.GONE);
                     if(saveItemFab.getVisibility() == View.GONE)
@@ -205,7 +197,7 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
             public void onClick(View v) {
 
                 //save new item to db
-                shoppingListController.addShoppingListItem
+                shoppingListItemController.addShoppingListItem
                         (new ShoppingListItem(
                                 listId,
                                 1,
@@ -331,7 +323,6 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
         isShopping = true;
         viewFragmentLayout.getLayoutParams().height = (int) getResources().getDimension(R.dimen.view_pager_height);
         viewFragmentLayout.setVisibility(View.VISIBLE);
-
         //toggle fab icons
         playFab.setVisibility(View.GONE);
         stopFab.setVisibility(View.VISIBLE);
@@ -415,6 +406,55 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
         listAdapter.setDataSet(lists);
     }
 
+    public void updateTotalPriceUncheckedView()
+    {
+        String total = currShoppingList.getTotalPriceUnchecked(this);
+
+        //update total price unchecked
+        if(total.equals("$0.0"))
+        {
+            //animate & make invisible if visible
+            if(totalPriceUncheckedView.getVisibility() == View.VISIBLE)
+            {
+                totalPriceUncheckedView
+                        .animate()
+                        .scaleX(0)
+                        .scaleY(0)
+                        .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
+                        totalPriceUncheckedView.setVisibility(View.GONE);
+                    }
+                }).start();
+            }
+
+            totalPriceUncheckedView.setText(total);
+        }
+        else
+        {
+            //animate & make visible if invisible
+            if(totalPriceUncheckedView.getVisibility() == View.GONE)
+            {
+                totalPriceUncheckedView.setVisibility(View.VISIBLE);
+                totalPriceUncheckedView.setScaleX(0);
+                totalPriceUncheckedView.setScaleY(0);
+                totalPriceUncheckedView.animate()
+                        .scaleX(1)
+                        .scaleY(1)
+                        .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
+                        totalPriceUncheckedView.setVisibility(View.VISIBLE);
+                    }
+                }).start();
+            }
+
+            totalPriceUncheckedView.setText(total);
+        }
+    }
+
     public void backToMain()
     {
         Intent intent = new Intent(ShopinItemsActivity.this,MainActivity.class);
@@ -471,11 +511,10 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
                 viewPagerFragment.setCurrentPage(position);
             }
 
-        }
+            //update total price unchecked view
+            updateTotalPriceUncheckedView();
 
-        //shopinListView.smoothScrollToPosition(position);
-        //LinearLayoutManager lp = (LinearLayoutManager)shopinListView.getLayoutManager();
-        //lp.scrollToPositionWithOffset(position, 0);;
+        }
     }
 
     @Override
@@ -521,6 +560,7 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
     protected void onResume() {
         super.onResume();
         updateList();
+        updateTotalPriceUncheckedView();
     }
 
     private ArrayList<ShoppingListItem> getSelectedItems()
@@ -554,11 +594,17 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
 
     }
 
+    /*
+    * called when checkbox in
+    * fragment is clicked -PageContentFragment.java
+    *
+    * */
     @Override
     public void onComplete() {
-        //called when checkbox in
-        // fragment is clicked -PageContentFragment.java
         updateList();
+
+        //update total price unchecked view
+        updateTotalPriceUncheckedView();
     }
 
     public void clearItemSelection()

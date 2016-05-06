@@ -27,6 +27,10 @@ public class ShoppingListController {
         return shoppingLists;
     }
 
+    public ShoppingList getShoppingList(int listID) {
+        return dataSource.getList(listID);
+    }
+
     public void setShoppingLists(ArrayList<ShoppingList> shoppingLists) {
         this.shoppingLists = shoppingLists;
     }

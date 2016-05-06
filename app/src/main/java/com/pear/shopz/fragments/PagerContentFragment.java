@@ -2,6 +2,8 @@ package com.pear.shopz.fragments;
 
 import android.app.Fragment;
 import android.content.Context;
+import android.graphics.Paint;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -73,9 +75,13 @@ public class PagerContentFragment extends Fragment{
         String price = dollarSign+String.valueOf(roundToDecimals(item.getItemPrice()));
 
         //set top panel layout to white, if no category was picked
-        if(Integer.parseInt(item.getItemCategory()) == 0)
+        if(Integer.parseInt(item.getItemCategory()) == 0) {
             topPanelLayout.setBackgroundColor(getResources().getColor(R.color.white));
-
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                itemCategoryTextView.setTextColor(getResources().getColor(R.color.dark_grey,getResources().newTheme()));
+            else
+                itemCategoryTextView.setTextColor(getResources().getColor(R.color.dark_grey));
+        }
         //display price & quantity
         if(item.getItemQuantity() <=1 && item.getItemPrice() >0.0)
             quantity_price_view.setText("("+quantity+")  "+ (item.getItemPrice() != 0.0? price:""));
@@ -120,9 +126,24 @@ public class PagerContentFragment extends Fragment{
     public void initItemCheckBox(ShoppingListItem item)
     {
         if(item.getItemBought() == 0)
+        {
             itemCheckBox.setChecked(false);
+            itemCheckBox.setPaintFlags(itemCheckBox.getPaintFlags() & (~ Paint.STRIKE_THRU_TEXT_FLAG));
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                itemCheckBox.setTextColor(getActivity().getResources().getColor(R.color.black,null));
+            else
+                itemCheckBox.setTextColor(getActivity().getResources().getColor(R.color.black));
+        }
         else
+        {
             itemCheckBox.setChecked(true);
+            itemCheckBox.setPaintFlags(itemCheckBox.getPaintFlags()| Paint.STRIKE_THRU_TEXT_FLAG);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                itemCheckBox.setTextColor(getActivity().getResources().getColor(R.color.dark_grey,null));
+            else
+                itemCheckBox.setTextColor(getActivity().getResources().getColor(R.color.dark_grey));
+        }
     }
 
     //update view from parent fragment

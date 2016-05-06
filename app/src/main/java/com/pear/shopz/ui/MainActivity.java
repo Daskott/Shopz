@@ -74,12 +74,20 @@ public class MainActivity extends AppCompatActivity implements ShoppingListAdapt
         setContentView(R.layout.activity_main);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+
+        //background color of activity
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+            getWindow().setBackgroundDrawable(getResources().getDrawable(R.drawable.main_background, null));
+        else
+            getWindow().setBackgroundDrawable(getResources().getDrawable(R.drawable.main_background));
+
+        //status bar color for only post Lollipop devices
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimaryDark, null));
+        else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimaryDark));
-        }
 
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+            FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

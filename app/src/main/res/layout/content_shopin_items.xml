@@ -60,7 +60,6 @@
         android:visibility="invisible"
         android:backgroundTint="@color/black"
         android:layout_width="match_parent"
-
         android:background="?attr/colorPrimary"
         android:layout_height="@dimen/view_pager_close_height">
 

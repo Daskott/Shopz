@@ -2,6 +2,8 @@ package com.pear.shopz.objects;
 
 import android.content.Context;
 
+import com.pear.shopz.R;
+
 /**
  * Created by edmondcotterell on 2016-04-21.
  */
@@ -31,6 +33,22 @@ public class ShoppingList {
         return totalBought;
     }
 
+    public String getTotalPriceUnchecked(Context context)
+    {
+        ShoppingListItemController itemController =  new ShoppingListItemController(context,listID);
+        String result ="";
+        double uncheckedPrice = 0.00;
+
+        for(ShoppingListItem item: itemController.getShoppingListItems())
+        {
+            if(item.getItemBought() == 0)
+                uncheckedPrice+=(item.getItemPrice()*item.getItemQuantity());
+        }
+
+        result = context.getResources().getString(R.string.dollar_sign)+uncheckedPrice;
+        return result;
+    }
+
     public int getListID() {
         return listID;
     }
@@ -47,6 +65,12 @@ public class ShoppingList {
         this.listName = listName;
     }
 
+    /*
+    * Right now, we store the index of where the store name is located in
+    * @see in Settings.getStoreOptions(Context context)
+    * N/B: Actual store name is not stored in db, just index
+    *
+    * */
     public String getStore() {
         return store;
     }

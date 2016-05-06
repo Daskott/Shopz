@@ -24,6 +24,29 @@
             app:contentScrim="?attr/colorPrimary"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/total_price_unchecked"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/dark_green_rect"
+                    android:textColor="@color/white"
+                    android:padding="@dimen/activity_vertical_margin"
+                    android:visibility="gone"
+                    android:text="$0.00"
+                    android:gravity="center_vertical|center_horizontal"
+                    android:layout_marginRight="@dimen/activity_vertical_margin"
+                    android:layout_marginEnd="@dimen/activity_vertical_margin"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true" />
+
+            </RelativeLayout>
+
+
             <android.support.v7.widget.Toolbar
                 android:id="@+id/app_bar"
                 android:layout_width="match_parent"

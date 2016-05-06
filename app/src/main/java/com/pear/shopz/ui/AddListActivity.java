@@ -3,12 +3,14 @@ package com.pear.shopz.ui;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -39,6 +41,8 @@ public class AddListActivity extends AppCompatActivity {
 
     private final String SERVERDATA = "SERVERDATA";
 
+    private Intent intent;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,23 +60,27 @@ public class AddListActivity extends AppCompatActivity {
 
     private void init()
     {
-        ShoppingListController listController = new ShoppingListController(this);
+        final ShoppingListController listController = new ShoppingListController(this);
         final ArrayList<String> currStoreOptions = Settings.getStoreOptions(this);//spinner/dropdown list
-        //ShoppingList currList = new ShoppingList(listController.get(listId))***get shopping list with id
+        ShoppingList currList = null;//new ShoppingList(listController.get(listId))***get shopping list with id
         saveButton = (TextView)findViewById(R.id.save_button_ls);
         nameTextView = (TextView)findViewById(R.id.list_name);
         storeSpinner = (Spinner) findViewById(R.id.store_spinner);
         addStoreButton = (ImageView)findViewById(R.id.add_store_icon);
 
-        //check if its an edit/add
-        if(listId != -1)
-            nameTextView.setText(listName);
+        intent = new Intent(AddListActivity.this, MainActivity.class);
 
         //initial store options
-        ArrayAdapter<String> storeAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, currStoreOptions);
-        storeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
+        ArrayAdapter<String> storeAdapter = CreateSpinnerAdapter(currStoreOptions);
         storeSpinner.setAdapter(storeAdapter);
-        //storeSpinner.setSelection(Integer.parseInt(currList.getStore().trim())); //index of store on dropdown is what we store
+
+        //check if its an edit
+        if(listId != -1) {
+            nameTextView.setText(listName);
+            saveButton.setText("UPDATE");
+            currList = listController.getShoppingList(listId);
+            storeSpinner.setSelection(Integer.parseInt(currList.getStore())); //set spinner
+        }
 
         addStoreButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -95,7 +103,7 @@ public class AddListActivity extends AppCompatActivity {
                             Settings.saveSettings(AddListActivity.this,currStoreOptions);
 
                             //create new spinner adapter & update ui
-                            ArrayAdapter<String> storeAdapter = new ArrayAdapter<String>(AddListActivity.this,android.R.layout.simple_spinner_item, currStoreOptions);
+                            ArrayAdapter<String> storeAdapter = CreateSpinnerAdapter(currStoreOptions);
                             storeAdapter.notifyDataSetChanged();
                             storeSpinner.setAdapter(storeAdapter);
                             storeSpinner.setSelection(currStoreOptions.size()-1);
@@ -114,7 +122,6 @@ public class AddListActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 ShoppingListController shoppingListController = new ShoppingListController(AddListActivity.this);
-                Intent intent;
 
                 if(attemptSave()) {
 
@@ -133,7 +140,6 @@ public class AddListActivity extends AppCompatActivity {
                     else
                     {
                         shoppingListController.updateShoppingList(list);
-                        intent = new Intent(AddListActivity.this, MainActivity.class);
                     }
                     startActivity(intent);
                     finish();
@@ -166,6 +172,65 @@ public class AddListActivity extends AppCompatActivity {
         return attempt;
     }
 
+    public  ArrayAdapter<String> CreateSpinnerAdapter(final ArrayList<String> list)
+    {
+        return new ArrayAdapter<String>(AddListActivity.this,R.layout.spinner_row, R.id.spinner_row_text,list)
+        {
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View view = super.getView(position, convertView, parent);
+
+                TextView textView = (TextView)view.findViewById(R.id.spinner_row_text);
+                //ImageView icon = (ImageView) spinnerLayout.findViewById(R.id.spinner_row_icon);
+                String storeName = list.get(position);
+
+
+                /*
+                * set store text to blue, if its supported
+                * */
+                if(Settings.getListOFSupportedStores().contains(storeName.toLowerCase()))
+                {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                        textView.setTextColor(getResources().getColor(R.color.blue, null));
+                    else
+                        textView.setTextColor(getResources().getColor(R.color.blue));
+                }
+
+                return view;
+            }
+
+            @Override
+            public View getDropDownView(int position, View convertView, ViewGroup parent) {
+                View view = super.getDropDownView(position, convertView, parent);
+
+                TextView textView = (TextView)view.findViewById(R.id.spinner_row_text);
+                //ImageView icon = (ImageView) spinnerLayout.findViewById(R.id.spinner_row_icon);
+                String storeName = list.get(position);
+
+
+                /*
+                * set store text to blue, if its supported, else black
+                * */
+                if(Settings.getListOFSupportedStores().contains(storeName.toLowerCase()))
+                {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                        textView.setTextColor(getResources().getColor(R.color.blue, null));
+                    else
+                        textView.setTextColor(getResources().getColor(R.color.blue));
+                }
+                else
+                {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                        textView.setTextColor(getResources().getColor(R.color.grey_icon, null));
+                    else
+                        textView.setTextColor(getResources().getColor(R.color.grey_icon));
+                }
+
+                return view;
+            }
+        };
+    }
+
     public String capitalize(String word)
     {
         if(word.length() == 1)
@@ -174,4 +239,11 @@ public class AddListActivity extends AppCompatActivity {
         return word.substring(0,1).toUpperCase()+""+word.substring(1).toLowerCase();
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        //go back to main activity
+        startActivity(intent);
+        finish();
+    }
 }

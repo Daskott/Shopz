@@ -32,7 +32,7 @@
                 android:gravity="top">
 
                 <CheckBox
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:text="Yams"
@@ -99,7 +99,7 @@
                     android:paddingLeft="8dp"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:text="(1) $22"
-                    android:background="@drawable/myrect"
+                    android:background="@drawable/dark_green_rect"
                     android:textColor="@color/white"
                     android:id="@+id/quantity_price_view"
                     android:layout_below="@+id/grocery_name"

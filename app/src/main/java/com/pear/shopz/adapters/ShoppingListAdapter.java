@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.pear.shopz.R;
+import com.pear.shopz.objects.Settings;
 import com.pear.shopz.objects.ShoppingList;
 import com.pear.shopz.objects.ShoppingListItemController;
 
@@ -39,12 +40,16 @@ public class ShoppingListAdapter extends SelectableAdapter<ShoppingListAdapter.V
 
         // each data item is just a string in this case
         private CardView cardView;
+        private TextView storeNameView;
+        private View storeSupportIcon;
         private RelativeLayout cardLayout;
         private ViewHolder.ClickListener listener;
 
         public ViewHolder(CardView v, ClickListener listener) {
             super(v);
             cardView = v;
+            storeNameView = (TextView) v.findViewById(R.id.store_name_view);
+            storeSupportIcon = v.findViewById(R.id.store_support_icon);
             cardLayout = (RelativeLayout)v.findViewById(R.id.card_layout_sl);
             this.listener = listener;
 
@@ -114,23 +119,47 @@ public class ShoppingListAdapter extends SelectableAdapter<ShoppingListAdapter.V
         TextView listProgress = (TextView) holder.cardView.findViewById(R.id.list_progress_view);
         listProgress.setText(totalItemsBought+"/"+total);
         double progressPercentage = total == 0? 0:((double)totalItemsBought/total)*100;
+
         /*set color indicator for progress
         */
         //100%
         if(progressPercentage == 100)
         {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
-                listProgress.setBackground(mContext.getResources().getDrawable(R.drawable.green_rect));
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+                listProgress.setBackground(mContext.getResources().getDrawable(R.drawable.green_rect,mContext.getResources().newTheme()));
             else
                 listProgress.setBackgroundDrawable(mContext.getResources().getDrawable(R.drawable.green_rect));
         }
         //75%
         else if(progressPercentage >= 50.0)
         {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
-                listProgress.setBackground(mContext.getResources().getDrawable(R.drawable.yellow_rect));
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+                listProgress.setBackground(mContext.getResources().getDrawable(R.drawable.yellow_rect,mContext.getResources().newTheme()));
             else
                 listProgress.setBackgroundDrawable(mContext.getResources().getDrawable(R.drawable.yellow_rect));
+        }
+
+        //init store name
+        int storeIndex = Integer.parseInt(listItem.getStore());
+        String storeName = Settings.getStoreOptions(mContext).get(storeIndex);
+        holder.storeNameView.setText(storeName);
+
+        /*
+        * set store icon to blue, if its supported
+        * */
+        if(Settings.getListOFSupportedStores().contains(storeName.toLowerCase()))
+        {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+                holder.storeSupportIcon.setBackground(mContext.getResources().getDrawable(R.drawable.blue_rect,mContext.getResources().newTheme()));
+            else
+                holder.storeSupportIcon.setBackgroundDrawable(mContext.getResources().getDrawable(R.drawable.blue_rect));
+        }
+        else
+        {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+                holder.storeSupportIcon.setBackground(mContext.getResources().getDrawable(R.drawable.myrect,mContext.getResources().newTheme()));
+            else
+                holder.storeSupportIcon.setBackgroundDrawable(mContext.getResources().getDrawable(R.drawable.myrect));
         }
 
         // Highlight the item if it's selected
