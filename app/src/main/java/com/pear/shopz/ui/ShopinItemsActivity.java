@@ -696,6 +696,7 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
                     intent.putExtra(ITEM_NAME, lists.get(listAdapter.getSelectedItems().get(0)).getItemName());
                     //intent.putParcelableArrayListExtra(SERVERDATA, serverData);
                     startActivity(intent);
+                    return true;
                 default:
                     return false;
             }

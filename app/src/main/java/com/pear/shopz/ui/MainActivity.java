@@ -435,10 +435,9 @@ public class MainActivity extends AppCompatActivity implements ShoppingListAdapt
                     //intent.putParcelableArrayListExtra(SERVERDATA, serverData);
                     startActivity(intent);
                     finish();
-
+                    return true;
                 case R.id.share_menu_item:
-
-                    //if list is not empty share list
+                    //if list is not empty share it, else show snackbar
                     if(lists.get(listAdapter.getSelectedItems().get(0)).getListSize(MainActivity.this) > 0)
                     {
                         Intent sendIntent = new Intent();
@@ -451,14 +450,15 @@ public class MainActivity extends AppCompatActivity implements ShoppingListAdapt
                         //Snack bar to indicate list is empty
                         RelativeLayout rootView = (RelativeLayout) findViewById(R.id.main_layout);
                         final Snackbar snackBar = Snackbar.make(rootView, "Your List is Empty :)", Snackbar.LENGTH_LONG);
-                            snackBar.setAction("Dismiss", new View.OnClickListener() {
+                        snackBar.setAction("Dismiss", new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                            snackBar.dismiss();
+                                snackBar.dismiss();
                             }
                         });
                         snackBar.show();
                     }
+                    return true;
                 default:
                     return false;
 
