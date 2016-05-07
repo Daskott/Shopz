@@ -448,7 +448,7 @@ public class MainActivity extends AppCompatActivity implements ShoppingListAdapt
                         startActivity(Intent.createChooser(sendIntent, "Share Grocery List..."));
                     }else
                     {
-                        //Snack bar to indicate data saved
+                        //Snack bar to indicate list is empty
                         RelativeLayout rootView = (RelativeLayout) findViewById(R.id.main_layout);
                         final Snackbar snackBar = Snackbar.make(rootView, "Your List is Empty :)", Snackbar.LENGTH_LONG);
                             snackBar.setAction("Dismiss", new View.OnClickListener() {
