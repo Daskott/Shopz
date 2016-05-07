@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.provider.BaseColumns;
 import android.util.Log;
 
+import com.pear.shopz.objects.InventoryItem;
 import com.pear.shopz.objects.ShoppingList;
 import com.pear.shopz.objects.ShoppingListItem;
 
@@ -321,5 +322,66 @@ public class ShoppingDataSource {
         database.endTransaction();
         close(database);
     }
+
+    public ArrayList<InventoryItem> readInventory() {
+
+        SQLiteDatabase database = open();
+        Cursor cursor = database.rawQuery(
+                "SELECT * FROM " + shoppingSQLiteHelper.INVENTORY_ITEMS_TABLE, null);
+
+
+
+        ArrayList<InventoryItem> inventoryItems = new ArrayList<InventoryItem>();
+
+        if(cursor.moveToFirst())
+        {
+            do
+            {
+                InventoryItem inventoryItem = new InventoryItem(
+                        getIntFromColumnName(cursor, BaseColumns._ID),
+                        getStringFromColumnName(cursor, ShoppingSQLiteHelper.COLUMN_ITEM_NAME),
+                        getStringFromColumnName(cursor, ShoppingSQLiteHelper.COLUMN_ITEM_CATEGORY)
+                );
+
+                //add record to list
+                inventoryItems.add(inventoryItem);
+            }while(cursor.moveToNext());
+        }
+
+        cursor.close();
+        close(database);
+        return inventoryItems;
+    }
+
+    public void createInventoryItem(InventoryItem item){
+
+        SQLiteDatabase database = open();
+        database.beginTransaction();
+
+        //implementation
+        ContentValues inventoryItemValues = new ContentValues();
+        inventoryItemValues.put(shoppingSQLiteHelper.COLUMN_ITEM_NAME, item.getName());
+        inventoryItemValues.put(shoppingSQLiteHelper.COLUMN_ITEM_CATEGORY,item.getCategory());
+
+        database.insert(shoppingSQLiteHelper.INVENTORY_ITEMS_TABLE,null,inventoryItemValues);
+
+        database.setTransactionSuccessful();
+        database.endTransaction();
+        close(database);
+    }
+
+    public void purgeInventory()
+    {
+        SQLiteDatabase database = open();
+        database.beginTransaction();
+
+        //implementation
+        database.delete(shoppingSQLiteHelper.INVENTORY_ITEMS_TABLE, null , null);
+
+        database.setTransactionSuccessful();
+        database.endTransaction();
+        close(database);
+    }
+
 
 }

@@ -24,6 +24,8 @@ import android.widget.Toast;
 
 import com.pear.shopz.R;
 import com.pear.shopz.adapters.ShoppingListAdapter;
+import com.pear.shopz.objects.InventoryItem;
+import com.pear.shopz.objects.InventoryItemController;
 import com.pear.shopz.objects.Item;
 import com.pear.shopz.objects.ShoppingList;
 import com.pear.shopz.objects.ShoppingListController;
@@ -65,7 +67,9 @@ public class MainActivity extends AppCompatActivity implements ShoppingListAdapt
     private final String LISTNAME = "LISTNAME";
     private final String SERVERDATA = "SERVERDATA";
 
-    private ArrayList<Item> serverData = null;
+    //private ArrayList<Item> serverData = null;
+
+    private final String url = "http://ec2-52-39-22-233.us-west-2.compute.amazonaws.com/api/";
 
 
     @Override
@@ -97,21 +101,21 @@ public class MainActivity extends AppCompatActivity implements ShoppingListAdapt
             }
         });
 
-        //test network
+        //check for version update, then update if new version on response
         try {
-            run();
+            versionUpdate();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        //setUpList(null);
+        setUpList(null);
     }
 
     private void run() throws Exception{
-        String url = "http://ec2-52-39-22-233.us-west-2.compute.amazonaws.com/api/";
-        final MediaType JSON
-                = MediaType.parse("application/json; charset=utf-8");
 
-        if (isNetworkAvailable() && serverData == null)
+//        final MediaType JSON
+//                = MediaType.parse("application/json; charset=utf-8");
+
+        if (isNetworkAvailable())
         {
             OkHttpClient client = new OkHttpClient();
             Request request = new Request.Builder()
@@ -122,13 +126,15 @@ public class MainActivity extends AppCompatActivity implements ShoppingListAdapt
                 @Override
                 public void onFailure(Call call, IOException e) {
                     e.printStackTrace();
-                    alertUserAboutFailure();
+                    //alertUserAboutFailure();
+                    Log.e("NETWORK", "network failure");
                 }
 
                 @Override
                 public void onResponse(Call call, Response response) throws IOException {
                     if (!response.isSuccessful()) {
-                        alertUserAboutFailure();
+                        //alertUserAboutFailure();
+                        Log.e("NETWORK", "network failure");
                         throw new IOException("Unexpected code " + response);
                     }
 
@@ -145,46 +151,54 @@ public class MainActivity extends AppCompatActivity implements ShoppingListAdapt
         }
         else
         {
-            Toast.makeText(this, "Network unavailable", Toast.LENGTH_LONG).show();
+            Log.e("NETWORK", "network unavailable");
+            //Toast.makeText(this, "Network unavailable", Toast.LENGTH_LONG).show();
         }
-        setUpList(null);
 
-        //String[] list = shoppingListItemController.getListArray();//{"Milk", "Baby", "Fish"};
+    }
 
-//        if(list.length != 0)
-//        {
-//            JSONObject json = new JSONObject();
-//
-//            json.put("list", new JSONArray(Arrays.asList(list)));
-//
-//            //RequestBody body = RequestBody.create(JSON, String.valueOf(json));
-//            Log.v("JSON", String.valueOf(json));
-//            Request request = new Request.Builder()
-//                    .url(url + "items")
-//                    .build();
-//
-//            client.newCall(request).enqueue(new Callback() {
-//                @Override
-//                public void onFailure(Call call, IOException e) {
-//                    e.printStackTrace();
-//                }
-//
-//                @Override
-//                public void onResponse(Call call, Response response) throws IOException {
-//                    if (!response.isSuccessful())
-//                        throw new IOException("Unexpected code " + response);
-//
-//                    //res[0] = response.body().toString();
-//                    try {
-//                        print(response.body().string());
-//                    } catch (JSONException e) {
-//                        e.printStackTrace();
-//                    }
-//
-//
-//                }
-//            });
-//        }
+    private void versionUpdate()
+    {
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder()
+                .url(url + "version")
+                .build();
+
+        final boolean[] result = {false};
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+                //alertUserAboutFailure();
+                Log.e("NETWORK", "network failure");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (!response.isSuccessful()) {
+                    Log.e("NETWORK", "network failure");
+                    //alertUserAboutFailure();
+                    throw new IOException("Unexpected code " + response);
+                }
+
+                //res[0] = response.body().toString();
+                try {
+                    JSONObject jsonData = new JSONObject(response.body().string());
+                    if (jsonData.getDouble("version") > 1.0)
+                    {
+                        run();
+                    }
+
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+
+            }
+        });
+
     }
 
     private void alertUserAboutFailure() {
@@ -207,22 +221,39 @@ public class MainActivity extends AppCompatActivity implements ShoppingListAdapt
 
     private void process(String data) throws JSONException {
         JSONObject jsonData = new JSONObject(data);
-       // Log.v("NetworkDATA", jsonData.getString("data"));
-        addNetworkData(jsonData);
+        InventoryItemController inventoryItemController = new InventoryItemController(this);
+
+        //purge db before fresh insert
+        inventoryItemController.purgeDB();
+
+        inventoryItemController.addToDB(jsonData);
+
+        //test, log all items
+        ArrayList<InventoryItem> items = inventoryItemController.getInventory();
+        for (InventoryItem item: items) {
+            Log.v("ITEMS", item.getName() + "-" + item.getCategory());
+        }
+
+//        inventoryItemController.purgeDB();
+//
+//        items = inventoryItemController.getInventory();
+//        for (InventoryItem item: items) {
+//            Log.v("STIILITEMS", item.getName() + "-" + item.getCategory());
+//        }
         //shoppingListItemController.addNetworkData(jsonData);
     }
 
-    public void addNetworkData(JSONObject json) throws JSONException {
-        JSONArray listArray = json.getJSONArray("data");
-
-        serverData = new ArrayList<Item>();
-        for(int i=0; i<listArray.length(); i++)
-        {
-            JSONObject json_data = listArray.getJSONObject(i);
-            serverData.add(new Item(json_data.getString("name"), json_data.getString("aisle")));
-        }
-
-    }
+//    public void addToDB(JSONObject json) throws JSONException {
+//        JSONArray listArray = json.getJSONArray("data");
+//
+//        serverData = new ArrayList<Item>();
+//        for(int i=0; i<listArray.length(); i++)
+//        {
+//            JSONObject json_data = listArray.getJSONObject(i);
+//            serverData.add(new Item(json_data.getString("name"), json_data.getString("aisle")));
+//        }
+//
+//    }
 
     public void setUpList(ArrayList<ShoppingList> currLists)
     {
@@ -315,7 +346,7 @@ public class MainActivity extends AppCompatActivity implements ShoppingListAdapt
             Intent intent = new Intent(MainActivity.this, ShopinItemsActivity.class);
             intent.putExtra(LISTID, lists.get(position).getListID());
             intent.putExtra(LISTNAME, lists.get(position).getListName());
-            intent.putParcelableArrayListExtra(SERVERDATA, serverData);
+            //intent.putParcelableArrayListExtra(SERVERDATA, serverData);
             startActivity(intent);
         }
     }
@@ -397,7 +428,7 @@ public class MainActivity extends AppCompatActivity implements ShoppingListAdapt
                     Intent intent = new Intent(MainActivity.this,AddListActivity.class);
                     intent.putExtra(LISTID, lists.get(listAdapter.getSelectedItems().get(0)).getListID());
                     intent.putExtra(LISTNAME, lists.get(listAdapter.getSelectedItems().get(0)).getListName());
-                    intent.putParcelableArrayListExtra(SERVERDATA, serverData);
+                    //intent.putParcelableArrayListExtra(SERVERDATA, serverData);
                     startActivity(intent);
                     finish();
                 default:

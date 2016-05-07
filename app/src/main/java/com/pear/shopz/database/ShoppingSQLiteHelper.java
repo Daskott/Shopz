@@ -46,6 +46,15 @@ public class ShoppingSQLiteHelper extends SQLiteOpenHelper{
                     COLUMN_FOREIGN_KEY_SLIST_ID +" INTEGER, "+
                     "FOREIGN KEY("+ COLUMN_FOREIGN_KEY_SLIST_ID +") REFERENCES  SHOPPING_LISTS(_ID))";
 
+    //init Grocery item table
+    public static final String INVENTORY_ITEMS_TABLE = "INVENTORY_ITEMS";
+
+    private static String CREATE_INVENTORY_ITEMS =
+            "CREATE TABLE "+INVENTORY_ITEMS_TABLE+ "("+
+                    BaseColumns._ID+" INTEGER PRIMARY KEY AUTOINCREMENT, "+
+                    COLUMN_ITEM_NAME+" TEXT,"+
+                    COLUMN_ITEM_CATEGORY+" TEXT)";
+
     public ShoppingSQLiteHelper(Context context){
         super(context, DB_NAME, null, DB_VERSION);
 
@@ -55,6 +64,7 @@ public class ShoppingSQLiteHelper extends SQLiteOpenHelper{
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_SHOPPING_LIST);
         db.execSQL(CREATE_GROCERY_ITEMS);
+        db.execSQL(CREATE_INVENTORY_ITEMS);
     }
 
     @Override
