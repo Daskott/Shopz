@@ -104,7 +104,7 @@ public class ShoppingList {
             }
 
             //formattedList+="\t"+item.getItemName()+"\t"+price+"\n\n";
-            formattedList+=String.format("\t%s(x%s) %s    =   \t%3s\n\n", item.getItemName(), String.valueOf(item.getItemQuantity()), price, totalPrice);
+            formattedList+=String.format("%s(x%s) %s    =   \t%3s\n\n", item.getItemName(), String.valueOf(item.getItemQuantity()), price, totalPrice);
 
         }
 
