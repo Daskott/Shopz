@@ -130,13 +130,21 @@ public class ShoppingListAdapter extends SelectableAdapter<ShoppingListAdapter.V
             else
                 listProgress.setBackgroundDrawable(mContext.getResources().getDrawable(R.drawable.green_rect));
         }
-        //75%
+        //50%
         else if(progressPercentage >= 50.0)
         {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
                 listProgress.setBackground(mContext.getResources().getDrawable(R.drawable.yellow_rect,mContext.getResources().newTheme()));
             else
                 listProgress.setBackgroundDrawable(mContext.getResources().getDrawable(R.drawable.yellow_rect));
+        }
+        //0-49.9%
+        else
+        {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+                listProgress.setBackground(mContext.getResources().getDrawable(R.drawable.red_rect,mContext.getResources().newTheme()));
+            else
+                listProgress.setBackgroundDrawable(mContext.getResources().getDrawable(R.drawable.red_rect));
         }
 
         //init store name
