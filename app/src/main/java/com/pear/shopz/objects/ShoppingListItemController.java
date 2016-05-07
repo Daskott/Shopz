@@ -82,7 +82,11 @@ public class ShoppingListItemController {
 
     public ArrayList<String>  getPossibleItemCategories()
     {
-        ArrayList<String> itemCategories = new ArrayList<String>(Arrays.asList("Other","Meat","Pharmacy","Bakery"));
+        ArrayList<String> itemCategories = new ArrayList<String>(Arrays.asList
+                ("alcohol & cigarette","bakery",
+                        "beverages","car care products","clothes", "coffee/tea","cosmetics", "dairy products"," diet foods", "electrical products", "fish & seafood",
+                        "frozen","grains & pasta", "home & kitchen", "home baking", "house cleaning products", "meat, poultry & sausage", "newspapers",
+                        "office supplies","oils","other","personal hygiene","pet supplies","pharmacy","preserves","produce","ready meals","snacks","spices & sauces"));
 
         return itemCategories;
     }

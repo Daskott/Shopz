@@ -210,7 +210,7 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
                                 1,
                                 add_item_view.getText().toString(),
                                 0,
-                                "0",
+                                "20",
                                 "",
                                 0,
                                 1
@@ -220,6 +220,9 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
                 //clear text and update list view
                 add_item_view.setText("");
                 updateList();
+
+                //refresh viewpager
+                refreshViewFragment();
 
 //                //Snack bar to indicate data saved
 //                final Snackbar snackBar = Snackbar.make(v, "New item added to list", Snackbar.LENGTH_LONG);
