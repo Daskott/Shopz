@@ -101,6 +101,8 @@ public class MainActivity extends AppCompatActivity implements ShoppingListAdapt
             }
         });
 
+
+
         //check for version update, then update if new version on response
         try {
             versionUpdate();
@@ -185,9 +187,14 @@ public class MainActivity extends AppCompatActivity implements ShoppingListAdapt
                 //res[0] = response.body().toString();
                 try {
                     JSONObject jsonData = new JSONObject(response.body().string());
+
+                    //get shared version number replace the 1.0
+
                     if (jsonData.getDouble("version") > 1.0)
                     {
                         run();
+
+                        //save new version number
                     }
 
 
@@ -243,17 +250,6 @@ public class MainActivity extends AppCompatActivity implements ShoppingListAdapt
         //shoppingListItemController.addNetworkData(jsonData);
     }
 
-//    public void addToDB(JSONObject json) throws JSONException {
-//        JSONArray listArray = json.getJSONArray("data");
-//
-//        serverData = new ArrayList<Item>();
-//        for(int i=0; i<listArray.length(); i++)
-//        {
-//            JSONObject json_data = listArray.getJSONObject(i);
-//            serverData.add(new Item(json_data.getString("name"), json_data.getString("aisle")));
-//        }
-//
-//    }
 
     public void setUpList(ArrayList<ShoppingList> currLists)
     {
