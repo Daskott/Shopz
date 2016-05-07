@@ -34,7 +34,7 @@ public class ViewPagerFragment extends Fragment {
     private final String LIST_SIZE = "LIST_SIZE";
 
     private ViewPager viewPager;
-    private View view;
+    private PagerAdapter pageAdapter;
 
 
     @Nullable
@@ -42,29 +42,24 @@ public class ViewPagerFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.pager_fragment,container,false);
-        this.view = view;
 
         //get arguments
         ArrayList<Integer> itemIDs = getArguments().getIntegerArrayList(ITEM_IDS);
         int listID = getArguments().getInt(LISTID);
+
+        viewPager = (ViewPager)view.getRootView().findViewById(R.id.view_pager);
 
         setUpViewPager(itemIDs, listID);
 
         return view;
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setRetainInstance(true);
-    }
 
     public void setUpViewPager(ArrayList<Integer> itemIDs, int listID)
     {
         ArrayList<PagerContentFragment> pagerContentFragments = createItemFragments(itemIDs,listID);
-
-        viewPager = (ViewPager)view.getRootView().findViewById(R.id.view_pager);
-        viewPager.setAdapter(new PagerAdapter(getFragmentManager(),itemIDs,pagerContentFragments, listID));
+        pageAdapter = new PagerAdapter(getFragmentManager(),pagerContentFragments, listID);
+        viewPager.setAdapter(pageAdapter);
         viewPager.setOffscreenPageLimit(6);
 
     }
@@ -98,6 +93,10 @@ public class ViewPagerFragment extends Fragment {
         return viewPager;
     }
 
+    public PagerAdapter getPageAdapter() {
+        return pageAdapter;
+    }
+
     public void setCurrentPage(int position)
     {
         if(position != viewPager.getCurrentItem())
@@ -115,22 +114,27 @@ public class ViewPagerFragment extends Fragment {
         return result;
     }
 
+    public void removeSelectedPosition(List<Integer> selection, ArrayList<PagerContentFragment> pagerContentFragments)
+    {
+        //remove selected indexes
+        for(Integer index: selection)
+            pagerContentFragments.remove(index);
+    }
+
     public static class PagerAdapter extends FragmentStatePagerAdapter {
 
         ArrayList<PagerContentFragment> pagerContentFragments;
-        ArrayList<Integer> itemIDs;
         int listID;
 
-        public PagerAdapter(FragmentManager fm, ArrayList<Integer> itemIDs, ArrayList<PagerContentFragment> pagerContentFragments,int listID) {
+        public PagerAdapter(FragmentManager fm, ArrayList<PagerContentFragment> pagerContentFragments,int listID) {
             super(fm);
-            this.itemIDs = itemIDs;
             this.pagerContentFragments = pagerContentFragments;
             this.listID = listID;
         }
 
         @Override
         public int getCount() {
-            return itemIDs.size();
+            return pagerContentFragments.size();
         }
 
         @Override
@@ -142,7 +146,7 @@ public class ViewPagerFragment extends Fragment {
         public int getItemPosition(Object object) {
 
             //if item found
-            if (pagerContentFragments.contains((PagerContentFragment)object)) {
+            if (pagerContentFragments.contains(object)) {
                 ((PagerContentFragment) object).updateView();
                 return super.getItemPosition(object);
             }
@@ -151,14 +155,7 @@ public class ViewPagerFragment extends Fragment {
         }
 
         //if only one page, fill screen, else show part of next page
-        @Override public float getPageWidth(int position) { return itemIDs.size() <=1? 1.0f:(0.85f); }
+        @Override public float getPageWidth(int position) { return pagerContentFragments.size() <=1? 1.0f:(0.85f); }
 
-        public void removePage(int position)
-        {
-            pagerContentFragments.remove(position);
-            notifyDataSetChanged();
-        }
     }
-
-
 }

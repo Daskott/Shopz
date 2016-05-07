@@ -80,7 +80,7 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
     FloatingActionButton playFab,stopFab,saveItemFab;
 
     FragmentManager fragmentManager;
-    ViewPagerFragment viewPagerFragment;
+    ViewPagerFragment currViewPagerFragment;
 
     private ShoppingList currShoppingList;
 
@@ -136,7 +136,7 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
         shopinListView = (RecyclerView) findViewById(R.id.shopin_list_view);
         setUpLists(null);
 
-        viewPagerFragment = new ViewPagerFragment();
+        currViewPagerFragment = new ViewPagerFragment();
         addViewPagerFragment();
 
 
@@ -234,10 +234,10 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
 
                 //addViewPagerFragment();
                 //refresh viewpager for shopping mode - ViewPagerFragment
-                viewPagerFragment.setUpViewPager(getItemIDs(shoppingListItemController.getShoppingListItems()), listId);
+                //currViewPagerFragment.setUpViewPager(getItemIDs(shoppingListItemController.getShoppingListItems()), listId);
 
                 //if list is not empty enable shopping mode
-                if(!(lists.size() <= 0))
+                if(lists.size() > 0)
                 {
                     startShopping(view);
 
@@ -309,13 +309,36 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
             Bundle bundle = new Bundle();
             bundle.putIntegerArrayList(ITEM_IDS,getItemIDs(lists));
             bundle.putInt(LISTID,listId);
-            viewPagerFragment.setArguments(bundle);
+            currViewPagerFragment.setArguments(bundle);
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.add(R.id.fragment_placeholder, viewPagerFragment, PAGER_FRAGMENT);
+            fragmentTransaction.add(R.id.fragment_placeholder, currViewPagerFragment, PAGER_FRAGMENT);
             fragmentTransaction.commit();
         }
 
     }
+
+    public  void refreshViewFragment()
+    {
+        Bundle bundle = new Bundle();
+        bundle.putIntegerArrayList(ITEM_IDS,getItemIDs(lists));
+        bundle.putInt(LISTID,listId);
+
+        //destroy old viewpager fragment
+        currViewPagerFragment.onDestroy();
+        currViewPagerFragment = null;
+
+        //replace it
+        ViewPagerFragment newViewPagerFragment = new ViewPagerFragment();
+        newViewPagerFragment.setArguments(bundle);
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.fragment_placeholder, newViewPagerFragment);
+        fragmentTransaction.commit();
+
+        //re-init
+        currViewPagerFragment = newViewPagerFragment;
+    }
+
 
 
     public void startShopping(View notifyView)
@@ -323,6 +346,8 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
         isShopping = true;
         viewFragmentLayout.getLayoutParams().height = (int) getResources().getDimension(R.dimen.view_pager_height);
         viewFragmentLayout.setVisibility(View.VISIBLE);
+        //currViewPagerFragment.setUpViewPager(getItemIDs(shoppingListItemController.getShoppingListItems()), listId);
+
         //toggle fab icons
         playFab.setVisibility(View.GONE);
         stopFab.setVisibility(View.VISIBLE);
@@ -504,11 +529,11 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
             //update slide fragment when item clicked
             if(isShopping)
             {
-                if(viewPagerFragment == null)
-                    viewPagerFragment = (ViewPagerFragment) fragmentManager.findFragmentByTag(PAGER_FRAGMENT);
+                if(currViewPagerFragment == null)
+                    currViewPagerFragment = (ViewPagerFragment) fragmentManager.findFragmentByTag(PAGER_FRAGMENT);
 
-                viewPagerFragment.getViewPager().getAdapter().notifyDataSetChanged();
-                viewPagerFragment.setCurrentPage(position);
+                currViewPagerFragment.getViewPager().getAdapter().notifyDataSetChanged();
+                currViewPagerFragment.setCurrentPage(position);
             }
 
             //update total price unchecked view
@@ -561,6 +586,9 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
         super.onResume();
         updateList();
         updateTotalPriceUncheckedView();
+
+        //refresh viewpager
+        refreshViewFragment();
     }
 
     private ArrayList<ShoppingListItem> getSelectedItems()
@@ -605,6 +633,7 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
 
         //update total price unchecked view
         updateTotalPriceUncheckedView();
+
     }
 
     public void clearItemSelection()
@@ -644,10 +673,11 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.delete_menu_item:
-                    //delete from db & list
+                    //delete from db, list & refresh viewpager
                     shoppingListItemController.deleteShoppingListItems(getSelectedItems());
                     updateList();
                     mode.finish();
+                    refreshViewFragment();
                     return true;
                 case R.id.edit_menu_item:
                     Intent intent = new Intent(ShopinItemsActivity.this,EditItemActivity.class);

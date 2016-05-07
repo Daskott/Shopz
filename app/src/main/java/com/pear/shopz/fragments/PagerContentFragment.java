@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.pear.shopz.R;
@@ -29,7 +28,6 @@ public class PagerContentFragment extends Fragment{
     private final String LISTID = "LISTID";
     private final String INDEX = "INDEX";
     private final String LIST_SIZE = "LIST_SIZE";
-//    public static final String ITEM_NAME = "ITEM_NAME";
 
     private ShoppingListItem item;
     private CheckBox itemCheckBox;
@@ -112,12 +110,25 @@ public class PagerContentFragment extends Fragment{
         if(item.getItemBought() == 0)
         {
             itemCheckBox.setChecked(true);
+            itemCheckBox.setPaintFlags(itemCheckBox.getPaintFlags()| Paint.STRIKE_THRU_TEXT_FLAG);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                itemCheckBox.setTextColor(getActivity().getResources().getColor(R.color.dark_grey,null));
+            else
+                itemCheckBox.setTextColor(getActivity().getResources().getColor(R.color.dark_grey));
+
             item.setItemBought(1);
             shoppingListItemController.updateShoppingListItem(item);
         }
         else
         {
             itemCheckBox.setChecked(false);
+            itemCheckBox.setPaintFlags(itemCheckBox.getPaintFlags() & (~ Paint.STRIKE_THRU_TEXT_FLAG));
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                itemCheckBox.setTextColor(getActivity().getResources().getColor(R.color.black,null));
+            else
+                itemCheckBox.setTextColor(getActivity().getResources().getColor(R.color.black));
+
+
             item.setItemBought(0);
             shoppingListItemController.updateShoppingListItem(item);
         }

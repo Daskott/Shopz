@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.pear.shopz.R;
 import com.pear.shopz.objects.Item;
+import com.pear.shopz.objects.Settings;
 import com.pear.shopz.objects.ShoppingListItem;
 import com.pear.shopz.objects.ShoppingListItemController;
 
@@ -77,7 +78,7 @@ public class EditItemActivity extends AppCompatActivity {
         ShoppingListItemController itemController = new ShoppingListItemController(this,listId);
         final ShoppingListItem item = itemController.getShoppingListItem(itemId);
 
-        String[] itemCategories = itemController.getPossibleItemCategories().toArray(new String[0]); //spinner array
+        ArrayList<String>itemCategories = itemController.getPossibleItemCategories(); //spinner array
         saveItemFab = (FloatingActionButton) findViewById(R.id.save_item_fab);
         nameTextView = (AutoCompleteTextView) findViewById(R.id.item_name);
         quantityTextView = (AutoCompleteTextView) findViewById(R.id.quantity_view_edit);
@@ -99,28 +100,7 @@ public class EditItemActivity extends AppCompatActivity {
 
 
         //category adapter
-        final int padding = (int)getResources().getDimension(R.dimen.view_pager_close_height);
-        ArrayAdapter<CharSequence> categoryAdapter = new ArrayAdapter<CharSequence>(EditItemActivity.this, android.R.layout.simple_spinner_item, itemCategories){
-            @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
-                View view =super.getView(position, convertView, parent);
-                TextView textView=(TextView) view.findViewById(android.R.id.text1);
-
-                //text view in category dropdown menu
-                textView.setTextSize(20);
-
-                //set selected item text color
-                if(item.getItemCategory().trim().equals("") && position == 0)
-                    textView.setTextColor(getResources().getColor(R.color.white));
-                else if(!item.getItemCategory().trim().equals("") && position == Integer.parseInt(item.getItemCategory()))
-                    textView.setTextColor(getResources().getColor(R.color.white));
-
-                textView.setPadding(4,4,4,4);
-
-                return view;
-            }
-        };
-
+        ArrayAdapter<String> categoryAdapter = createSpinnerAdapter(itemCategories);
         categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
         categorySpinner.setAdapter(categoryAdapter);
         categorySpinner.setSelection(Integer.parseInt(item.getItemCategory().trim()));
@@ -174,6 +154,44 @@ public class EditItemActivity extends AppCompatActivity {
         return itemNames;
     }
 
+    public  ArrayAdapter<String> createSpinnerAdapter(final ArrayList<String> list)
+    {
+        return new ArrayAdapter<String>(EditItemActivity.this,android.R.layout.simple_spinner_item, list)
+        {
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View view =super.getView(position, convertView, parent);
+                TextView textView=(TextView) view.findViewById(android.R.id.text1);
+
+                textView.setTextSize(20);
+
+                //set color of selected list item
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                    textView.setTextColor(getResources().getColor(R.color.white,null));
+                else
+                    textView.setTextColor(getResources().getColor(R.color.white));
+
+                textView.setPadding(4,4,4,4);
+
+                return view;
+            }
+
+            @Override
+            public View getDropDownView(int position, View convertView, ViewGroup parent) {
+                View view = super.getDropDownView(position, convertView, parent);
+
+                TextView textView=(TextView) view.findViewById(android.R.id.text1);
+
+                //set color of list items
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                    textView.setTextColor(getResources().getColor(R.color.grey_icon,null));
+                else
+                    textView.setTextColor(getResources().getColor(R.color.grey_icon));
+
+                return view;
+            }
+        };
+    }
 
     @Override
     public void onBackPressed() {

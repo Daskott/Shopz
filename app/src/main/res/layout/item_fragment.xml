@@ -36,7 +36,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:text="Yams"
-                    android:inputType="textCapSentences"
+                    android:inputType="none"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:id="@+id/grocery_name"
                     android:layout_marginLeft="20dp"
