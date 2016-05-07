@@ -37,7 +37,7 @@ public class AddListActivity extends AppCompatActivity {
     private final String LISTID = "LISTID";
     private final String LISTNAME = "LISTNAME";
 
-    private ArrayList<Item> serverData = null;
+    //private ArrayList<Item> serverData = null;
 
     private final String SERVERDATA = "SERVERDATA";
 
@@ -52,7 +52,7 @@ public class AddListActivity extends AppCompatActivity {
         if(extras!=null) {
             listId = extras.getInt(LISTID);
             listName = extras.getString(LISTNAME);
-            serverData = extras.getParcelableArrayList(SERVERDATA);
+            //serverData = extras.getParcelableArrayList(SERVERDATA);
         }
 
         init();
@@ -134,7 +134,7 @@ public class AddListActivity extends AppCompatActivity {
                         intent = new Intent(AddListActivity.this, ShopinItemsActivity.class);
                         intent.putExtra(LISTNAME,nameTextView.getText().toString());
                         intent.putExtra(LISTID, list.getListID());
-                        intent.putParcelableArrayListExtra(SERVERDATA, serverData);
+                        //intent.putParcelableArrayListExtra(SERVERDATA, serverData);
                     }
                     //update existing shopping list
                     else

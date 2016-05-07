@@ -16,6 +16,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.pear.shopz.R;
+import com.pear.shopz.objects.InventoryItem;
+import com.pear.shopz.objects.InventoryItemController;
 import com.pear.shopz.objects.Item;
 import com.pear.shopz.objects.Settings;
 import com.pear.shopz.objects.ShoppingListItem;
@@ -39,7 +41,9 @@ public class EditItemActivity extends AppCompatActivity {
     private final String ITEM_ID = "ITEM_ID";
     private final String ITEM_NAME = "ITEM_NAME";
 
-    private ArrayList<Item> serverData = null;
+    //private ArrayList<Item> serverData = null;
+    private ArrayList<InventoryItem> inventoryItems = null;
+    private InventoryItemController inventoryItemController;
 
     private final String SERVERDATA = "SERVERDATA";
 
@@ -66,7 +70,7 @@ public class EditItemActivity extends AppCompatActivity {
             listName = extras.getString(LISTNAME);
             itemName = extras.getString(ITEM_NAME,"");
             itemId = extras.getInt(ITEM_ID, -1);
-            serverData = extras.getParcelableArrayList(SERVERDATA);
+            //serverData = extras.getParcelableArrayList(SERVERDATA);
         }
 
 
@@ -75,6 +79,9 @@ public class EditItemActivity extends AppCompatActivity {
 
     private void init()
     {
+        inventoryItemController = new InventoryItemController(EditItemActivity.this);
+        inventoryItems = inventoryItemController.getInventory();
+
         ShoppingListItemController itemController = new ShoppingListItemController(this,listId);
         final ShoppingListItem item = itemController.getShoppingListItem(itemId);
 
@@ -142,13 +149,13 @@ public class EditItemActivity extends AppCompatActivity {
 
     private String[] getArray() {
 
-        if (serverData == null || serverData.size() == 0) return new String[0];
+        if (inventoryItems == null || inventoryItems.size() == 0) return new String[0];
 
-        String[] itemNames = new String[serverData.size()];
+        String[] itemNames = new String[inventoryItems.size()];
 
-        for (int i = 0; i < serverData.size(); i++)
+        for (int i = 0; i < inventoryItems.size(); i++)
         {
-            itemNames[i] = serverData.get(i).getName();
+            itemNames[i] = inventoryItems.get(i).getName();
         }
 
         return itemNames;

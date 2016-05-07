@@ -32,6 +32,8 @@ import com.pear.shopz.R;
 import com.pear.shopz.adapters.ShoppingItemAdapter;
 import com.pear.shopz.fragments.PagerContentFragment;
 import com.pear.shopz.fragments.ViewPagerFragment;
+import com.pear.shopz.objects.InventoryItem;
+import com.pear.shopz.objects.InventoryItemController;
 import com.pear.shopz.objects.Item;
 import com.pear.shopz.objects.ShoppingList;
 import com.pear.shopz.objects.ShoppingListController;
@@ -51,7 +53,9 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
     private ActionMode actionMode;
     private ShoppingListItemController shoppingListItemController;
 
-    private ArrayList<Item> serverData = null;
+   // private ArrayList<Item> serverData = null;
+    private ArrayList<InventoryItem> inventoryItems = null;
+    private InventoryItemController inventoryItemController;
 
     private  int listId = -1;
     private String listName = "";
@@ -100,8 +104,11 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
         {
             listId = extras.getInt(LISTID);
             listName = extras.getString(LISTNAME);
-            serverData = extras.getParcelableArrayList(SERVERDATA);
+            //serverData = extras.getParcelableArrayList(SERVERDATA);
         }
+
+        inventoryItemController = new InventoryItemController(ShopinItemsActivity.this);
+        inventoryItems = inventoryItemController.getInventory();
 
         fragmentManager = getFragmentManager();
 
@@ -281,13 +288,13 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
 
     private String[] getArray() {
 
-        if (serverData == null || serverData.size() == 0) return new String[0];
+        if (inventoryItems == null || inventoryItems.size() == 0) return new String[0];
 
-        String[] itemNames = new String[serverData.size()];
+        String[] itemNames = new String[inventoryItems.size()];
 
-        for (int i = 0; i < serverData.size(); i++)
+        for (int i = 0; i < inventoryItems.size(); i++)
         {
-            itemNames[i] = serverData.get(i).getName();
+            itemNames[i] = inventoryItems.get(i).getName();
         }
 
         return itemNames;
@@ -684,7 +691,7 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
                     intent.putExtra(LISTID, lists.get(listAdapter.getSelectedItems().get(0)).getListID());
                     intent.putExtra(ITEM_ID, lists.get(listAdapter.getSelectedItems().get(0)).getItemID());
                     intent.putExtra(ITEM_NAME, lists.get(listAdapter.getSelectedItems().get(0)).getItemName());
-                    intent.putParcelableArrayListExtra(SERVERDATA, serverData);
+                    //intent.putParcelableArrayListExtra(SERVERDATA, serverData);
                     startActivity(intent);
                 default:
                     return false;
