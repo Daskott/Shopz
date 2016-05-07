@@ -27,6 +27,7 @@ import com.pear.shopz.adapters.ShoppingListAdapter;
 import com.pear.shopz.objects.InventoryItem;
 import com.pear.shopz.objects.InventoryItemController;
 import com.pear.shopz.objects.Item;
+import com.pear.shopz.objects.Settings;
 import com.pear.shopz.objects.ShoppingList;
 import com.pear.shopz.objects.ShoppingListController;
 import com.pear.shopz.objects.ShoppingListItem;
@@ -189,12 +190,13 @@ public class MainActivity extends AppCompatActivity implements ShoppingListAdapt
                     JSONObject jsonData = new JSONObject(response.body().string());
 
                     //get shared version number replace the 1.0
-
+                    //Settings.getSupportedStoreVersionNumber(MainActivity.this);
                     if (jsonData.getDouble("version") > 1.0)
                     {
                         run();
 
                         //save new version number
+                        //Settings.setSupportedStoreVersionNumber(MainActivity.this, newVersionNumber);
                     }
 
 

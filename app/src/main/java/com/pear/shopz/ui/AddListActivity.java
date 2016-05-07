@@ -10,12 +10,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.pear.shopz.R;
-import com.pear.shopz.objects.Item;
 import com.pear.shopz.objects.Settings;
 import com.pear.shopz.objects.ShoppingList;
 import com.pear.shopz.objects.ShoppingListController;
@@ -100,7 +98,7 @@ public class AddListActivity extends AppCompatActivity {
 
                             //update & save list
                             currStoreOptions.add(capitalize(storeNameInput.getText().toString()));
-                            Settings.saveSettings(AddListActivity.this,currStoreOptions);
+                            Settings.saveArrayListToSharedPreferenceFile(AddListActivity.this,currStoreOptions);
 
                             //create new spinner adapter & update ui
                             ArrayAdapter<String> storeAdapter = CreateSpinnerAdapter(currStoreOptions);
