@@ -189,14 +189,12 @@ public class MainActivity extends AppCompatActivity implements ShoppingListAdapt
                 try {
                     JSONObject jsonData = new JSONObject(response.body().string());
 
-                    //get shared version number replace the 1.0
-                    //Settings.getSupportedStoreVersionNumber(MainActivity.this);
-                    if (jsonData.getDouble("version") > 1.0)
+                    if (jsonData.getDouble("version") > Settings.getSupportedStoreVersionNumber(MainActivity.this))
                     {
                         run();
 
                         //save new version number
-                        //Settings.setSupportedStoreVersionNumber(MainActivity.this, newVersionNumber);
+                        Settings.setSupportedStoreVersionNumber(MainActivity.this, jsonData.getDouble("version"));
                     }
 
 

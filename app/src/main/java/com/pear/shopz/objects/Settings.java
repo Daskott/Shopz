@@ -43,11 +43,11 @@ public class Settings {
         return new ArrayList<>(Arrays.asList("superstore(ca)"));
     }
 
-    public static int getSupportedStoreVersionNumber(Context context)
+    public static double getSupportedStoreVersionNumber(Context context)
     {
         // Restore preferences
         SharedPreferences settings = context.getSharedPreferences(PREFS_NAME, 0);
-        int versionNumber = settings.getInt(SUPPORTED_STORES_VERSION_NUMBER,0);
+        double versionNumber = (double) settings.getFloat(SUPPORTED_STORES_VERSION_NUMBER,0);
 
         //init version number in pref. file
         if(versionNumber == 0)
@@ -56,11 +56,11 @@ public class Settings {
         return versionNumber;
     }
 
-    public static void setSupportedStoreVersionNumber(Context context, int versionNumber)
+    public static void setSupportedStoreVersionNumber(Context context, double versionNumber)
     {
         SharedPreferences settings = context.getSharedPreferences(PREFS_NAME, 0);
         SharedPreferences.Editor editor = settings.edit();
-        editor.putInt(SUPPORTED_STORES_VERSION_NUMBER,versionNumber);
+        editor.putFloat(SUPPORTED_STORES_VERSION_NUMBER, (float) versionNumber);
 
         // Commit the edits!
         editor.commit();
