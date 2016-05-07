@@ -4,6 +4,8 @@ import android.content.Context;
 
 import com.pear.shopz.R;
 
+import java.text.DecimalFormat;
+
 /**
  * Created by edmondcotterell on 2016-04-21.
  */
@@ -77,5 +79,49 @@ public class ShoppingList {
 
     public void setStore(String store) {
         this.store = store;
+    }
+
+    public String getFormattedShoppingListString(Context context)
+    {
+        ShoppingListItemController itemController =  new ShoppingListItemController(context,listID);
+        String formattedList = "";
+        String result ="";
+        double uncheckedPrice = 0.00;
+
+        formattedList+="Shopping List\n";
+        formattedList+="_______________\n\n";
+
+        for(ShoppingListItem item: itemController.getShoppingListItems())
+        {
+            String price = "";
+            String totalPrice = "- -";
+
+            if(item.getItemPrice() > 0)
+            {
+                price = context.getResources().getString(R.string.dollar_sign) + String.valueOf(item.getItemPrice());
+                totalPrice = context.getResources().getString(R.string.dollar_sign) + roundToDecimals(item.getItemPrice()*item.getItemQuantity());
+
+            }
+
+            //formattedList+="\t"+item.getItemName()+"\t"+price+"\n\n";
+            formattedList+=String.format("\t%s(x%s) %s    =   \t%3s\n\n", item.getItemName(), String.valueOf(item.getItemQuantity()), price, totalPrice);
+
+        }
+
+        formattedList+="\n*** SHOPEZZY APP ***";
+
+        return formattedList;
+    }
+
+    public int getListSize(Context context)
+    {
+        return new ShoppingListItemController(context,listID).getShoppingListItems().size();
+    }
+
+    public String roundToDecimals(double number)
+    {
+        DecimalFormat df = new DecimalFormat("#.00");
+        return df.format(number);
+
     }
 }

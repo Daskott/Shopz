@@ -7,6 +7,7 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -19,6 +20,7 @@ import android.view.ActionMode;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 
@@ -367,11 +369,17 @@ public class MainActivity extends AppCompatActivity implements ShoppingListAdapt
             actionMode.finish();
         } else {
 
-            //disable edit if multiple items selected
+            //disable edit & share icon if multiple items selected
             if(count > 1)
+            {
                 findViewById(R.id.edit_menu_item).setVisibility(View.GONE);
+                findViewById(R.id.share_menu_item).setVisibility(View.GONE);
+            }
             else
+            {
                 findViewById(R.id.edit_menu_item).setVisibility(View.VISIBLE);
+                findViewById(R.id.share_menu_item).setVisibility(View.VISIBLE);
+            }
 
             actionMode.setTitle(String.valueOf(count));
             actionMode.invalidate();
@@ -427,8 +435,33 @@ public class MainActivity extends AppCompatActivity implements ShoppingListAdapt
                     //intent.putParcelableArrayListExtra(SERVERDATA, serverData);
                     startActivity(intent);
                     finish();
+
+                case R.id.share_menu_item:
+
+                    //if list is not empty share list
+                    if(lists.get(listAdapter.getSelectedItems().get(0)).getListSize(MainActivity.this) > 0)
+                    {
+                        Intent sendIntent = new Intent();
+                        sendIntent.setAction(Intent.ACTION_SEND);
+                        sendIntent.putExtra(Intent.EXTRA_TEXT, lists.get(listAdapter.getSelectedItems().get(0)).getFormattedShoppingListString(MainActivity.this));
+                        sendIntent.setType("text/plain");
+                        startActivity(Intent.createChooser(sendIntent, "Share Grocery List..."));
+                    }else
+                    {
+                        //Snack bar to indicate data saved
+                        RelativeLayout rootView = (RelativeLayout) findViewById(R.id.main_layout);
+                        final Snackbar snackBar = Snackbar.make(rootView, "Your List is Empty :)", Snackbar.LENGTH_LONG);
+                            snackBar.setAction("Dismiss", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                            snackBar.dismiss();
+                            }
+                        });
+                        snackBar.show();
+                    }
                 default:
                     return false;
+
             }
         }
 

@@ -663,7 +663,7 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
 
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-            mode.getMenuInflater().inflate (R.menu.menu_shopping_lists, menu);
+            mode.getMenuInflater().inflate (R.menu.menu_shopping_items, menu);
 
             //hold current color of status bar(post-lollipop)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
