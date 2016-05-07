@@ -98,6 +98,11 @@ public class PagerContentFragment extends Fragment{
             @Override
             public void onClick(View v) {
                 toggleItemBought(item);
+
+                //if listener null re-init
+                if(mListener == null)
+                    mListener = (OnCompleteListener)getActivity();
+
                 mListener.onComplete();
             }
         });
