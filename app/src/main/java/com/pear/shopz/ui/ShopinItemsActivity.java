@@ -232,7 +232,7 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
                     //logic is currently like this because of support for one store
                     if(currShoppingList.getStore().equals("1"))
                     {
-                        if(inventoryItem.getCategory().matches("[0-9]+"))
+                        if(inventoryItem.getCategory().matches(".*[0-9]+.*"))
                         {
                             category = "Aisle: " + inventoryItem.getCategory();
                         }
@@ -242,7 +242,7 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
                     }
                     else
                     {
-                        if(inventoryItem.getCategory().matches("[0-9]+"))
+                        if(inventoryItem.getCategory().matches(".*[0-9]+.*"))
                         {
                             category = "other";
                         }
