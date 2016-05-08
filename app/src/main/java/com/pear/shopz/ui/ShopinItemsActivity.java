@@ -213,18 +213,29 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
                 {
                     itemName = inventoryItem.getName();
 
-                    //"0" is mapped as the index for General store
-                    if(currShoppingList.getStore().equals("0") && inventoryItem.getCategory().matches("[0-9]+"))
+                    //"1" is mapped as the index for superstore [gotten based on list item index]
+                    //logic is currently like this because of support for one store
+                    if(currShoppingList.getStore().equals("1"))
                     {
-                        category = "other";
-                    }
-                    else if(inventoryItem.getCategory().matches("[0-9]+"))
-                    {
-                        category = "Aisle: " + inventoryItem.getCategory();
+                        if(inventoryItem.getCategory().matches("[0-9]+"))
+                        {
+                            category = "Aisle: " + inventoryItem.getCategory();
+                        }
+                        else {
+                            category = inventoryItem.getCategory();
+                        }
                     }
                     else
                     {
-                        category = inventoryItem.getCategory();
+                        if(inventoryItem.getCategory().matches("[0-9]+"))
+                        {
+                            category = "other";
+                        }
+                        else
+                        {
+                            category = inventoryItem.getCategory();
+                        }
+
                     }
                 }
                 //save new item to db
