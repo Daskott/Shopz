@@ -110,7 +110,38 @@ public class EditItemActivity extends AppCompatActivity {
         ArrayAdapter<String> categoryAdapter = createSpinnerAdapter(itemCategories);
         categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
         categorySpinner.setAdapter(categoryAdapter);
-        categorySpinner.setSelection(Integer.parseInt(item.getItemCategory().trim()));
+
+        //get category index from item
+        String itemCategory = item.getItemCategory().trim().toLowerCase();
+        String currCategory = "";
+        int categoryIndex = -1;
+        for(int i = 0; i < itemCategories.size() && categoryIndex == -1; i++)
+        {
+            currCategory = itemCategories.get(i);
+
+            if(currCategory.trim().toLowerCase().equals(itemCategory))
+            {
+                categoryIndex = i;
+                break;
+            }
+        }
+
+        //set spinner/dropdown for item category
+        if(categoryIndex != -1)
+            categorySpinner.setSelection(categoryIndex);
+        else
+        {
+            //the category is not on the list, add it temporarily & re-init spinner
+            itemCategories.add(item.getItemCategory().trim().toLowerCase());
+            categoryAdapter = createSpinnerAdapter(itemCategories);
+            categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
+            categorySpinner.setAdapter(categoryAdapter);
+            categorySpinner.setSelection(itemCategories.size()-1);
+        }
+
+
+
+
 
         saveItemFab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -122,7 +153,7 @@ public class EditItemActivity extends AppCompatActivity {
                     //update item & save
                     item.setItemName(nameTextView.getText().toString());
                     item.setItemPrice(Double.parseDouble(priceTextView.getText().toString()));
-                    item.setItemCategory(String.valueOf(categorySpinner.getSelectedItemPosition()));
+                    item.setItemCategory(String.valueOf(categorySpinner.getSelectedItem().toString()));
                     item.setItemQuantity(Integer.parseInt(quantityTextView.getText().toString()));
 
                     shoppingListController.updateShoppingListItem((item));

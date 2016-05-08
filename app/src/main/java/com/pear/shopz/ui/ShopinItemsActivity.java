@@ -210,7 +210,7 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
                                 1,
                                 add_item_view.getText().toString(),
                                 0,
-                                "20",
+                                "other",
                                 "",
                                 0,
                                 1

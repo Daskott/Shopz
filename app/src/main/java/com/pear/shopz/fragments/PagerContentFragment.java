@@ -66,14 +66,14 @@ public class PagerContentFragment extends Fragment{
         topPanelLayout = (LinearLayout)view.findViewById(R.id.topPanelLayout);
 
         itemCheckBox.setText(capitalize(item.getItemName()));
-        itemCategoryTextView.setText(capitalize(shoppingListItemController.getPossibleItemCategories().get(Integer.parseInt(item.getItemCategory()))));
+        itemCategoryTextView.setText(capitalize(item.getItemCategory()));
         itemAisle.setText(item.getItemAisle().trim());
         String dollarSign = getResources().getString(R.string.dollar_sign);
         String quantity = String.valueOf(item.getItemQuantity());
         String price = dollarSign+String.valueOf(roundToDecimals(item.getItemPrice()));
 
-        //set top panel layout to white, if no category was picked [20 - index of "Other"]
-        if(Integer.parseInt(item.getItemCategory()) == 20) {
+        //set top panel layout to white, if no category was picked ["Other"]
+        if(item.getItemCategory().trim().toLowerCase().equals("other")) {
             topPanelLayout.setBackgroundColor(getResources().getColor(R.color.white));
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
                 itemCategoryTextView.setTextColor(getResources().getColor(R.color.dark_grey,getResources().newTheme()));
