@@ -203,14 +203,38 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
             @Override
             public void onClick(View v) {
 
+                String itemName = add_item_view.getText().toString();
+                String category = "Other";
+
+                //if not in superstore and category is number, save as other
+                InventoryItem inventoryItem = inventoryItemController.getByItemName(itemName);
+
+                if (inventoryItem != null)
+                {
+                    itemName = inventoryItem.getName();
+
+                    //"0" is mapped as the index for General store
+                    if(currShoppingList.getStore().equals("0") && inventoryItem.getCategory().matches("[0-9]+"))
+                    {
+                        category = "other";
+                    }
+                    else if(inventoryItem.getCategory().matches("[0-9]+"))
+                    {
+                        category = "Aisle: " + inventoryItem.getCategory();
+                    }
+                    else
+                    {
+                        category = inventoryItem.getCategory();
+                    }
+                }
                 //save new item to db
                 shoppingListItemController.addShoppingListItem
                         (new ShoppingListItem(
                                 listId,
                                 1,
-                                add_item_view.getText().toString(),
+                                itemName,
                                 0,
-                                "other",
+                                category,
                                 "",
                                 0,
                                 1

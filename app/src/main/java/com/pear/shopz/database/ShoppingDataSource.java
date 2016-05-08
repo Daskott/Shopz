@@ -389,7 +389,7 @@ public class ShoppingDataSource {
         SQLiteDatabase database = open();
         Cursor cursor = database.rawQuery(
                 "SELECT * FROM " + shoppingSQLiteHelper.INVENTORY_ITEMS_TABLE +
-                        " WHERE " + shoppingSQLiteHelper.COLUMN_ITEM_NAME + " = " + itemName, null);
+                        " WHERE " + shoppingSQLiteHelper.COLUMN_ITEM_NAME + " = '" + itemName + "'", null);
 
         if(cursor.moveToFirst())
         {
