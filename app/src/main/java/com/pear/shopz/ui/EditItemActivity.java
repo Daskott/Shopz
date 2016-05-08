@@ -18,6 +18,7 @@ import com.pear.shopz.objects.InventoryItem;
 import com.pear.shopz.objects.InventoryItemController;
 import com.pear.shopz.objects.ShoppingListItem;
 import com.pear.shopz.objects.ShoppingListItemController;
+import com.pear.shopz.objects.Util;
 
 import java.util.ArrayList;
 
@@ -89,7 +90,7 @@ public class EditItemActivity extends AppCompatActivity {
         categorySpinner = (Spinner) findViewById(R.id.category_spinner);
 
 
-        String[] serverItems = getArray();
+        String[] serverItems = Util.getAdapterArray(inventoryItems);
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,serverItems);
         nameTextView.setAdapter(adapter);
@@ -172,20 +173,6 @@ public class EditItemActivity extends AppCompatActivity {
 
             }
         });
-    }
-
-    private String[] getArray() {
-
-        if (inventoryItems == null || inventoryItems.size() == 0) return new String[0];
-
-        String[] itemNames = new String[inventoryItems.size()];
-
-        for (int i = 0; i < inventoryItems.size(); i++)
-        {
-            itemNames[i] = inventoryItems.get(i).getName();
-        }
-
-        return itemNames;
     }
 
     public  ArrayAdapter<String> createSpinnerAdapter(final ArrayList<String> list)

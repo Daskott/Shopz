@@ -152,7 +152,7 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
         //Add item text box
         final AutoCompleteTextView add_item_view = (AutoCompleteTextView) findViewById(R.id.add_item_edit_view);
         final CardView addItemCard = (CardView)findViewById(R.id.add_item_card);
-        String[] serverItems = getArray();
+        String[] serverItems = Util.getAdapterArray(inventoryItems);
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,serverItems);
         add_item_view.setAdapter(adapter);
@@ -308,20 +308,6 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
             }
         });
 
-    }
-
-    private String[] getArray() {
-
-        if (inventoryItems == null || inventoryItems.size() == 0) return new String[0];
-
-        String[] itemNames = new String[inventoryItems.size()];
-
-        for (int i = 0; i < inventoryItems.size(); i++)
-        {
-            itemNames[i] = inventoryItems.get(i).getName();
-        }
-
-        return itemNames;
     }
 
     public String capitalize(String word)

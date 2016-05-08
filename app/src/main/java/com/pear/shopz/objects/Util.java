@@ -1,6 +1,7 @@
 package com.pear.shopz.objects;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 
 /**
  * Created by edmondcotterell on 2016-05-08.
@@ -22,6 +23,21 @@ public class Util {
         DecimalFormat df = new DecimalFormat("#.00");
         return df.format(number);
 
+    }
+
+    //get array of string names for adapter autocomplete
+    public static String[] getAdapterArray(ArrayList<InventoryItem> inventoryItems) {
+
+        if (inventoryItems == null || inventoryItems.size() == 0) return new String[0];
+
+        String[] itemNames = new String[inventoryItems.size()];
+
+        for (int i = 0; i < inventoryItems.size(); i++)
+        {
+            itemNames[i] = inventoryItems.get(i).getName();
+        }
+
+        return itemNames;
     }
 
 }
