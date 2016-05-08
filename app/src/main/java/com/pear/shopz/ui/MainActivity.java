@@ -237,19 +237,6 @@ public class MainActivity extends AppCompatActivity implements ShoppingListAdapt
 
         inventoryItemController.addToDB(jsonData);
 
-        //test, log all items
-//        ArrayList<InventoryItem> items = inventoryItemController.getInventory();
-//        for (InventoryItem item: items) {
-//            Log.v("ITEMS", item.getName() + "-" + item.getCategory());
-//        }
-
-//        inventoryItemController.purgeDB();
-//
-//        items = inventoryItemController.getInventory();
-//        for (InventoryItem item: items) {
-//            Log.v("STIILITEMS", item.getName() + "-" + item.getCategory());
-//        }
-        //shoppingListItemController.addNetworkData(jsonData);
     }
 
 
