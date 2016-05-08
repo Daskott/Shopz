@@ -63,6 +63,7 @@ public class MainActivity extends AppCompatActivity implements ShoppingListAdapt
 
     //private ArrayList<Item> serverData = null;
 
+    private FloatingActionButton addFab;
     private final String url = "http://ec2-52-39-22-233.us-west-2.compute.amazonaws.com/api/";
 
 
@@ -85,8 +86,8 @@ public class MainActivity extends AppCompatActivity implements ShoppingListAdapt
         else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimaryDark));
 
-            FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        addFab = (FloatingActionButton) findViewById(R.id.fab);
+        addFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, AddListActivity.class);
@@ -94,7 +95,6 @@ public class MainActivity extends AppCompatActivity implements ShoppingListAdapt
                 //finish();
             }
         });
-
 
 
         //check for version update, then update if new version on response
@@ -432,6 +432,7 @@ public class MainActivity extends AppCompatActivity implements ShoppingListAdapt
                             @Override
                             public void onClick(View v) {
                                 snackBar.dismiss();
+                                addFab.setTranslationY(0);
                             }
                         });
                         snackBar.show();
