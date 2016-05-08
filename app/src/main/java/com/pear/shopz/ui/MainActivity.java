@@ -26,30 +26,21 @@ import android.widget.Toast;
 
 import com.pear.shopz.R;
 import com.pear.shopz.adapters.ShoppingListAdapter;
-import com.pear.shopz.objects.InventoryItem;
 import com.pear.shopz.objects.InventoryItemController;
-import com.pear.shopz.objects.Item;
 import com.pear.shopz.objects.Settings;
 import com.pear.shopz.objects.ShoppingList;
 import com.pear.shopz.objects.ShoppingListController;
-import com.pear.shopz.objects.ShoppingListItem;
 
-
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.RequestBody;
 import okhttp3.Response;
 
 

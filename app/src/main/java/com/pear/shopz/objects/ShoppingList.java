@@ -4,7 +4,6 @@ import android.content.Context;
 
 import com.pear.shopz.R;
 
-import java.text.DecimalFormat;
 
 /**
  * Created by edmondcotterell on 2016-04-21.
@@ -35,10 +34,9 @@ public class ShoppingList {
         return totalBought;
     }
 
-    public String getTotalPriceUnchecked(Context context)
+    public double getTotalPriceUnchecked(Context context)
     {
         ShoppingListItemController itemController =  new ShoppingListItemController(context,listID);
-        String result ="";
         double uncheckedPrice = 0.00;
 
         for(ShoppingListItem item: itemController.getShoppingListItems())
@@ -47,8 +45,7 @@ public class ShoppingList {
                 uncheckedPrice+=(item.getItemPrice()*item.getItemQuantity());
         }
 
-        result = context.getResources().getString(R.string.dollar_sign)+uncheckedPrice;
-        return result;
+        return uncheckedPrice;
     }
 
     public int getListID() {
@@ -85,8 +82,6 @@ public class ShoppingList {
     {
         ShoppingListItemController itemController =  new ShoppingListItemController(context,listID);
         String formattedList = "";
-        String result ="";
-        double uncheckedPrice = 0.00;
 
         formattedList+="Shopping List\n";
         formattedList+="_______________\n\n";
@@ -99,16 +94,14 @@ public class ShoppingList {
             if(item.getItemPrice() > 0)
             {
                 price = context.getResources().getString(R.string.dollar_sign) + String.valueOf(item.getItemPrice());
-                totalPrice = context.getResources().getString(R.string.dollar_sign) + roundToDecimals(item.getItemPrice()*item.getItemQuantity());
+                totalPrice = context.getResources().getString(R.string.dollar_sign) + Util.roundToDecimals(item.getItemPrice()*item.getItemQuantity());
 
             }
-
-            //formattedList+="\t"+item.getItemName()+"\t"+price+"\n\n";
             formattedList+=String.format("%s(x%s) %s    =   \t%3s\n\n", item.getItemName(), String.valueOf(item.getItemQuantity()), price, totalPrice);
 
         }
 
-        formattedList+="\n*** SHOPEZZY APP ***";
+        formattedList+="\n*** SHOPIZY APP ***";
 
         return formattedList;
     }
@@ -118,10 +111,5 @@ public class ShoppingList {
         return new ShoppingListItemController(context,listID).getShoppingListItems().size();
     }
 
-    public String roundToDecimals(double number)
-    {
-        DecimalFormat df = new DecimalFormat("#.00");
-        return df.format(number);
 
-    }
 }

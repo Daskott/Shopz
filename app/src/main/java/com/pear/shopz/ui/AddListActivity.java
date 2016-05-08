@@ -17,6 +17,7 @@ import com.pear.shopz.R;
 import com.pear.shopz.objects.Settings;
 import com.pear.shopz.objects.ShoppingList;
 import com.pear.shopz.objects.ShoppingListController;
+import com.pear.shopz.objects.Util;
 
 import java.util.ArrayList;
 
@@ -97,8 +98,8 @@ public class AddListActivity extends AppCompatActivity {
                         if(attemptSave(storeNameInput)) {
 
                             //update & save list
-                            currStoreOptions.add(capitalize(storeNameInput.getText().toString()));
-                            Settings.saveArrayListToSharedPreferenceFile(AddListActivity.this,currStoreOptions);
+                            currStoreOptions.add(Util.capitalize(storeNameInput.getText().toString()));
+                            Settings.saveArrayListToSharedPreferenceFile(AddListActivity.this,currStoreOptions,Settings.STORE_OPTIONS);
 
                             //create new spinner adapter & update ui
                             ArrayAdapter<String> storeAdapter = CreateSpinnerAdapter(currStoreOptions);
@@ -227,14 +228,6 @@ public class AddListActivity extends AppCompatActivity {
                 return view;
             }
         };
-    }
-
-    public String capitalize(String word)
-    {
-        if(word.length() == 1)
-            return word.toUpperCase();
-
-        return word.substring(0,1).toUpperCase()+""+word.substring(1).toLowerCase();
     }
 
     @Override

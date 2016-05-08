@@ -32,7 +32,7 @@ public class Settings {
         //init store options
         if(storeOptions == null) {
             storeOptions = new ArrayList<String>(Arrays.asList("General Store", "Superstore(CA)"));
-            saveArrayListToSharedPreferenceFile(context, storeOptions);
+            saveArrayListToSharedPreferenceFile(context, storeOptions, STORE_OPTIONS);
         }
 
         return storeOptions;
@@ -66,7 +66,7 @@ public class Settings {
         editor.commit();
     }
 
-    public static void saveArrayListToSharedPreferenceFile(Context context, ArrayList<String> arrayList)
+    public static void saveArrayListToSharedPreferenceFile(Context context, ArrayList<String> arrayList, String TAG)
     {
         // We need an Editor object to make preference changes.
         // All objects are from android.context.Context
@@ -74,7 +74,7 @@ public class Settings {
         SharedPreferences.Editor editor = settings.edit();
         Gson gson = new Gson();
         String json = gson.toJson(arrayList);
-        editor.putString(STORE_OPTIONS, json);
+        editor.putString(TAG, json);
 
         // Commit the edits!
         editor.commit();

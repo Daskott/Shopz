@@ -64,12 +64,6 @@ public class ShoppingListItem {
         this.itemPrice = itemPrice;
     }
 
-     /*
-      * Right now, we store the index of where the category name is located in
-      * @see in ShoppingListItemController.getPossibleItemCategories()
-      * N/B: Actual category name is not stored in db, just index
-      *
-      */
     public String getItemCategory() {
         return itemCategory;
     }

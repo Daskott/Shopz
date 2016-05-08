@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Shopz</string>
+    <string name="app_name">Shopizy</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_shopin_items">List Items</string>
     <string name="error_field_required">This field is required</string>

@@ -10,16 +10,12 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.pear.shopz.R;
 import com.pear.shopz.objects.InventoryItem;
 import com.pear.shopz.objects.InventoryItemController;
-import com.pear.shopz.objects.Item;
-import com.pear.shopz.objects.Settings;
 import com.pear.shopz.objects.ShoppingListItem;
 import com.pear.shopz.objects.ShoppingListItemController;
 

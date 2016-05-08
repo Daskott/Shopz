@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.pear.shopz.R;
 import com.pear.shopz.objects.ShoppingListItem;
 import com.pear.shopz.objects.ShoppingListItemController;
+import com.pear.shopz.objects.Util;
 
 import java.text.DecimalFormat;
 
@@ -65,12 +66,12 @@ public class PagerContentFragment extends Fragment{
         quantity_price_view = (TextView)view.findViewById(R.id.quantity_price_view);
         topPanelLayout = (LinearLayout)view.findViewById(R.id.topPanelLayout);
 
-        itemCheckBox.setText(capitalize(item.getItemName()));
-        itemCategoryTextView.setText(capitalize(item.getItemCategory()));
+        itemCheckBox.setText(Util.capitalize(item.getItemName()));
+        itemCategoryTextView.setText(Util.capitalize(item.getItemCategory()));
         itemAisle.setText(item.getItemAisle().trim());
         String dollarSign = getResources().getString(R.string.dollar_sign);
         String quantity = String.valueOf(item.getItemQuantity());
-        String price = dollarSign+String.valueOf(roundToDecimals(item.getItemPrice()));
+        String price = dollarSign+String.valueOf(Util.roundToDecimals(item.getItemPrice()));
 
         //set top panel layout to white, if no category was picked ["Other"]
         if(item.getItemCategory().trim().toLowerCase().equals("other")) {
@@ -85,8 +86,8 @@ public class PagerContentFragment extends Fragment{
             quantity_price_view.setText("("+quantity+")  "+ (item.getItemPrice() != 0.0? price:""));
         else if(item.getItemQuantity() > 1 & item.getItemPrice() >0.0)
         {
-            price = dollarSign+String.valueOf(roundToDecimals((double) item.getItemPrice()*item.getItemQuantity()));
-            quantity_price_view.setText("(" + quantity + " x " +dollarSign+roundToDecimals(item.getItemPrice()) + ")  " + (item.getItemPrice() != 0.0 ? price : ""));
+            price = dollarSign+String.valueOf(Util.roundToDecimals((double) item.getItemPrice()*item.getItemQuantity()));
+            quantity_price_view.setText("(" + quantity + " x " +dollarSign+Util.roundToDecimals(item.getItemPrice()) + ")  " + (item.getItemPrice() != 0.0 ? price : ""));
         }
         else
             quantity_price_view.setVisibility(View.GONE);
@@ -184,20 +185,5 @@ public class PagerContentFragment extends Fragment{
         catch (final ClassCastException e) {
             throw new ClassCastException(context.toString() + " must implement OnCompleteListener");
         }
-    }
-
-    public String capitalize(String word)
-    {
-        if(word.length() == 1)
-            return word.toUpperCase();
-
-        return word.substring(0,1).toUpperCase()+""+word.substring(1).toLowerCase();
-    }
-
-    public String roundToDecimals(double number)
-    {
-        DecimalFormat df = new DecimalFormat("#.00");
-        return df.format(number);
-
     }
 }

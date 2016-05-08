@@ -34,11 +34,11 @@ import com.pear.shopz.fragments.PagerContentFragment;
 import com.pear.shopz.fragments.ViewPagerFragment;
 import com.pear.shopz.objects.InventoryItem;
 import com.pear.shopz.objects.InventoryItemController;
-import com.pear.shopz.objects.Item;
 import com.pear.shopz.objects.ShoppingList;
 import com.pear.shopz.objects.ShoppingListController;
 import com.pear.shopz.objects.ShoppingListItem;
 import com.pear.shopz.objects.ShoppingListItemController;
+import com.pear.shopz.objects.Util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -259,16 +259,6 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
                 //refresh viewpager
                 refreshViewFragment();
 
-//                //Snack bar to indicate data saved
-//                final Snackbar snackBar = Snackbar.make(v, "New item added to list", Snackbar.LENGTH_LONG);
-//                snackBar.setAction("Dismiss", new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        snackBar.dismiss();
-//                        playFab.setTranslationY(0);
-//                    }
-//                });
-//                snackBar.show();
             }
         });
 
@@ -276,10 +266,6 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
         playFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                //addViewPagerFragment();
-                //refresh viewpager for shopping mode - ViewPagerFragment
-                //currViewPagerFragment.setUpViewPager(getItemIDs(shoppingListItemController.getShoppingListItems()), listId);
 
                 //if list is not empty enable shopping mode
                 if(lists.size() > 0)
@@ -391,24 +377,12 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
         isShopping = true;
         viewFragmentLayout.getLayoutParams().height = (int) getResources().getDimension(R.dimen.view_pager_height);
         viewFragmentLayout.setVisibility(View.VISIBLE);
-        //currViewPagerFragment.setUpViewPager(getItemIDs(shoppingListItemController.getShoppingListItems()), listId);
 
         //toggle fab icons
         playFab.setVisibility(View.GONE);
         stopFab.setVisibility(View.VISIBLE);
 
         appBar.setExpanded(false);
-
-        //Snack bar to indicate editing is disabled
-//        final Snackbar snackBar = Snackbar.make(notifyView, "Shopping Mode Enabled", Snackbar.LENGTH_LONG);
-//        snackBar.setAction("Dismiss", new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                snackBar.dismiss();
-//                stopFab.setTranslationY(0);
-//            }
-//        });
-//        snackBar.show();
     }
 
     public void stopShopping(View notifyView) {
@@ -421,17 +395,6 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
         playFab.setVisibility(View.VISIBLE);
 
         appBar.setExpanded(true);
-
-//        //Snack bar to indicate editing is enabled
-//        final Snackbar snackBar = Snackbar.make(notifyView, "Shopping Mode Disabled", Snackbar.LENGTH_LONG);
-//        snackBar.setAction("Dismiss", new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                snackBar.dismiss();
-//                playFab.setTranslationY(0);
-//            }
-//        });
-//        snackBar.show();
 
     }
 
@@ -478,10 +441,14 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
 
     public void updateTotalPriceUncheckedView()
     {
-        String total = currShoppingList.getTotalPriceUnchecked(this);
+        String total = getResources().getString(R.string.dollar_sign)+ Util.roundToDecimals(currShoppingList.getTotalPriceUnchecked(this));
 
-        //update total price unchecked
-        if(total.equals("$0.0"))
+        /*
+        * update total price unchecked
+        *
+        * if total price is $0, do not display anything
+        * */
+        if(currShoppingList.getTotalPriceUnchecked(this) <= 0)
         {
             //animate & make invisible if visible
             if(totalPriceUncheckedView.getVisibility() == View.VISIBLE)
