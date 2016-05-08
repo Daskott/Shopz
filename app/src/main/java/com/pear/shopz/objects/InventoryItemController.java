@@ -47,4 +47,9 @@ public class InventoryItemController {
         dataSource.purgeInventory();
         getInventory();
     }
+
+    public InventoryItem getByItemName(String itemName)
+    {
+        return dataSource.getInventoryItem(itemName);
+    }
 }

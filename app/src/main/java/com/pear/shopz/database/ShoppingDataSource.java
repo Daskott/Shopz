@@ -383,5 +383,31 @@ public class ShoppingDataSource {
         close(database);
     }
 
+    public InventoryItem getInventoryItem(String itemName)
+    {
+        InventoryItem item = null;
+        SQLiteDatabase database = open();
+        Cursor cursor = database.rawQuery(
+                "SELECT * FROM " + shoppingSQLiteHelper.INVENTORY_ITEMS_TABLE +
+                        " WHERE " + shoppingSQLiteHelper.COLUMN_ITEM_NAME + " = " + itemName, null);
+
+        if(cursor.moveToFirst())
+        {
+            do
+            {
+                item = new InventoryItem(
+                        getIntFromColumnName(cursor, BaseColumns._ID),
+                        getStringFromColumnName(cursor, ShoppingSQLiteHelper.COLUMN_SLIST_NAME),
+                        getStringFromColumnName(cursor, shoppingSQLiteHelper.COLUMN_ITEM_CATEGORY)
+                );
+
+            }while(cursor.moveToNext());
+        }
+
+        cursor.close();
+        close(database);
+        return item;
+    }
+
 
 }
