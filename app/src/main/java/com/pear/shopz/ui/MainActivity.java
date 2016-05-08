@@ -43,6 +43,9 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+
 
 public class MainActivity extends AppCompatActivity implements ShoppingListAdapter.ViewHolder.ClickListener{
 
@@ -73,6 +76,19 @@ public class MainActivity extends AppCompatActivity implements ShoppingListAdapt
         setContentView(R.layout.activity_main);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        //ad view
+        AdView mAdView = (AdView) findViewById(R.id.adView_home);
+        //AdRequest adRequest = new AdRequest.Builder().build(); //deployment
+
+
+        //for testing
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)        // All emulators
+                .addTestDevice("83C91F7145125BB8C343C40C7EE10194")  // An example device ID
+                .build();
+
+        mAdView.loadAd(adRequest);
 
         //background color of activity
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)

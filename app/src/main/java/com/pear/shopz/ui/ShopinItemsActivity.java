@@ -28,6 +28,8 @@ import android.widget.AutoCompleteTextView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.pear.shopz.R;
 import com.pear.shopz.adapters.ShoppingItemAdapter;
 import com.pear.shopz.fragments.PagerContentFragment;
@@ -97,6 +99,19 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimaryDark));
         }
+
+        //ad view
+        AdView mAdView = (AdView) findViewById(R.id.adView_shopping_items);
+        //AdRequest adRequest = new AdRequest.Builder().build(); //deployment
+
+
+        //for testing
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)        // All emulators
+                .addTestDevice("83C91F7145125BB8C343C40C7EE10194")  // An example device ID
+                .build();
+
+        mAdView.loadAd(adRequest);
 
         Bundle extras = getIntent().getExtras();
 
