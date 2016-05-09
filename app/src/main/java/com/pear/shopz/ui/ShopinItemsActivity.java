@@ -19,10 +19,13 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.DisplayMetrics;
 import android.view.ActionMode;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.RelativeLayout;
@@ -145,7 +148,7 @@ public class ShopinItemsActivity extends AppCompatActivity
         viewFragmentLayout = (RelativeLayout)findViewById(R.id.fragment_placeholder);
 
         //initialize title bar
-        title = capitalize(listName);
+        title = Util.capitalize(listName);
         collapseBar.setTitle(title);
         toolbar = (Toolbar) findViewById(R.id.app_bar);
 
@@ -165,7 +168,7 @@ public class ShopinItemsActivity extends AppCompatActivity
         currViewPagerFragment = new ViewPagerFragment();
         addViewPagerFragment();
 
-
+        initLayoutHeight();
         //Toast.makeText(this, reslt[0], Toast.LENGTH_LONG).show();
 
         //Add item text box
@@ -328,13 +331,17 @@ public class ShopinItemsActivity extends AppCompatActivity
         });
 
     }
-
-    public String capitalize(String word)
+    //set layout height to 70% to accomodate admob
+    public void initLayoutHeight()
     {
-        if(word.length() == 1)
-            return word.toUpperCase();
+        Display display = getWindowManager().getDefaultDisplay();
+        DisplayMetrics displaymetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+        int screenHeight = displaymetrics.heightPixels;
 
-        return word.substring(0,1).toUpperCase()+""+word.substring(1).toLowerCase();
+
+        android.support.design.widget.CoordinatorLayout mainLayout = (android.support.design.widget.CoordinatorLayout) findViewById(R.id.main_shopping_items_layout);
+        mainLayout.getLayoutParams().height = (int) (0.85 * screenHeight);
     }
 
     public void addViewPagerFragment()
