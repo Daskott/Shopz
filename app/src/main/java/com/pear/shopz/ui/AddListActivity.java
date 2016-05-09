@@ -81,7 +81,8 @@ public class AddListActivity extends AppCompatActivity {
             saveButton.setText("UPDATE");
             currList = listController.getShoppingList(listId);
             storeSpinner.setSelection(Integer.parseInt(currList.getStore())); //set spinner
-        }
+        }else
+            storeSpinner.setSelection(1);
 
         addStoreButton.setOnClickListener(new View.OnClickListener() {
             @Override

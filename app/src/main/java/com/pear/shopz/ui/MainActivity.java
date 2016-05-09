@@ -15,11 +15,14 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.ActionMode;
+import android.view.Display;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -256,7 +259,19 @@ public class MainActivity extends AppCompatActivity implements ShoppingListAdapt
 
         // use this setting to improve performance if you know that changes
         // in content do not change the cardView size of the RecyclerView
+        //capture the size of the devices screen
+        Display display = getWindowManager().getDefaultDisplay();
+        DisplayMetrics displaymetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+        int screenHeight = displaymetrics.heightPixels;
+
         shopinListView.setHasFixedSize(true);
+
+
+
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT);
+        params.height = (int) (0.7 * screenHeight);
+        shopinListView.setLayoutParams(params);
 
         // use a linear cardView manager
         layoutManager = new LinearLayoutManager(this);
