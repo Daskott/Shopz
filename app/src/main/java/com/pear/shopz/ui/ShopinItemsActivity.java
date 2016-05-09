@@ -104,16 +104,15 @@ public class ShopinItemsActivity extends AppCompatActivity
 
         //ad view
         AdView mAdView = (AdView) findViewById(R.id.adView_shopping_items);
-        //AdRequest adRequest = new AdRequest.Builder().build(); //deployment
+        AdRequest adRequest = new AdRequest.Builder().build(); //deployment
 
 
         //for testing
-        //for testing
-        AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)        // All emulators
-                .addTestDevice("83C91F7145125BB8C343C40C7EE10194")  // An example device ID
-                .addTestDevice("EED7C07AB7B885F7DAAD60C3A0788296") //second test device
-                .build();
+//        AdRequest adRequest = new AdRequest.Builder()
+//                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)        // All emulators
+//                .addTestDevice("83C91F7145125BB8C343C40C7EE10194")  // An example device ID
+//                .addTestDevice("EED7C07AB7B885F7DAAD60C3A0788296") //second test device
+//                .build();
 
         mAdView.loadAd(adRequest);
 
