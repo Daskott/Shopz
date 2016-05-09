@@ -28,7 +28,7 @@ public class AboutActivity extends AppCompatActivity {
                 sendIntent.putExtra(Intent.EXTRA_TEXT, "Shopizy is an app that enhances your\n" +
                                                         "grocery shopping experience. Get it free for Android."+
                                                         "\nhttps://play.google.com/store/apps" +
-                                                        "/details?id=com.pear.shopizy");
+                                                        "/details?id=com.pear.shopz");
                 sendIntent.setType("text/plain");
                 startActivity(Intent.createChooser(sendIntent, "Share Via"));
             }
