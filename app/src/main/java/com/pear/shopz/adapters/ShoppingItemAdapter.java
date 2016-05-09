@@ -31,6 +31,7 @@ public class ShoppingItemAdapter  extends SelectableAdapter<ShoppingItemAdapter.
     private final Context mContext;
     public SparseBooleanArray selectedItems;
     private ViewHolder.ClickListener clickListener;
+    private OnCompleteListener mListener;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -100,6 +101,14 @@ public class ShoppingItemAdapter  extends SelectableAdapter<ShoppingItemAdapter.
         this.mContext = mContext;
         this.clickListener = clickListener;
         selectedItems = new SparseBooleanArray();
+
+        //implement oncomplete listener to let shopping item activity know when list empty
+        try {
+            this.mListener = (OnCompleteListener)mContext;
+        }
+        catch (final ClassCastException e) {
+            throw new ClassCastException(mContext.toString() + " must implement OnCompleteListener");
+        }
     }
 
     // Create new views (invoked by the cardView manager)
@@ -173,6 +182,20 @@ public class ShoppingItemAdapter  extends SelectableAdapter<ShoppingItemAdapter.
     // Return the size of your dataset (invoked by the cardView manager)
     @Override
     public int getItemCount() {
+        //tell shopping item activity to do something each
+        // time the list count is updated
+        mListener.onComplete(mDataset.size());
+
+        return mDataset.size();
+    }
+
+    //just to let the main activity noe when the list is empty
+    public static interface OnCompleteListener {
+        public abstract void onComplete(int dataSetSize);
+    }
+
+    public int getDataSetSize()
+    {
         return mDataset.size();
     }
 
@@ -182,20 +205,6 @@ public class ShoppingItemAdapter  extends SelectableAdapter<ShoppingItemAdapter.
         notifyItemRangeChanged(position, mDataset.size());
     }
 
-    public void addItem(ShoppingListItem item) {
-        mDataset.add(item);
-        notifyItemInserted(mDataset.size()-1);
-        notifyItemRangeChanged(mDataset.size()-1, mDataset.size());
-    }
-
-    public void moveItemToBottom(int fromPosition, int toPosition, ShoppingListItem data, ViewHolder holder) {
-
-        //notifyItemRemoved(fromPosition);
-        mDataset.add(mDataset.get(fromPosition));
-        mDataset.remove(fromPosition);
-        //notifyItemInserted(toPosition);
-        holder.cardItem.setBackgroundColor(mContext.getResources().getColor(R.color.light_grey));
-    }
 
     public void removeItems(List<Integer> positions) {
         // Reverse-sort the list

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -46,6 +47,7 @@ public class AddListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_list);
+        this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         Bundle extras = getIntent().getExtras();
 
         if(extras!=null) {
@@ -236,5 +238,19 @@ public class AddListActivity extends AppCompatActivity {
         //go back to main activity
         startActivity(intent);
         finish();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                // app icon in action bar clicked; goto parent activity.
+                //go back to main activity
+                startActivity(intent);
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }

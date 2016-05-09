@@ -45,7 +45,9 @@ import com.pear.shopz.objects.Util;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingItemAdapter.ViewHolder.ClickListener, AppBarLayout.OnOffsetChangedListener,PagerContentFragment.OnCompleteListener{
+public class ShopinItemsActivity extends AppCompatActivity
+        implements ShoppingItemAdapter.ViewHolder.ClickListener,
+        AppBarLayout.OnOffsetChangedListener,PagerContentFragment.OnCompleteListener, ShoppingItemAdapter.OnCompleteListener{
 
     private RecyclerView shopinListView;
     private ShoppingItemAdapter listAdapter;
@@ -106,12 +108,15 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
 
 
         //for testing
+        //for testing
         AdRequest adRequest = new AdRequest.Builder()
                 .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)        // All emulators
                 .addTestDevice("83C91F7145125BB8C343C40C7EE10194")  // An example device ID
+                .addTestDevice("EED7C07AB7B885F7DAAD60C3A0788296") //second test device
                 .build();
 
         mAdView.loadAd(adRequest);
+
 
         Bundle extras = getIntent().getExtras();
 
@@ -521,9 +526,9 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
+        //if (id == R.id.action_settings) {
+          //  return true;
+        //}
 
         return super.onOptionsItemSelected(item);
     }
@@ -559,19 +564,16 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
     public boolean onItemLongClicked(int position) {
         int count = listAdapter.getSelectedItemCount();
 
-        if(!isShopping)
-        {
-            if (actionMode == null ) {
-                actionMode = startActionMode(actionModeCallback);
-                toolbar.setVisibility(View.INVISIBLE);
-            }
 
-            toggleSelection(position);
-
-            return true;
+        if (actionMode == null ) {
+            actionMode = startActionMode(actionModeCallback);
+            toolbar.setVisibility(View.INVISIBLE);
         }
 
-        return false;
+        toggleSelection(position);
+
+        return true;
+
     }
 
     private void toggleSelection(int position) {
@@ -646,8 +648,8 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
 
         //update total price unchecked view
         updateTotalPriceUncheckedView();
-
     }
+
 
     public void clearItemSelection()
     {
@@ -657,6 +659,29 @@ public class ShopinItemsActivity extends AppCompatActivity  implements ShoppingI
 
         actionMode = null;
         toolbar.setVisibility(View.VISIBLE);
+    }
+
+    //update view with placeholder if list is empty
+    public void updateLayoutIfListEmpty(int dataSetSize)
+    {
+        RelativeLayout emptyLayout = (RelativeLayout) findViewById(R.id.empty_layout);
+        if(dataSetSize == 0 && emptyLayout.getVisibility() ==View.GONE)
+            emptyLayout.setVisibility(View.VISIBLE);
+        else if(dataSetSize > 0 && emptyLayout.getVisibility() ==View.VISIBLE)
+            emptyLayout.setVisibility(View.GONE);
+    }
+
+    /*
+   *
+   * called each time shopping list adapter
+   * updates the dataset count, so if data set is empty,
+   * view is updated with placeholder
+   *
+   * */
+    @Override
+    public void onComplete(int dataSetSize) {
+
+        updateLayoutIfListEmpty(dataSetSize);
     }
 
     private class ActionModeCallback implements ActionMode.Callback {

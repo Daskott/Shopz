@@ -17,6 +17,7 @@
             android:theme="@style/Theme.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -28,7 +29,8 @@
         <activity android:name=".ui.AddListActivity" />
         <activity
             android:name=".ui.EditItemActivity"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".ui.AboutActivity"></activity>
     </application>
 
 </manifest>

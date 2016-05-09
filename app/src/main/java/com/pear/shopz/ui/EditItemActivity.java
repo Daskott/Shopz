@@ -45,6 +45,8 @@ public class EditItemActivity extends AppCompatActivity {
     private InventoryItemController inventoryItemController;
 
     private final String SERVERDATA = "SERVERDATA";
+    private ShoppingListItem item;
+    private ShoppingListItemController itemController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,26 +56,6 @@ public class EditItemActivity extends AppCompatActivity {
             getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimaryDark));
         }
 
-        //ad view
-        AdView mAdView = (AdView) findViewById(R.id.adView_edit);
-        //AdRequest adRequest = new AdRequest.Builder().build(); //deployment
-
-
-        //for testing
-        AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)        // All emulators
-                .addTestDevice("83C91F7145125BB8C343C40C7EE10194")  // An example device ID
-                .build();
-
-        mAdView.loadAd(adRequest);
-
-        Toolbar toolbar = (Toolbar)findViewById(R.id.app_bar_edit);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
 
         Bundle extras = getIntent().getExtras();
         if(extras != null)
@@ -85,8 +67,44 @@ public class EditItemActivity extends AppCompatActivity {
             //serverData = extras.getParcelableArrayList(SERVERDATA);
         }
 
+        itemController = new ShoppingListItemController(this,listId);
+        item = itemController.getShoppingListItem(itemId);
 
         init();
+
+        Toolbar toolbar = (Toolbar)findViewById(R.id.app_bar_edit);
+        assert toolbar != null;
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ShoppingListItemController shoppingListController = new ShoppingListItemController(EditItemActivity.this,listId);
+
+                if(attemptSave())
+                {
+                    //update item & save
+                    item.setItemName(nameTextView.getText().toString());
+
+                    //price
+                    if(priceTextView.getText().toString().trim().equals(""))
+                        item.setItemPrice(0.00);
+                    else
+                        item.setItemPrice(Double.parseDouble(priceTextView.getText().toString().trim()));
+
+                    //price
+                    if(quantityTextView.getText().toString().trim().equals("") || quantityTextView.getText().toString().trim().equals("0"))
+                        item.setItemQuantity(1);
+                    else
+                        item.setItemQuantity(Integer.parseInt(quantityTextView.getText().toString().trim()));
+
+                    item.setItemCategory(String.valueOf(categorySpinner.getSelectedItem().toString()));
+
+
+                    shoppingListController.updateShoppingListItem((item));
+                    finish();
+                }
+            }
+        });
+
     }
 
     private void init()
@@ -94,11 +112,9 @@ public class EditItemActivity extends AppCompatActivity {
         inventoryItemController = new InventoryItemController(EditItemActivity.this);
         inventoryItems = inventoryItemController.getInventory();
 
-        ShoppingListItemController itemController = new ShoppingListItemController(this,listId);
-        final ShoppingListItem item = itemController.getShoppingListItem(itemId);
 
         ArrayList<String>itemCategories = itemController.getPossibleItemCategories(); //spinner array
-        saveItemFab = (FloatingActionButton) findViewById(R.id.save_item_fab);
+        //saveItemFab = (FloatingActionButton) findViewById(R.id.save_item_fab);
         nameTextView = (AutoCompleteTextView) findViewById(R.id.item_name);
         quantityTextView = (AutoCompleteTextView) findViewById(R.id.quantity_view_edit);
         priceTextView = (AutoCompleteTextView) findViewById(R.id.price_view_edit);
@@ -155,25 +171,13 @@ public class EditItemActivity extends AppCompatActivity {
 
 
 
-        saveItemFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ShoppingListItemController shoppingListController = new ShoppingListItemController(EditItemActivity.this,listId);
-
-                if(attemptSave())
-                {
-                    //update item & save
-                    item.setItemName(nameTextView.getText().toString());
-                    item.setItemPrice(Double.parseDouble(priceTextView.getText().toString()));
-                    item.setItemCategory(String.valueOf(categorySpinner.getSelectedItem().toString()));
-                    item.setItemQuantity(Integer.parseInt(quantityTextView.getText().toString()));
-
-                    shoppingListController.updateShoppingListItem((item));
-                    finish();
-                }
-
-            }
-        });
+//        saveItemFab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//
+//            }
+//        });
 
         categorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override

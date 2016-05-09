@@ -98,15 +98,15 @@
     <include layout="@layout/content_edit_item" />
 
 
-    <!--Save Shopping fab-->
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/save_item_fab"
-        app:layout_collapseMode="parallax"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
-        android:src="@drawable/ic_save_white_48dp" />
+    <!--&lt;!&ndash;Save Shopping fab&ndash;&gt;-->
+    <!--<android.support.design.widget.FloatingActionButton-->
+        <!--android:id="@+id/save_item_fab"-->
+        <!--app:layout_collapseMode="parallax"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_gravity="bottom|end"-->
+        <!--android:layout_margin="@dimen/fab_margin"-->
+        <!--android:src="@drawable/ic_save_white_48dp" />-->
 
 
 </android.support.design.widget.CoordinatorLayout>

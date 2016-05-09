@@ -16,6 +16,7 @@ import com.pear.shopz.R;
 import com.pear.shopz.objects.Settings;
 import com.pear.shopz.objects.ShoppingList;
 import com.pear.shopz.objects.ShoppingListItemController;
+import com.pear.shopz.objects.Util;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,6 +32,7 @@ public class ShoppingListAdapter extends SelectableAdapter<ShoppingListAdapter.V
     private final Context mContext;
     public SparseBooleanArray selectedItems;
     private ViewHolder.ClickListener clickListener;
+    private OnCompleteListener mListener;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -86,6 +88,14 @@ public class ShoppingListAdapter extends SelectableAdapter<ShoppingListAdapter.V
         this.mContext = mContext;
         selectedItems = new SparseBooleanArray();
         this.clickListener = clickListener;
+
+        //implement oncomplete listener to let main activity know when list empty
+        try {
+            this.mListener = (OnCompleteListener)mContext;
+        }
+        catch (final ClassCastException e) {
+            throw new ClassCastException(mContext.toString() + " must implement OnCompleteListener");
+        }
     }
 
     // Create new views (invoked by the cardView manager)
@@ -108,7 +118,7 @@ public class ShoppingListAdapter extends SelectableAdapter<ShoppingListAdapter.V
 
         //set list name
         TextView listName = (TextView) holder.cardView.findViewById(R.id.list_name);
-        listName.setText(capitalize(listItem.getListName()));
+        listName.setText(Util.capitalize(listItem.getListName()));
 
         //set progress
         ShoppingListItemController listItemController = new ShoppingListItemController(mContext,listItem.getListID());
@@ -181,12 +191,26 @@ public class ShoppingListAdapter extends SelectableAdapter<ShoppingListAdapter.V
     // Return the size of your dataset (invoked by the cardView manager)
     @Override
     public int getItemCount() {
+
+        //tell main activity to do something each
+        // time the list count is updated
+        mListener.onComplete(mDataset.size());
         return mDataset.size();
     }
 
     public void removeItem(int position) {
         mDataset.remove(position);
         notifyItemRemoved(position);
+    }
+
+    public int getDataSetSize()
+    {
+        return mDataset.size();
+    }
+
+    //just to let the main activity noe when the list is empty
+    public static interface OnCompleteListener {
+        public abstract void onComplete(int dataSetSize);
     }
 
     public void removeItems(List<Integer> positions) {
@@ -227,13 +251,5 @@ public class ShoppingListAdapter extends SelectableAdapter<ShoppingListAdapter.V
             mDataset.remove(positionStart);
         }
         notifyItemRangeRemoved(positionStart, itemCount);
-    }
-
-    public String capitalize(String word)
-    {
-        if(word.length() == 1)
-            return word.toUpperCase();
-
-        return word.substring(0,1).toUpperCase()+""+word.substring(1).toLowerCase();
     }
 }

@@ -47,7 +47,7 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
 
-public class MainActivity extends AppCompatActivity implements ShoppingListAdapter.ViewHolder.ClickListener{
+public class MainActivity extends AppCompatActivity implements ShoppingListAdapter.ViewHolder.ClickListener, ShoppingListAdapter.OnCompleteListener{
 
     private RecyclerView shopinListView;
     private ShoppingListAdapter listAdapter;
@@ -86,6 +86,7 @@ public class MainActivity extends AppCompatActivity implements ShoppingListAdapt
         AdRequest adRequest = new AdRequest.Builder()
                 .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)        // All emulators
                 .addTestDevice("83C91F7145125BB8C343C40C7EE10194")  // An example device ID
+                .addTestDevice("EED7C07AB7B885F7DAAD60C3A0788296") //second test device
                 .build();
 
         mAdView.loadAd(adRequest);
@@ -306,7 +307,9 @@ public class MainActivity extends AppCompatActivity implements ShoppingListAdapt
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_about) {
+            Intent intent = new Intent(MainActivity.this, AboutActivity.class);
+            startActivity(intent);
             return true;
         }
 
@@ -390,6 +393,12 @@ public class MainActivity extends AppCompatActivity implements ShoppingListAdapt
         return result;
     }
 
+    //used to update main activity view when is empty
+    @Override
+    public void onComplete(int dataSetSize) {
+        updateLayoutIfListEmpty(dataSetSize);
+    }
+
     private class ActionModeCallback implements ActionMode.Callback {
         @SuppressWarnings("unused")
         private final String TAG = ActionModeCallback.class.getSimpleName();
@@ -469,6 +478,16 @@ public class MainActivity extends AppCompatActivity implements ShoppingListAdapt
             //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
               //  getWindow().setStatusBarColor(statusBarColor);
         }
+    }
+
+    //update view with placeholder if list is empty
+    public void updateLayoutIfListEmpty(int dataSetSize)
+    {
+        RelativeLayout emptyLayout = (RelativeLayout) findViewById(R.id.empty_layout);
+        if(dataSetSize == 0 && emptyLayout.getVisibility() ==View.GONE)
+            emptyLayout.setVisibility(View.VISIBLE);
+        else if(dataSetSize > 0 && emptyLayout.getVisibility() ==View.VISIBLE)
+            emptyLayout.setVisibility(View.GONE);
     }
 
 }

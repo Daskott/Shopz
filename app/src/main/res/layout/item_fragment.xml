@@ -45,7 +45,7 @@
                     android:paddingRight="@dimen/activity_vertical_margin"
                     android:paddingLeft="8dp"
                     android:singleLine="true"
-                    android:maxLength="14"
+                    android:maxLength="18"
                     android:maxLines="2"
                     android:ellipsize="end"
                     android:textColor="@color/black"

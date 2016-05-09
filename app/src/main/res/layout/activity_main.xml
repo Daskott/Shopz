@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
     tools:context="com.pear.shopz.ui.MainActivity">
 
     <android.support.design.widget.AppBarLayout
@@ -23,13 +24,28 @@
 
     <include layout="@layout/content_main" />
 
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/adView_home"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        ads:adSize="BANNER"
+        ads:adUnitId="@string/banner_ad_unit_id_home">
+    </com.google.android.gms.ads.AdView>
+
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
-        android:src="@drawable/ic_playlist_add_white_48dp" />
-
-
+        android:src="@drawable/ic_playlist_add_white_48dp"
+        android:layout_above="@+id/adView_home"
+        android:layout_alignRight="@+id/adView_home"
+        android:layout_alignEnd="@+id/adView_home" />
+</RelativeLayout>
 </android.support.design.widget.CoordinatorLayout>
