@@ -28,6 +28,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -88,7 +89,8 @@ public class ShopinItemsActivity extends AppCompatActivity
     private RelativeLayout viewFragmentLayout;
     private CollapsingToolbarLayout collapseBar;
     private AppBarLayout appBar;
-    FloatingActionButton playFab,stopFab,saveItemFab;
+    private ImageView addItemButton;
+    FloatingActionButton playFab,stopFab;
 
     FragmentManager fragmentManager;
     ViewPagerFragment currViewPagerFragment;
@@ -196,32 +198,42 @@ public class ShopinItemsActivity extends AppCompatActivity
                 //toggle visibility of save fab
                 if(add_item_view.getText().toString().trim().length() > 0)
                 {
-                    playFab.setVisibility(View.GONE);
-                    if(saveItemFab.getVisibility() == View.GONE)
+                    if(addItemButton.getVisibility() == View.INVISIBLE)
                     {
-                        saveItemFab.setVisibility(View.VISIBLE);
-                        saveItemFab.setScaleX(0);
-                        saveItemFab.setScaleY(0);
-                        saveItemFab.animate().scaleX(1).scaleY(1).start();
+                        addItemButton.setScaleX(0);
+                        addItemButton.setScaleY(0);
+                        addItemButton.animate()
+                                .scaleX(1)
+                                .scaleY(1)
+                                .setListener(new AnimatorListenerAdapter() {
+                                    @Override
+                                    public void onAnimationEnd(Animator animation) {
+                                        super.onAnimationEnd(animation);
+                                        addItemButton.setVisibility(View.VISIBLE);
+                                    }
+                                }).start();
                     }
 
                 }
                 else
                 {
-                    saveItemFab.setVisibility(View.GONE);
-                    if(playFab.getVisibility() == View.GONE)
-                    {
-                        playFab.setVisibility(View.VISIBLE);
-                        playFab.setScaleX(0);
-                        playFab.setScaleY(0);
-                        playFab.animate().scaleX(1).scaleY(1).start();
-                    }
+                    addItemButton.animate()
+                            .scaleX(0)
+                            .scaleY(0)
+                            .setListener(new AnimatorListenerAdapter() {
+                                @Override
+                                public void onAnimationEnd(Animator animation) {
+                                    super.onAnimationEnd(animation);
+                                    addItemButton.setVisibility(View.INVISIBLE);
+                                }
+                            }).start();
+
                 }
             }
         });
 
-        saveItemFab = (FloatingActionButton) findViewById(R.id.save_item_fab);
-        saveItemFab.setOnClickListener(new View.OnClickListener() {
+        addItemButton = (ImageView)findViewById(R.id.add_item_button);
+        addItemButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -331,7 +343,7 @@ public class ShopinItemsActivity extends AppCompatActivity
         });
 
     }
-    //set layout height to 70% to accomodate admob
+    //set layout height to 88% to accomodate admob
     public void initLayoutHeight()
     {
         Display display = getWindowManager().getDefaultDisplay();
@@ -341,7 +353,7 @@ public class ShopinItemsActivity extends AppCompatActivity
 
 
         android.support.design.widget.CoordinatorLayout mainLayout = (android.support.design.widget.CoordinatorLayout) findViewById(R.id.main_shopping_items_layout);
-        mainLayout.getLayoutParams().height = (int) (0.85 * screenHeight);
+        mainLayout.getLayoutParams().height = (int) (0.88 * screenHeight);
     }
 
     public void addViewPagerFragment()

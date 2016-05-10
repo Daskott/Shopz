@@ -93,19 +93,6 @@
             android:layout_marginRight="@dimen/fab_margin"
             android:src="@drawable/ic_remove_shopping_cart_white_48dp" />
 
-        <!--Save Shopping fab-->
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/save_item_fab"
-            android:visibility="gone"
-            app:layout_collapseMode="parallax"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_marginBottom="10dp"
-            android:layout_margin="@dimen/fab_margin"
-            android:src="@drawable/ic_add_white_48dp" />
-
-
     </android.support.design.widget.CoordinatorLayout>
 
     <RelativeLayout
