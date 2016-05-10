@@ -353,7 +353,7 @@ public class ShopinItemsActivity extends AppCompatActivity
 
 
         android.support.design.widget.CoordinatorLayout mainLayout = (android.support.design.widget.CoordinatorLayout) findViewById(R.id.main_shopping_items_layout);
-        mainLayout.getLayoutParams().height = (int) (0.88 * screenHeight);
+        mainLayout.getLayoutParams().height = (int) (0.85 * screenHeight);
     }
 
     public void addViewPagerFragment()

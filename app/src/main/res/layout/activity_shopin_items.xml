@@ -18,7 +18,7 @@
         <android.support.design.widget.AppBarLayout
             android:id="@+id/app_bar_layout"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
+            android:layout_height="@dimen/view_pager_height"
             android:background="?colorPrimary">
 
 
@@ -79,7 +79,7 @@
             android:layout_gravity="bottom|end"
             android:layout_marginBottom="8dp"
             android:layout_marginRight="@dimen/fab_margin"
-            android:src="@drawable/ic_shopping_cart_white_48dp" />
+            android:src="@drawable/ic_play_arrow_white_48dp" />
 
         <!--Stop Shopping fab-->
         <android.support.design.widget.FloatingActionButton
@@ -91,7 +91,7 @@
             android:layout_gravity="bottom|end"
             android:layout_marginBottom="8dp"
             android:layout_marginRight="@dimen/fab_margin"
-            android:src="@drawable/ic_remove_shopping_cart_white_48dp" />
+            android:src="@drawable/ic_pause_white_48dp" />
 
     </android.support.design.widget.CoordinatorLayout>
 
