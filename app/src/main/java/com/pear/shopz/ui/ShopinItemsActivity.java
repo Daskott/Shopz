@@ -407,6 +407,7 @@ public class ShopinItemsActivity extends AppCompatActivity
         stopFab.setVisibility(View.VISIBLE);
 
         appBar.setExpanded(false);
+        refreshViewFragment();
     }
 
     public void stopShopping(View notifyView) {
