@@ -70,7 +70,13 @@ public class MainActivity extends AppCompatActivity implements ShoppingListAdapt
     //private ArrayList<Item> serverData = null;
 
     private FloatingActionButton addFab;
-    private final String url = "http://ec2-52-39-22-233.us-west-2.compute.amazonaws.com/api/";
+
+    //stale endpoint, leave for reference
+    //private final String url = "http://ec2-52-39-22-233.us-west-2.compute.amazonaws.com/api/";
+
+    //have to replace these with a more appropriate implementation
+    private final String itemsJsonUrl = "https://api.myjson.com/bins/14ayyx";
+    private final String versionJson = "https://api.myjson.com/bins/1cck4h";
 
 
     @Override
@@ -135,7 +141,7 @@ public class MainActivity extends AppCompatActivity implements ShoppingListAdapt
         {
             OkHttpClient client = new OkHttpClient();
             Request request = new Request.Builder()
-                    .url(url + "items")
+                    .url(itemsJsonUrl)
                     .build();
 
             client.newCall(request).enqueue(new Callback() {
@@ -177,7 +183,7 @@ public class MainActivity extends AppCompatActivity implements ShoppingListAdapt
     {
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
-                .url(url + "version")
+                .url(versionJson)
                 .build();
 
         final boolean[] result = {false};
